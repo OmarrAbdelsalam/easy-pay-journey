@@ -89,7 +89,7 @@ const TicketQuantity = ({
         <div className="pt-4 border-t border-border">
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span>تذكرتك (طالب)</span>
+              <span>تذكرتك (طالب) - {selectedPackage === "with-ski" ? "رحلة القاهرة + Ski Egypt" : "رحلة القاهرة"}</span>
               <span>{studentTotal} جنيه</span>
             </div>
             {companions.length > 0 && <div className="flex justify-between">

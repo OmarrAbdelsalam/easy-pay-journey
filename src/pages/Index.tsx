@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, CalendarDays, MapPin, MessageCircle } from "lucide-react";
 import heroImage from "@/assets/cairo-trip-hero.webp";
 import StepIndicator from "@/components/StepIndicator";
 import PackageSelection, { PackageType } from "@/components/PackageSelection";
@@ -125,31 +125,73 @@ const Index = () => {
           <img src={heroImage} alt="رحلة القاهرة - Cairo Trip" className="w-full h-[166%] object-[center_100%] object-cover" />
         </div>
 
-        {/* Header Card - Only show on first step */}
+        {/* Trip Info Cards - Only show on first step */}
         {currentStep === 1 && (
-          <div className="gform-card p-3 sm:p-4 mb-3" dir="rtl">
-            <h1 className="text-xl sm:text-2xl font-bold text-primary mb-2">
-              رحلة القاهرة
-            </h1>
-            <ul className="space-y-1 text-foreground text-xs sm:text-sm">
-              <li className="flex items-start gap-1.5">
-                <span className="text-foreground">•</span>
-                <span>(المتحف المصري الكبير - مول مصر - سكي ايجيبت "اختياري" - شارع المعز)</span>
-              </li>
-              <li className="flex items-start gap-1.5">
-                <span className="text-foreground">•</span>
-                <span>سعر تيكت الرحلة للطلاب من كل المراحل العمرية = 310 ج</span>
-              </li>
-              <li className="flex items-start gap-1.5">
-                <span className="text-foreground">•</span>
-                <span>سعر تيكت الرحلة لغير الطلاب = 410 ج</span>
-              </li>
-              <li className="flex items-start gap-1.5">
-                <span className="text-foreground">•</span>
-                <span>سعر تيكت سكي ايجيبت + 350ج بدل 700 </span>
-              </li>
-            </ul>
-          </div>
+          <>
+            <div className="grid grid-cols-1 gap-2 mb-3" dir="rtl">
+              {/* Date Card */}
+              <div className="bg-white rounded-xl border border-border p-3 flex items-center justify-end gap-3">
+                <div className="text-right">
+                  <p className="text-xs text-muted-foreground">التاريخ</p>
+                  <p className="font-bold text-foreground">12/2</p>
+                </div>
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <CalendarDays className="w-5 h-5 text-primary" />
+                </div>
+              </div>
+
+              {/* Destination Card */}
+              <div className="bg-white rounded-xl border border-border p-3 flex items-center justify-end gap-3">
+                <div className="text-right">
+                  <p className="text-xs text-muted-foreground">الوجهة</p>
+                  <p className="font-bold text-foreground text-sm">المتحف المصري الكبير - مول مصر - سكي ايجيبت - شارع المعز</p>
+                </div>
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <MapPin className="w-5 h-5 text-primary" />
+                </div>
+              </div>
+
+              {/* WhatsApp Contact Card */}
+              <a 
+                href="https://wa.me/201012345678" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-white rounded-xl border border-border p-3 flex items-center justify-end gap-3 hover:bg-muted/30 transition-colors"
+              >
+                <div className="text-right">
+                  <p className="text-xs text-muted-foreground">للاستفسار</p>
+                  <p className="font-bold text-foreground" dir="ltr">01012345678</p>
+                </div>
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <MessageCircle className="w-5 h-5 text-green-600" />
+                </div>
+              </a>
+            </div>
+
+            <div className="gform-card p-3 sm:p-4 mb-3" dir="rtl">
+              <h1 className="text-xl sm:text-2xl font-bold text-primary mb-2">
+                رحلة القاهرة
+              </h1>
+              <ul className="space-y-1 text-foreground text-xs sm:text-sm">
+                <li className="flex items-start gap-1.5">
+                  <span className="text-foreground">•</span>
+                  <span>(المتحف المصري الكبير - مول مصر - سكي ايجيبت "اختياري" - شارع المعز)</span>
+                </li>
+                <li className="flex items-start gap-1.5">
+                  <span className="text-foreground">•</span>
+                  <span>سعر تيكت الرحلة للطلاب من كل المراحل العمرية = 310 ج</span>
+                </li>
+                <li className="flex items-start gap-1.5">
+                  <span className="text-foreground">•</span>
+                  <span>سعر تيكت الرحلة لغير الطلاب = 410 ج</span>
+                </li>
+                <li className="flex items-start gap-1.5">
+                  <span className="text-foreground">•</span>
+                  <span>سعر تيكت سكي ايجيبت + 350ج بدل 700 </span>
+                </li>
+              </ul>
+            </div>
+          </>
         )}
 
         {/* Step Indicator - hide on confirmation */}
