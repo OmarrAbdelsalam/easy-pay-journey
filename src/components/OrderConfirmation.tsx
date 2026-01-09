@@ -1,7 +1,8 @@
-import { CircleCheckBig, Calendar, MapPin, MessageCircle, Ticket } from "lucide-react";
+import { CircleCheckBig, Calendar, MapPin, Ticket } from "lucide-react";
 import { PaymentMethod } from "./PaymentUpload";
 import { PackageType, packages } from "./PackageSelection";
 import { Companion } from "./TicketQuantity";
+import whatsappIcon from "@/assets/whatsapp-icon.png";
 
 interface OrderConfirmationProps {
   orderDetails: {
@@ -122,7 +123,7 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
           rel="noopener noreferrer"
           className="flex items-center gap-3 bg-card rounded-lg p-4 border border-border hover:bg-muted/30 transition-colors"
         >
-          <MessageCircle className="w-5 h-5 text-green-600" />
+          <img src={whatsappIcon} alt="WhatsApp" className="w-6 h-6" />
           <div className="text-right">
             <p className="text-xs text-muted-foreground">للاستفسار</p>
             <p className="font-medium text-sm" dir="ltr">01012345678</p>
