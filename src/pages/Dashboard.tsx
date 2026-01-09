@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Lock, Search, Download, Eye, X, CreditCard, Package, Users, CheckCircle, XCircle, Clock, AlertTriangle, ChevronDown, ChevronUp } from "lucide-react";
+import { Lock, Search, Download, Eye, X, CreditCard, Package, Users, CheckCircle, XCircle, Clock, AlertTriangle, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
 const DASHBOARD_PASSWORD = "cairo2024";
@@ -113,6 +114,23 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error updating status:", error);
       toast.error("فشل في تحديث الحالة");
+    }
+  };
+
+  const deleteBooking = async (bookingId: string) => {
+    try {
+      const { error } = await supabase
+        .from("bookings")
+        .delete()
+        .eq("id", bookingId);
+
+      if (error) throw error;
+
+      setBookings(prev => prev.filter(b => b.id !== bookingId));
+      toast.success("تم حذف الحجز بنجاح");
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+      toast.error("فشل في حذف الحجز");
     }
   };
 
@@ -720,6 +738,34 @@ const Dashboard = () => {
                               </SelectContent>
                             </Select>
                           )}
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-8 w-8 text-red-600 border-red-200 hover:bg-red-50"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent dir="rtl">
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  هل أنت متأكد من حذف حجز {booking.customer_name}؟ لا يمكن التراجع عن هذا الإجراء.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter className="flex gap-2">
+                                <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                                <AlertDialogAction
+                                  className="bg-red-600 hover:bg-red-700"
+                                  onClick={() => deleteBooking(booking.id)}
+                                >
+                                  حذف
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </td>
                     </tr>
