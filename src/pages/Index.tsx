@@ -193,7 +193,7 @@ const Index = () => {
               senderName: ""
             });
             localStorage.removeItem(STORAGE_KEY);
-          }} className="text-sm text-primary border-primary hover:bg-primary/10">
+          }} className="text-sm text-primary bg-gray-100 border-0 hover:bg-primary hover:text-white">
                 حجز آخر
               </Button>
             </div>}
