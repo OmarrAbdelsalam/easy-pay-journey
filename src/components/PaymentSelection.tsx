@@ -54,14 +54,18 @@ const PaymentSelection = ({
           <div
             key={method.id}
             onClick={() => onSelect(method.id)}
-            className={`payment-option flex items-center justify-center p-6 ${
+            className={`payment-option flex items-center justify-center p-6 overflow-hidden ${
               selectedMethod === method.id ? "selected" : ""
             }`}
           >
             <img
               src={method.logo}
               alt={method.name}
-              className="h-16 w-full object-contain"
+              className={`w-full object-contain ${
+                method.id === "instapay" || method.id === "vodafone"
+                  ? "h-32 scale-150"
+                  : "h-16"
+              }`}
             />
           </div>
         ))}
