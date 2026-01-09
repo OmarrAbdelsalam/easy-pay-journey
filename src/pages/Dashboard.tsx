@@ -539,13 +539,10 @@ const Dashboard = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">كل السنين</SelectItem>
-                <SelectItem value="السنة الأولى">السنة الأولى</SelectItem>
-                <SelectItem value="السنة الثانية">السنة الثانية</SelectItem>
-                <SelectItem value="السنة الثالثة">السنة الثالثة</SelectItem>
-                <SelectItem value="السنة الرابعة">السنة الرابعة</SelectItem>
-                <SelectItem value="السنة الخامسة">السنة الخامسة</SelectItem>
-                <SelectItem value="السنة السادسة">السنة السادسة</SelectItem>
-                <SelectItem value="خريج">خريج</SelectItem>
+                <SelectItem value="أولى">أولى</SelectItem>
+                <SelectItem value="تانية">تانية</SelectItem>
+                <SelectItem value="تالتة">تالتة</SelectItem>
+                <SelectItem value="رابعة">رابعة</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline" size="icon" className="bg-gray-100 hover:bg-gray-200" onClick={exportToCSV} title="تصدير CSV">
