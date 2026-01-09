@@ -8,6 +8,11 @@ import { toast } from "sonner";
 
 const DASHBOARD_PASSWORD = "cairo2024";
 
+interface CompanionDetail {
+  index: number;
+  packageType: string;
+}
+
 interface Booking {
   id: string;
   order_number: string;
@@ -18,6 +23,7 @@ interface Booking {
   selected_package: string;
   student_tickets: number;
   companion_tickets: number;
+  companions_details: CompanionDetail[] | null;
   payment_method: string;
   transaction_number: string;
   sender_phone: string | null;
@@ -72,7 +78,14 @@ const Dashboard = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setBookings(data || []);
+      // Cast companions_details properly
+      const bookingsData = (data || []).map(b => ({
+        ...b,
+        companions_details: Array.isArray(b.companions_details) 
+          ? (b.companions_details as unknown as CompanionDetail[]) 
+          : []
+      }));
+      setBookings(bookingsData);
     } catch (error) {
       console.error("Error fetching bookings:", error);
       toast.error("فشل في تحميل الحجوزات");
@@ -324,7 +337,7 @@ const Dashboard = () => {
                   <th className="text-right p-3 font-medium text-slate-300">الهاتف</th>
                   <th className="text-right p-3 font-medium text-slate-300">المحول منه</th>
                   <th className="text-right p-3 font-medium text-slate-300">الباكدج</th>
-                  <th className="text-right p-3 font-medium text-slate-300">التذاكر</th>
+                  <th className="text-right p-3 font-medium text-slate-300">المرافقين</th>
                   <th className="text-right p-3 font-medium text-slate-300">رقم التحويل</th>
                   <th className="text-right p-3 font-medium text-slate-300">الإجمالي</th>
                   <th className="text-right p-3 font-medium text-slate-300">الحالة</th>
@@ -363,7 +376,33 @@ const Dashboard = () => {
                           {booking.selected_package === "with-ski" ? "مع سكي" : "بدون سكي"}
                         </span>
                       </td>
-                      <td className="p-3 text-slate-300">{booking.student_tickets + booking.companion_tickets}</td>
+                      <td className="p-3">
+                        {booking.companion_tickets > 0 ? (
+                          <div className="space-y-1">
+                            <span className="text-slate-300 text-xs">
+                              {booking.companion_tickets} مرافق
+                            </span>
+                            {booking.companions_details && booking.companions_details.length > 0 && (
+                              <div className="flex flex-wrap gap-1">
+                                {booking.companions_details.map((comp, idx) => (
+                                  <span 
+                                    key={idx}
+                                    className={`px-1.5 py-0.5 rounded text-[10px] ${
+                                      comp.packageType === "with-ski"
+                                        ? "bg-blue-500/20 text-blue-300"
+                                        : "bg-slate-600 text-slate-400"
+                                    }`}
+                                  >
+                                    {comp.packageType === "with-ski" ? "سكي" : "عادي"}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-slate-500 text-xs">-</span>
+                        )}
+                      </td>
                       <td className="p-3 font-mono text-xs text-slate-300">{booking.transaction_number}</td>
                       <td className="p-3 font-bold text-green-400">{Number(booking.total_price).toLocaleString()} ج</td>
                       <td className="p-3">
