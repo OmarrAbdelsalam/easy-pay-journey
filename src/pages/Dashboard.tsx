@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Lock, Search, Download, Eye, X, Calendar, CreditCard, Package, Users, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
+import { Lock, Search, Download, Eye, X, CreditCard, Package, Users, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
@@ -78,7 +78,6 @@ const Dashboard = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      // Cast companions_details properly
       const bookingsData = (data || []).map(b => ({
         ...b,
         companions_details: Array.isArray(b.companions_details) 
@@ -145,7 +144,6 @@ const Dashboard = () => {
   const totalTickets = filteredBookings.reduce((sum, b) => sum + b.student_tickets + b.companion_tickets, 0);
   const pendingCount = bookings.filter(b => b.status === "pending").length;
 
-  // Check for duplicates
   const getDuplicateCount = (booking: Booking, field: 'sender' | 'transaction') => {
     if (field === 'sender') {
       const senderValue = booking.sender_name || booking.sender_phone;
@@ -226,15 +224,15 @@ const Dashboard = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
         <div className="w-full max-w-sm">
-          <div className="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-xl" dir="rtl">
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-lg" dir="rtl">
             <div className="flex flex-col items-center mb-6">
-              <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Lock className="w-8 h-8 text-primary" />
               </div>
-              <h1 className="text-xl font-bold text-white">لوحة التحكم</h1>
-              <p className="text-sm text-slate-400">أدخل كلمة المرور للدخول</p>
+              <h1 className="text-xl font-bold text-gray-900">لوحة التحكم</h1>
+              <p className="text-sm text-gray-500">أدخل كلمة المرور للدخول</p>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-4">
@@ -243,7 +241,7 @@ const Dashboard = () => {
                 placeholder="كلمة المرور"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="text-center bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+                className="text-center"
               />
               <Button type="submit" className="w-full">
                 دخول
@@ -256,65 +254,65 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 py-4 sm:py-8" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-4 sm:py-8" dir="rtl">
       <div className="container max-w-7xl mx-auto px-3 sm:px-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-white">لوحة التحكم</h1>
-            <p className="text-sm text-slate-400">إدارة حجوزات رحلة القاهرة</p>
+            <h1 className="text-2xl font-bold text-gray-900">لوحة التحكم</h1>
+            <p className="text-sm text-gray-500">إدارة حجوزات رحلة القاهرة</p>
           </div>
-          <Button variant="outline" size="sm" onClick={handleLogout} className="border-slate-600 text-slate-300 hover:bg-slate-800">
+          <Button variant="outline" size="sm" onClick={handleLogout}>
             تسجيل خروج
           </Button>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-          <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-            <div className="flex items-center gap-2 text-slate-400 mb-1">
+          <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+            <div className="flex items-center gap-2 text-gray-500 mb-1">
               <Package className="w-4 h-4" />
               <span className="text-xs">إجمالي الحجوزات</span>
             </div>
-            <p className="text-2xl font-bold text-white">{filteredBookings.length}</p>
+            <p className="text-2xl font-bold text-gray-900">{filteredBookings.length}</p>
           </div>
-          <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-            <div className="flex items-center gap-2 text-slate-400 mb-1">
+          <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+            <div className="flex items-center gap-2 text-gray-500 mb-1">
               <Clock className="w-4 h-4" />
               <span className="text-xs">قيد الانتظار</span>
             </div>
-            <p className="text-2xl font-bold text-yellow-400">{pendingCount}</p>
+            <p className="text-2xl font-bold text-yellow-600">{pendingCount}</p>
           </div>
-          <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-            <div className="flex items-center gap-2 text-slate-400 mb-1">
+          <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+            <div className="flex items-center gap-2 text-gray-500 mb-1">
               <Users className="w-4 h-4" />
               <span className="text-xs">إجمالي التذاكر</span>
             </div>
-            <p className="text-2xl font-bold text-white">{totalTickets}</p>
+            <p className="text-2xl font-bold text-gray-900">{totalTickets}</p>
           </div>
-          <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-            <div className="flex items-center gap-2 text-slate-400 mb-1">
+          <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+            <div className="flex items-center gap-2 text-gray-500 mb-1">
               <CreditCard className="w-4 h-4" />
               <span className="text-xs">إجمالي الإيرادات</span>
             </div>
-            <p className="text-2xl font-bold text-green-400">{totalRevenue.toLocaleString()} ج</p>
+            <p className="text-2xl font-bold text-green-600">{totalRevenue.toLocaleString()} ج</p>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-slate-800 rounded-xl p-4 border border-slate-700 mb-6">
+        <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm mb-6">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 relative">
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <Input
                 placeholder="بحث بالاسم، الهاتف، رقم الطلب، المحول منه..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pr-10 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+                className="pr-10"
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-40 bg-slate-700 border-slate-600 text-white">
+              <SelectTrigger className="w-full sm:w-40">
                 <SelectValue placeholder="الحالة" />
               </SelectTrigger>
               <SelectContent>
@@ -325,7 +323,7 @@ const Dashboard = () => {
               </SelectContent>
             </Select>
             <Select value={packageFilter} onValueChange={setPackageFilter}>
-              <SelectTrigger className="w-full sm:w-40 bg-slate-700 border-slate-600 text-white">
+              <SelectTrigger className="w-full sm:w-40">
                 <SelectValue placeholder="الباكدج" />
               </SelectTrigger>
               <SelectContent>
@@ -335,7 +333,7 @@ const Dashboard = () => {
               </SelectContent>
             </Select>
             <Select value={paymentFilter} onValueChange={setPaymentFilter}>
-              <SelectTrigger className="w-full sm:w-40 bg-slate-700 border-slate-600 text-white">
+              <SelectTrigger className="w-full sm:w-40">
                 <SelectValue placeholder="طريقة الدفع" />
               </SelectTrigger>
               <SelectContent>
@@ -345,171 +343,169 @@ const Dashboard = () => {
                 <SelectItem value="orange">Orange Cash</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="icon" onClick={exportToCSV} title="تصدير CSV" className="border-slate-600 text-slate-300 hover:bg-slate-700">
+            <Button variant="outline" size="icon" onClick={exportToCSV} title="تصدير CSV">
               <Download className="w-4 h-4" />
             </Button>
           </div>
         </div>
 
-        {/* Table */}
-        <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-700/50 border-b border-slate-600">
-                <tr>
-                  <th className="text-right p-3 font-medium text-slate-300">رقم الطلب</th>
-                  <th className="text-right p-3 font-medium text-slate-300">الاسم</th>
-                  <th className="text-right p-3 font-medium text-slate-300">الهاتف</th>
-                  <th className="text-right p-3 font-medium text-slate-300">المحول منه</th>
-                  <th className="text-right p-3 font-medium text-slate-300">وسيلة الدفع</th>
-                  <th className="text-right p-3 font-medium text-slate-300">رقم المعاملة</th>
-                  <th className="text-right p-3 font-medium text-slate-300">الباكدج</th>
-                  <th className="text-right p-3 font-medium text-slate-300">المرافقين</th>
-                  <th className="text-right p-3 font-medium text-slate-300">الإجمالي</th>
-                  <th className="text-right p-3 font-medium text-slate-300">الحالة</th>
-                  <th className="text-right p-3 font-medium text-slate-300">الإجراء</th>
-                  <th className="text-right p-3 font-medium text-slate-300">الإيصال</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan={12} className="text-center p-8 text-slate-400">
-                      جاري التحميل...
-                    </td>
-                  </tr>
-                ) : filteredBookings.length === 0 ? (
-                  <tr>
-                    <td colSpan={12} className="text-center p-8 text-slate-400">
-                      لا توجد حجوزات
-                    </td>
-                  </tr>
-                ) : (
-                  filteredBookings.map((booking) => (
-                    <tr key={booking.id} className="border-b border-slate-700 hover:bg-slate-700/30">
-                      <td className="p-3 font-mono text-xs text-slate-300">{booking.order_number}</td>
-                      <td className="p-3 font-medium text-white">{booking.customer_name}</td>
-                      <td className="p-3 text-slate-300" dir="ltr">{booking.customer_phone}</td>
-                      <td className="p-3">
-                        <div className="flex items-center gap-1">
-                          <span className="text-slate-300">
-                            {booking.sender_name || booking.sender_phone || "-"}
-                          </span>
-                          {getDuplicateCount(booking, 'sender') > 0 && (
-                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 text-[10px]" title={`مستخدم في ${getDuplicateCount(booking, 'sender')} حجز آخر`}>
-                              <AlertTriangle className="w-3 h-3" />
-                              {getDuplicateCount(booking, 'sender')}
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="p-3">
-                        <span className="px-2 py-1 rounded text-xs bg-slate-600 text-slate-300">
-                          {paymentMethodLabels[booking.payment_method] || booking.payment_method}
+        {/* Bookings Cards */}
+        <div className="space-y-4">
+          {loading ? (
+            <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm text-center text-gray-500">
+              جاري التحميل...
+            </div>
+          ) : filteredBookings.length === 0 ? (
+            <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm text-center text-gray-500">
+              لا توجد حجوزات
+            </div>
+          ) : (
+            filteredBookings.map((booking) => (
+              <div key={booking.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                {/* Main Row */}
+                <div className="p-4 flex flex-wrap gap-4 items-start">
+                  {/* Order & Customer Info */}
+                  <div className="flex-1 min-w-[200px]">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-mono text-xs text-gray-500">{booking.order_number}</span>
+                      {getStatusBadge(booking.status)}
+                    </div>
+                    <h3 className="font-bold text-gray-900">{booking.customer_name}</h3>
+                    <p className="text-sm text-gray-500" dir="ltr">{booking.customer_phone}</p>
+                    <p className="text-xs text-gray-400 mt-1">{booking.customer_year} - {new Date(booking.created_at).toLocaleDateString("ar-EG")}</p>
+                  </div>
+
+                  {/* Payment Info */}
+                  <div className="min-w-[180px]">
+                    <p className="text-xs text-gray-500 mb-1">الدفع</p>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-700">
+                        {paymentMethodLabels[booking.payment_method] || booking.payment_method}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-gray-600">المحول منه:</span>
+                      <span className="text-xs font-medium text-gray-900">
+                        {booking.sender_name || booking.sender_phone || "-"}
+                      </span>
+                      {getDuplicateCount(booking, 'sender') > 0 && (
+                        <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded bg-orange-100 text-orange-600 text-[10px]" title={`مستخدم في ${getDuplicateCount(booking, 'sender')} حجز آخر`}>
+                          <AlertTriangle className="w-3 h-3" />
+                          {getDuplicateCount(booking, 'sender')}
                         </span>
-                      </td>
-                      <td className="p-3">
-                        <div className="flex items-center gap-1">
-                          <span className="font-mono text-xs text-slate-300">{booking.transaction_number}</span>
-                          {getDuplicateCount(booking, 'transaction') > 0 && (
-                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 text-[10px]" title={`رقم معاملة مكرر في ${getDuplicateCount(booking, 'transaction')} حجز آخر`}>
-                              <AlertTriangle className="w-3 h-3" />
-                              {getDuplicateCount(booking, 'transaction')}
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="p-3">
-                        <span className={`px-2 py-1 rounded text-xs ${
-                          booking.selected_package === "with-ski" 
-                            ? "bg-primary/20 text-primary" 
-                            : "bg-slate-600 text-slate-300"
-                        }`}>
-                          {booking.selected_package === "with-ski" ? "مع سكي" : "بدون سكي"}
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1 mt-1">
+                      <span className="text-xs text-gray-600">رقم المعاملة:</span>
+                      <span className="font-mono text-xs text-gray-900">{booking.transaction_number}</span>
+                      {getDuplicateCount(booking, 'transaction') > 0 && (
+                        <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded bg-red-100 text-red-600 text-[10px]" title={`رقم معاملة مكرر`}>
+                          <AlertTriangle className="w-3 h-3" />
+                          {getDuplicateCount(booking, 'transaction')}
                         </span>
-                      </td>
-                      <td className="p-3">
-                        {booking.companion_tickets > 0 ? (
-                          <div className="space-y-1">
-                            <span className="text-slate-300 text-xs">
-                              {booking.companion_tickets} مرافق
-                            </span>
-                            {booking.companions_details && booking.companions_details.length > 0 && (
-                              <div className="flex flex-wrap gap-1">
-                                {booking.companions_details.map((comp, idx) => (
-                                  <span 
-                                    key={idx}
-                                    className={`px-1.5 py-0.5 rounded text-[10px] ${
-                                      comp.packageType === "with-ski"
-                                        ? "bg-blue-500/20 text-blue-300"
-                                        : "bg-slate-600 text-slate-400"
-                                    }`}
-                                  >
-                                    {comp.packageType === "with-ski" ? "سكي" : "عادي"}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <span className="text-slate-500 text-xs">-</span>
-                        )}
-                      </td>
-                      <td className="p-3 font-bold text-green-400">{Number(booking.total_price).toLocaleString()} ج</td>
-                      <td className="p-3">
-                        {getStatusBadge(booking.status)}
-                      </td>
-                      <td className="p-3">
-                        <div className="flex gap-1">
-                          {booking.status !== "approved" && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-7 w-7 text-green-400 hover:text-green-300 hover:bg-green-400/10"
-                              onClick={() => updateBookingStatus(booking.id, "approved")}
-                              title="موافقة"
-                            >
-                              <CheckCircle className="w-4 h-4" />
-                            </Button>
-                          )}
-                          {booking.status !== "rejected" && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-7 w-7 text-red-400 hover:text-red-300 hover:bg-red-400/10"
-                              onClick={() => updateBookingStatus(booking.id, "rejected")}
-                              title="رفض"
-                            >
-                              <XCircle className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
-                      </td>
-                      <td className="p-3">
-                        {booking.payment_screenshot_url && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-slate-400 hover:text-white"
-                            onClick={() => setSelectedImage(booking.payment_screenshot_url)}
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Package & Total */}
+                  <div className="min-w-[120px]">
+                    <p className="text-xs text-gray-500 mb-1">الباكدج</p>
+                    <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                      booking.selected_package === "with-ski" 
+                        ? "bg-blue-100 text-blue-700" 
+                        : "bg-gray-100 text-gray-700"
+                    }`}>
+                      {booking.selected_package === "with-ski" ? "مع سكي" : "بدون سكي"}
+                    </span>
+                    <p className="text-lg font-bold text-green-600 mt-2">{Number(booking.total_price).toLocaleString()} ج</p>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-2">
+                    {booking.status !== "approved" && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-green-600 border-green-200 hover:bg-green-50"
+                        onClick={() => updateBookingStatus(booking.id, "approved")}
+                      >
+                        <CheckCircle className="w-4 h-4 ml-1" />
+                        موافقة
+                      </Button>
+                    )}
+                    {booking.status !== "rejected" && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-red-600 border-red-200 hover:bg-red-50"
+                        onClick={() => updateBookingStatus(booking.id, "rejected")}
+                      >
+                        <XCircle className="w-4 h-4 ml-1" />
+                        رفض
+                      </Button>
+                    )}
+                    {booking.payment_screenshot_url && (
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-9 w-9"
+                        onClick={() => setSelectedImage(booking.payment_screenshot_url)}
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Companions Row */}
+                {booking.companion_tickets > 0 && (
+                  <div className="px-4 py-3 bg-gray-50 border-t border-gray-100">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Users className="w-4 h-4 text-gray-500" />
+                      <span className="text-sm font-medium text-gray-700">
+                        المرافقين ({booking.companion_tickets})
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {booking.companions_details && booking.companions_details.length > 0 ? (
+                        booking.companions_details.map((comp, idx) => (
+                          <div 
+                            key={idx}
+                            className={`px-3 py-2 rounded-lg border ${
+                              comp.packageType === "with-ski"
+                                ? "bg-blue-50 border-blue-200"
+                                : "bg-gray-100 border-gray-200"
+                            }`}
                           >
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                        )}
-                      </td>
-                    </tr>
-                  ))
+                            <span className="text-xs text-gray-500">مرافق {idx + 1}:</span>
+                            <span className={`mr-2 text-sm font-medium ${
+                              comp.packageType === "with-ski" ? "text-blue-700" : "text-gray-700"
+                            }`}>
+                              {comp.packageType === "with-ski" ? "رحلة + سكي" : "رحلة فقط"}
+                            </span>
+                          </div>
+                        ))
+                      ) : (
+                        // For old bookings without details
+                        Array.from({ length: booking.companion_tickets }, (_, idx) => (
+                          <div key={idx} className="px-3 py-2 rounded-lg bg-gray-100 border border-gray-200">
+                            <span className="text-xs text-gray-500">مرافق {idx + 1}</span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
                 )}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
       {/* Image Modal */}
       {selectedImage && (
         <div 
-          className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
           onClick={() => setSelectedImage(null)}
         >
           <div className="relative max-w-2xl max-h-[90vh]">
