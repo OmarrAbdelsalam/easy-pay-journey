@@ -98,19 +98,22 @@ const TicketQuantity = ({
                     }`}
                   >
                     <Building2 className="w-4 h-4" />
-                    <span>بدون سكي (410ج)</span>
+                    <span>رحلة القاهرة (410ج)</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => updateCompanionPackage(index, "with-ski")}
-                    className={`flex-1 p-2 rounded-lg border text-sm transition-all flex items-center justify-center gap-2 ${
+                    className={`relative flex-1 p-2 rounded-lg border text-sm transition-all flex flex-col items-center justify-center gap-1 ${
                       companion.packageType === "with-ski"
                         ? "border-primary bg-primary/10 text-primary"
                         : "border-border hover:border-primary/30"
                     }`}
                   >
-                    <Snowflake className="w-4 h-4" />
-                    <span>مع سكي (760ج)</span>
+                    <span className="absolute -top-2 bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded">وفر 350ج!</span>
+                    <div className="flex items-center gap-1">
+                      <Snowflake className="w-4 h-4" />
+                      <span>+ Ski Egypt (760ج)</span>
+                    </div>
                   </button>
                 </div>
               </div>
