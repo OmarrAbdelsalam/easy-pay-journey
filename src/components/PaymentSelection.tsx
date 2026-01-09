@@ -54,18 +54,15 @@ const PaymentSelection = ({
           <div
             key={method.id}
             onClick={() => onSelect(method.id)}
-            className={`payment-option text-center ${
+            className={`payment-option flex items-center justify-center p-6 ${
               selectedMethod === method.id ? "selected" : ""
             }`}
           >
-            <div className="h-16 flex items-center justify-center mx-auto mb-3">
-              <img
-                src={method.logo}
-                alt={method.name}
-                className="max-h-14 max-w-full object-contain"
-              />
-            </div>
-            <h3 className="font-semibold text-foreground">{method.name}</h3>
+            <img
+              src={method.logo}
+              alt={method.name}
+              className="h-16 w-full object-contain"
+            />
           </div>
         ))}
       </div>
