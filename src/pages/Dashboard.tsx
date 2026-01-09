@@ -540,142 +540,144 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* Bookings Cards */}
-        <div className="space-y-4">
+        {/* Bookings Table */}
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           {loading ? (
-            <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm text-center text-gray-500">
-              جاري التحميل...
-            </div>
+            <div className="p-8 text-center text-gray-500">جاري التحميل...</div>
           ) : filteredBookings.length === 0 ? (
-            <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm text-center text-gray-500">
-              لا توجد حجوزات
-            </div>
+            <div className="p-8 text-center text-gray-500">لا توجد حجوزات</div>
           ) : (
-            filteredBookings.map((booking) => (
-              <div key={booking.id} className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-                {/* Main Row - Compact */}
-                <div className="px-3 py-2 flex flex-wrap gap-3 items-center">
-                  {/* Order & Customer Info */}
-                  <div className="flex-1 min-w-[150px]">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[10px] text-gray-400">{booking.order_number}</span>
-                      {getStatusBadge(booking.status)}
-                    </div>
-                    <h3 className="font-semibold text-sm text-gray-900">{booking.customer_name}</h3>
-                    <p className="text-xs text-gray-500" dir="ltr">{booking.customer_phone}</p>
-                  </div>
-
-                  {/* Payment Info */}
-                  <div className="min-w-[150px]">
-                    <div className="flex items-center gap-1 flex-wrap">
-                      <span className="px-1.5 py-0.5 rounded text-[10px] bg-gray-100 text-gray-600">
-                        {paymentMethodLabels[booking.payment_method] || booking.payment_method}
-                      </span>
-                      <span className="text-[10px] text-gray-500">
-                        {booking.sender_name || booking.sender_phone || "-"}
-                      </span>
-                      {getDuplicateCount(booking, 'sender') > 0 && (
-                        <span className="inline-flex items-center px-1 rounded bg-orange-100 text-orange-600 text-[10px]">
-                          <AlertTriangle className="w-2.5 h-2.5" />
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-4 py-3 text-right font-medium text-gray-600">العميل</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-600">رقم المعاملة</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-600">المحول منه</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-600">الدفع</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-600">الباكدج</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-600">المبلغ</th>
+                    <th className="px-4 py-3 text-center font-medium text-gray-600">الإجراءات</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {filteredBookings.map((booking) => (
+                    <tr key={booking.id} className="hover:bg-gray-50">
+                      {/* Customer */}
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          {getStatusBadge(booking.status)}
+                          <span className="font-mono text-[10px] text-gray-400">{booking.order_number}</span>
+                        </div>
+                        <div className="font-semibold text-gray-900">{booking.customer_name}</div>
+                        <div className="text-xs text-gray-500" dir="ltr">{booking.customer_phone}</div>
+                      </td>
+                      
+                      {/* Transaction Number */}
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-1">
+                          <span className="font-mono text-gray-700">{booking.transaction_number}</span>
+                          {getDuplicateCount(booking, 'transaction') > 0 && (
+                            <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded bg-red-100 text-red-600 text-[10px]">
+                              <AlertTriangle className="w-3 h-3" />
+                              {getDuplicateCount(booking, 'transaction')}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      
+                      {/* Sender */}
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-1">
+                          <span className="text-gray-700">{booking.sender_name || booking.sender_phone || "-"}</span>
+                          {getDuplicateCount(booking, 'sender') > 0 && (
+                            <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded bg-orange-100 text-orange-600 text-[10px]">
+                              <AlertTriangle className="w-3 h-3" />
+                              {getDuplicateCount(booking, 'sender')}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      
+                      {/* Payment Method */}
+                      <td className="px-4 py-3">
+                        <span className="px-2 py-1 rounded bg-gray-100 text-gray-700 text-xs">
+                          {paymentMethodLabels[booking.payment_method] || booking.payment_method}
                         </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1 mt-0.5">
-                      <span className="font-mono text-[10px] text-gray-500">{booking.transaction_number}</span>
-                      {getDuplicateCount(booking, 'transaction') > 0 && (
-                        <span className="inline-flex items-center px-1 rounded bg-red-100 text-red-600 text-[10px]">
-                          <AlertTriangle className="w-2.5 h-2.5" />
+                      </td>
+                      
+                      {/* Package */}
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-1 rounded text-xs font-medium ${
+                          booking.selected_package === "with-ski" 
+                            ? "bg-blue-100 text-blue-700" 
+                            : "bg-gray-100 text-gray-600"
+                        }`}>
+                          {booking.selected_package === "with-ski" ? "سكي" : "بدون"}
                         </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Package & Total */}
-                  <div className="min-w-[80px] text-center">
-                    <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${
-                      booking.selected_package === "with-ski" 
-                        ? "bg-blue-100 text-blue-700" 
-                        : "bg-gray-100 text-gray-600"
-                    }`}>
-                      {booking.selected_package === "with-ski" ? "سكي" : "بدون"}
-                    </span>
-                    <p className="text-sm font-bold text-green-600">{Number(booking.total_price).toLocaleString()} ج</p>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex items-center gap-1.5">
-                    {booking.status === "pending" ? (
-                      <>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-7 px-2 text-xs text-green-600 border-green-200 hover:bg-green-50"
-                          onClick={() => updateBookingStatus(booking.id, "approved")}
-                        >
-                          <CheckCircle className="w-3 h-3 ml-1" />
-                          موافقة
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-7 px-2 text-xs text-red-600 border-red-200 hover:bg-red-50"
-                          onClick={() => updateBookingStatus(booking.id, "rejected")}
-                        >
-                          <XCircle className="w-3 h-3 ml-1" />
-                          رفض
-                        </Button>
-                      </>
-                    ) : (
-                      <Select
-                        value={booking.status}
-                        onValueChange={(value) => updateBookingStatus(booking.id, value)}
-                      >
-                        <SelectTrigger className="h-7 w-[110px] text-xs bg-gray-100">
-                          <SelectValue placeholder="تغيير الحالة" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="pending">قيد الانتظار</SelectItem>
-                          <SelectItem value="approved">موافق</SelectItem>
-                          <SelectItem value="rejected">مرفوض</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                    {booking.payment_screenshot_url && (
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-7 w-7 bg-gray-100 hover:bg-gray-200"
-                        onClick={() => setSelectedImage(booking.payment_screenshot_url)}
-                      >
-                        <Eye className="w-3 h-3" />
-                      </Button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Companions - Simple inline */}
-                {booking.companion_tickets > 0 && (
-                  <div className="px-3 py-1.5 bg-gray-50 border-t border-gray-100 text-xs text-gray-600">
-                    <span className="font-medium text-gray-700">المرافقين: </span>
-                    {booking.companions_details && booking.companions_details.length > 0 ? (
-                      booking.companions_details.map((comp, idx) => (
-                        <span key={idx}>
-                          مرافق {idx + 1}: {comp.packageType === "with-ski" ? "رحلة + سكي" : "رحلة"}
-                          {idx < booking.companions_details!.length - 1 && " ، "}
-                        </span>
-                      ))
-                    ) : (
-                      Array.from({ length: booking.companion_tickets }, (_, idx) => (
-                        <span key={idx}>
-                          مرافق {idx + 1}: غير محدد
-                          {idx < booking.companion_tickets - 1 && " ، "}
-                        </span>
-                      ))
-                    )}
-                  </div>
-                )}
-              </div>
-            ))
+                      </td>
+                      
+                      {/* Price */}
+                      <td className="px-4 py-3">
+                        <span className="font-bold text-green-600">{Number(booking.total_price).toLocaleString()} ج</span>
+                      </td>
+                      
+                      {/* Actions */}
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-center gap-2">
+                          {booking.payment_screenshot_url && (
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8 bg-gray-100 hover:bg-gray-200"
+                              onClick={() => setSelectedImage(booking.payment_screenshot_url)}
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                          )}
+                          {booking.status === "pending" ? (
+                            <>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 text-green-600 border-green-200 hover:bg-green-50"
+                                onClick={() => updateBookingStatus(booking.id, "approved")}
+                              >
+                                <CheckCircle className="w-4 h-4 ml-1" />
+                                موافقة
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 text-red-600 border-red-200 hover:bg-red-50"
+                                onClick={() => updateBookingStatus(booking.id, "rejected")}
+                              >
+                                <XCircle className="w-4 h-4 ml-1" />
+                                رفض
+                              </Button>
+                            </>
+                          ) : (
+                            <Select
+                              value={booking.status}
+                              onValueChange={(value) => updateBookingStatus(booking.id, value)}
+                            >
+                              <SelectTrigger className="h-8 w-[120px] bg-gray-100">
+                                <SelectValue placeholder="تغيير الحالة" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="pending">قيد الانتظار</SelectItem>
+                                <SelectItem value="approved">موافق</SelectItem>
+                                <SelectItem value="rejected">مرفوض</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </div>
