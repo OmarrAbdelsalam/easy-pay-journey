@@ -35,7 +35,7 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
 
   return (
     <div className="animate-fade-in text-center" dir="rtl">
-      <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-green-500/30">
+      <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
         <CircleCheckBig className="w-14 h-14 text-white" strokeWidth={2.5} />
       </div>
 
