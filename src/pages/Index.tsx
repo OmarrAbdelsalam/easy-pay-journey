@@ -82,31 +82,32 @@ const Index = () => {
           <img src={heroImage} alt="رحلة القاهرة - Cairo Trip" className="w-full h-[166%] object-[center_100%] object-cover" />
         </div>
 
-        {/* Header Card */}
-        <div className="gform-card p-3 sm:p-4 mb-3" dir="rtl">
-          <h1 className="text-xl sm:text-2xl font-bold text-primary mb-2">
-            رحلة القاهرة
-          </h1>
-          <ul className="space-y-1 text-foreground text-xs sm:text-sm">
-            <li className="flex items-start gap-1.5">
-              <span className="text-foreground">•</span>
-              <span>(المتحف المصري الكبير - مول مصر - سكي ايجيبت "اختياري" - شارع المعز)</span>
-            </li>
-            <li className="flex items-start gap-1.5">
-              <span className="text-foreground">•</span>
-              <span>سعر تيكت الرحلة للطلاب من كل المراحل العمرية = 310 ج</span>
-            </li>
-            <li className="flex items-start gap-1.5">
-              <span className="text-foreground">•</span>
-              <span>سعر تيكت الرحلة لغير الطلاب = 410 ج</span>
-            </li>
-            <li className="flex items-start gap-1.5">
-              <span className="text-foreground">•</span>
-              <span>سعر تيكت سكي ايجيبت + 350ج بدل 700 </span>
-            </li>
-          </ul>
-          
-        </div>
+        {/* Header Card - Only show on first step */}
+        {currentStep === 1 && (
+          <div className="gform-card p-3 sm:p-4 mb-3" dir="rtl">
+            <h1 className="text-xl sm:text-2xl font-bold text-primary mb-2">
+              رحلة القاهرة
+            </h1>
+            <ul className="space-y-1 text-foreground text-xs sm:text-sm">
+              <li className="flex items-start gap-1.5">
+                <span className="text-foreground">•</span>
+                <span>(المتحف المصري الكبير - مول مصر - سكي ايجيبت "اختياري" - شارع المعز)</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <span className="text-foreground">•</span>
+                <span>سعر تيكت الرحلة للطلاب من كل المراحل العمرية = 310 ج</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <span className="text-foreground">•</span>
+                <span>سعر تيكت الرحلة لغير الطلاب = 410 ج</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <span className="text-foreground">•</span>
+                <span>سعر تيكت سكي ايجيبت + 350ج بدل 700 </span>
+              </li>
+            </ul>
+          </div>
+        )}
 
         {/* Step Indicator - hide on confirmation */}
         {!showConfirmation && <div className="gform-section p-4 mb-3">
