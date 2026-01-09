@@ -109,7 +109,7 @@ const TicketQuantity = ({
                         : "border-border hover:border-primary/30"
                     }`}
                   >
-                    <span className="absolute -top-2 left-2 bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded">وفر 350ج!</span>
+                    <span className="absolute -top-3 left-2 bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded">وفر 350ج!</span>
                     <Snowflake className="w-4 h-4" />
                     <span>+ Ski Egypt (760ج)</span>
                   </button>
