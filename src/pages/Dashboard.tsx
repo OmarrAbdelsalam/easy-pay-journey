@@ -115,6 +115,32 @@ const Dashboard = () => {
     }
   };
 
+  const approveAllPending = async () => {
+    const pendingBookings = filteredBookings.filter(b => b.status === "pending");
+    if (pendingBookings.length === 0) {
+      toast.info("لا توجد حجوزات قيد الانتظار");
+      return;
+    }
+    
+    try {
+      const { error } = await supabase
+        .from("bookings")
+        .update({ status: "approved" })
+        .in("id", pendingBookings.map(b => b.id));
+
+      if (error) throw error;
+
+      setBookings(prev => prev.map(b => 
+        pendingBookings.some(pb => pb.id === b.id) ? { ...b, status: "approved" } : b
+      ));
+
+      toast.success(`تم الموافقة على ${pendingBookings.length} حجز`);
+    } catch (error) {
+      console.error("Error approving all:", error);
+      toast.error("فشل في الموافقة على الحجوزات");
+    }
+  };
+
   const handleLogout = () => {
     setIsAuthenticated(false);
     localStorage.removeItem("dashboard_auth");
@@ -263,7 +289,7 @@ const Dashboard = () => {
             <h1 className="text-2xl font-bold text-gray-900">لوحة التحكم</h1>
             <p className="text-sm text-gray-500">إدارة حجوزات رحلة القاهرة</p>
           </div>
-          <Button variant="outline" size="sm" onClick={handleLogout}>
+          <Button variant="outline" size="sm" className="bg-gray-100 hover:bg-gray-200" onClick={handleLogout}>
             تسجيل خروج
           </Button>
         </div>
@@ -464,7 +490,7 @@ const Dashboard = () => {
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-40">
+              <SelectTrigger className="w-full sm:w-40 bg-gray-100">
                 <SelectValue placeholder="الحالة" />
               </SelectTrigger>
               <SelectContent>
@@ -475,7 +501,7 @@ const Dashboard = () => {
               </SelectContent>
             </Select>
             <Select value={packageFilter} onValueChange={setPackageFilter}>
-              <SelectTrigger className="w-full sm:w-40">
+              <SelectTrigger className="w-full sm:w-40 bg-gray-100">
                 <SelectValue placeholder="الباكدج" />
               </SelectTrigger>
               <SelectContent>
@@ -485,7 +511,7 @@ const Dashboard = () => {
               </SelectContent>
             </Select>
             <Select value={paymentFilter} onValueChange={setPaymentFilter}>
-              <SelectTrigger className="w-full sm:w-40">
+              <SelectTrigger className="w-full sm:w-40 bg-gray-100">
                 <SelectValue placeholder="طريقة الدفع" />
               </SelectTrigger>
               <SelectContent>
@@ -495,10 +521,23 @@ const Dashboard = () => {
                 <SelectItem value="orange">Orange Cash</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="icon" onClick={exportToCSV} title="تصدير CSV">
+            <Button variant="outline" size="icon" className="bg-gray-100 hover:bg-gray-200" onClick={exportToCSV} title="تصدير CSV">
               <Download className="w-4 h-4" />
             </Button>
           </div>
+          {/* Approve All Button - shows when filter is not "all" */}
+          {(paymentFilter !== "all" || packageFilter !== "all" || statusFilter !== "all") && (
+            <div className="mt-3 flex justify-end">
+              <Button
+                size="sm"
+                className="bg-green-600 hover:bg-green-700 text-white"
+                onClick={approveAllPending}
+              >
+                <CheckCircle className="w-4 h-4 ml-1" />
+                موافقة الكل ({filteredBookings.filter(b => b.status === "pending").length})
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Bookings Cards */}
@@ -513,85 +552,76 @@ const Dashboard = () => {
             </div>
           ) : (
             filteredBookings.map((booking) => (
-              <div key={booking.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                {/* Main Row */}
-                <div className="p-4 flex flex-wrap gap-4 items-start">
+              <div key={booking.id} className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                {/* Main Row - Compact */}
+                <div className="px-3 py-2 flex flex-wrap gap-3 items-center">
                   {/* Order & Customer Info */}
-                  <div className="flex-1 min-w-[200px]">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-mono text-xs text-gray-500">{booking.order_number}</span>
+                  <div className="flex-1 min-w-[150px]">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-[10px] text-gray-400">{booking.order_number}</span>
                       {getStatusBadge(booking.status)}
                     </div>
-                    <h3 className="font-bold text-gray-900">{booking.customer_name}</h3>
-                    <p className="text-sm text-gray-500" dir="ltr">{booking.customer_phone}</p>
-                    <p className="text-xs text-gray-400 mt-1">{booking.customer_year} - {new Date(booking.created_at).toLocaleDateString("ar-EG")}</p>
+                    <h3 className="font-semibold text-sm text-gray-900">{booking.customer_name}</h3>
+                    <p className="text-xs text-gray-500" dir="ltr">{booking.customer_phone}</p>
                   </div>
 
                   {/* Payment Info */}
-                  <div className="min-w-[180px]">
-                    <p className="text-xs text-gray-500 mb-1">الدفع</p>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-700">
+                  <div className="min-w-[150px]">
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <span className="px-1.5 py-0.5 rounded text-[10px] bg-gray-100 text-gray-600">
                         {paymentMethodLabels[booking.payment_method] || booking.payment_method}
                       </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-xs text-gray-600">المحول منه:</span>
-                      <span className="text-xs font-medium text-gray-900">
+                      <span className="text-[10px] text-gray-500">
                         {booking.sender_name || booking.sender_phone || "-"}
                       </span>
                       {getDuplicateCount(booking, 'sender') > 0 && (
-                        <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded bg-orange-100 text-orange-600 text-[10px]" title={`مستخدم في ${getDuplicateCount(booking, 'sender')} حجز آخر`}>
-                          <AlertTriangle className="w-3 h-3" />
-                          {getDuplicateCount(booking, 'sender')}
+                        <span className="inline-flex items-center px-1 rounded bg-orange-100 text-orange-600 text-[10px]">
+                          <AlertTriangle className="w-2.5 h-2.5" />
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-1 mt-1">
-                      <span className="text-xs text-gray-600">رقم المعاملة:</span>
-                      <span className="font-mono text-xs text-gray-900">{booking.transaction_number}</span>
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <span className="font-mono text-[10px] text-gray-500">{booking.transaction_number}</span>
                       {getDuplicateCount(booking, 'transaction') > 0 && (
-                        <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded bg-red-100 text-red-600 text-[10px]" title={`رقم معاملة مكرر`}>
-                          <AlertTriangle className="w-3 h-3" />
-                          {getDuplicateCount(booking, 'transaction')}
+                        <span className="inline-flex items-center px-1 rounded bg-red-100 text-red-600 text-[10px]">
+                          <AlertTriangle className="w-2.5 h-2.5" />
                         </span>
                       )}
                     </div>
                   </div>
 
                   {/* Package & Total */}
-                  <div className="min-w-[120px]">
-                    <p className="text-xs text-gray-500 mb-1">الباكدج</p>
-                    <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                  <div className="min-w-[80px] text-center">
+                    <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${
                       booking.selected_package === "with-ski" 
                         ? "bg-blue-100 text-blue-700" 
-                        : "bg-gray-100 text-gray-700"
+                        : "bg-gray-100 text-gray-600"
                     }`}>
-                      {booking.selected_package === "with-ski" ? "مع سكي" : "بدون سكي"}
+                      {booking.selected_package === "with-ski" ? "سكي" : "بدون"}
                     </span>
-                    <p className="text-lg font-bold text-green-600 mt-2">{Number(booking.total_price).toLocaleString()} ج</p>
+                    <p className="text-sm font-bold text-green-600">{Number(booking.total_price).toLocaleString()} ج</p>
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     {booking.status === "pending" ? (
                       <>
                         <Button
                           variant="outline"
                           size="sm"
-                          className="text-green-600 border-green-200 hover:bg-green-50"
+                          className="h-7 px-2 text-xs text-green-600 border-green-200 hover:bg-green-50"
                           onClick={() => updateBookingStatus(booking.id, "approved")}
                         >
-                          <CheckCircle className="w-4 h-4 ml-1" />
+                          <CheckCircle className="w-3 h-3 ml-1" />
                           موافقة
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
-                          className="text-red-600 border-red-200 hover:bg-red-50"
+                          className="h-7 px-2 text-xs text-red-600 border-red-200 hover:bg-red-50"
                           onClick={() => updateBookingStatus(booking.id, "rejected")}
                         >
-                          <XCircle className="w-4 h-4 ml-1" />
+                          <XCircle className="w-3 h-3 ml-1" />
                           رفض
                         </Button>
                       </>
@@ -600,7 +630,7 @@ const Dashboard = () => {
                         value={booking.status}
                         onValueChange={(value) => updateBookingStatus(booking.id, value)}
                       >
-                        <SelectTrigger className="w-[140px]">
+                        <SelectTrigger className="h-7 w-[110px] text-xs bg-gray-100">
                           <SelectValue placeholder="تغيير الحالة" />
                         </SelectTrigger>
                         <SelectContent>
@@ -614,10 +644,10 @@ const Dashboard = () => {
                       <Button
                         variant="outline"
                         size="icon"
-                        className="h-9 w-9"
+                        className="h-7 w-7 bg-gray-100 hover:bg-gray-200"
                         onClick={() => setSelectedImage(booking.payment_screenshot_url)}
                       >
-                        <Eye className="w-4 h-4" />
+                        <Eye className="w-3 h-3" />
                       </Button>
                     )}
                   </div>
