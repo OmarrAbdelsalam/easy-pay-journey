@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Upload, X, Check } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import instapayLogo from "@/assets/instapay-logo.png";
 import vodafoneLogo from "@/assets/vodafone-logo.png";
 import orangeLogo from "@/assets/orange-logo.png";
@@ -270,18 +270,13 @@ const PaymentUpload = ({
             </button>
           ) : (
             <div className="relative border border-primary rounded-lg overflow-hidden">
-              <div className="absolute top-2 right-2 z-10 flex gap-2">
-                <div className="bg-success text-success-foreground rounded-full p-1">
-                  <Check className="w-4 h-4" />
-                </div>
-                <button
-                  type="button"
-                  onClick={handleRemoveFile}
-                  className="bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={handleRemoveFile}
+                className="absolute top-1.5 right-1.5 z-10 bg-black/60 text-white rounded-full p-1 hover:bg-black/80 transition-colors"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
               {previewUrl && (
                 <img
                   src={previewUrl}
