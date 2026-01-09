@@ -8,7 +8,7 @@ interface PackageSelectionProps {
 }
 const packages = [{
   id: "without-ski" as const,
-  title: "بدون سكي ايجيبت",
+  title: "رحلة القاهرة",
   icon: <Building2 className="w-5 h-5" />,
   studentPrice: 310,
   nonStudentPrice: 410,
