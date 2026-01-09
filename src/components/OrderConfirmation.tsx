@@ -65,9 +65,12 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">تذكرتك (طالب)</span>
-            <span className="font-medium">
-              {orderDetails.selectedPackage === "with-ski" ? "رحلة القاهرة + Ski Egypt" : "رحلة القاهرة"} - {studentTotal} جنيه
-            </span>
+            <div className="text-left">
+              <p className="font-medium">
+                {orderDetails.selectedPackage === "with-ski" ? "رحلة القاهرة + Ski Egypt" : "رحلة القاهرة"}
+              </p>
+              <p className="text-primary font-bold">{studentTotal} جنيه</p>
+            </div>
           </div>
           
           {orderDetails.companions.length > 0 && (
