@@ -321,123 +321,122 @@ const Dashboard = () => {
                   )}
                 </button>
                 
-                {/* Content */}
+                {/* Content - Table */}
                 {warningsExpanded && (
-                  <div className="p-4 space-y-4">
-                    {warningBookings.map((booking) => {
-                      const senderDupes = getDuplicateCount(booking, 'sender');
-                      const transactionDupes = getDuplicateCount(booking, 'transaction');
-                      
-                      return (
-                        <div key={booking.id} className="bg-gray-100 rounded-lg border border-gray-200 overflow-hidden">
-                          {/* Warning Tags */}
-                          <div className="bg-white px-4 py-2 flex flex-wrap gap-2 border-b border-gray-200">
-                            {transactionDupes > 0 && (
-                              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-600 text-white text-xs font-bold">
-                                <AlertTriangle className="w-3 h-3" />
-                                رقم معاملة مكرر في {transactionDupes} حجز آخر
-                              </span>
-                            )}
-                            {senderDupes > 0 && (
-                              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-orange-500 text-white text-xs font-bold">
-                                <AlertTriangle className="w-3 h-3" />
-                                محول منه مكرر في {senderDupes} حجز آخر
-                              </span>
-                            )}
-                          </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                          <th className="px-3 py-2 text-right font-medium text-gray-600">التحذير</th>
+                          <th className="px-3 py-2 text-right font-medium text-gray-600">العميل</th>
+                          <th className="px-3 py-2 text-right font-medium text-gray-600">رقم المعاملة</th>
+                          <th className="px-3 py-2 text-right font-medium text-gray-600">المحول منه</th>
+                          <th className="px-3 py-2 text-right font-medium text-gray-600">المبلغ</th>
+                          <th className="px-3 py-2 text-center font-medium text-gray-600">الإجراءات</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {warningBookings.map((booking) => {
+                          const senderDupes = getDuplicateCount(booking, 'sender');
+                          const transactionDupes = getDuplicateCount(booking, 'transaction');
                           
-                          {/* Booking Details */}
-                          <div className="p-4 bg-white">
-                            <div className="flex flex-wrap gap-4 items-start">
-                              {/* Customer Info */}
-                              <div className="flex-1 min-w-[180px]">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="font-mono text-xs text-gray-500">{booking.order_number}</span>
+                          return (
+                            <tr key={booking.id} className="hover:bg-gray-50">
+                              {/* Warning Tags */}
+                              <td className="px-3 py-2">
+                                <div className="flex flex-col gap-1">
+                                  {transactionDupes > 0 && (
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-red-100 text-red-700 text-[10px] font-medium">
+                                      <AlertTriangle className="w-3 h-3" />
+                                      معاملة مكررة ({transactionDupes})
+                                    </span>
+                                  )}
+                                  {senderDupes > 0 && (
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-orange-100 text-orange-700 text-[10px] font-medium">
+                                      <AlertTriangle className="w-3 h-3" />
+                                      محول مكرر ({senderDupes})
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
+                              
+                              {/* Customer */}
+                              <td className="px-3 py-2">
+                                <div className="flex items-center gap-2">
                                   {getStatusBadge(booking.status)}
+                                  <span className="font-mono text-[10px] text-gray-400">{booking.order_number}</span>
                                 </div>
-                                <h3 className="font-bold text-gray-900">{booking.customer_name}</h3>
-                                <p className="text-sm text-gray-500" dir="ltr">{booking.customer_phone}</p>
-                                <p className="text-xs text-gray-400">{booking.customer_year}</p>
-                              </div>
+                                <div className="font-semibold text-gray-900">{booking.customer_name}</div>
+                                <div className="text-xs text-gray-500" dir="ltr">{booking.customer_phone}</div>
+                              </td>
                               
-                              {/* Payment Info */}
-                              <div className="min-w-[200px]">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <span className="px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-700">
-                                    {paymentMethodLabels[booking.payment_method] || booking.payment_method}
-                                  </span>
-                                </div>
-                                <div className="p-2 rounded-lg bg-gray-100">
-                                  <div className="text-xs text-gray-600">المحول منه:</div>
-                                  <div className="font-medium text-gray-900">{booking.sender_name || booking.sender_phone || "-"}</div>
-                                </div>
-                                <div className="p-2 rounded-lg mt-2 bg-gray-100">
-                                  <div className="text-xs text-gray-600">رقم المعاملة:</div>
-                                  <div className="font-mono font-medium text-gray-900">{booking.transaction_number}</div>
-                                </div>
-                              </div>
+                              {/* Transaction */}
+                              <td className="px-3 py-2">
+                                <span className="font-mono text-gray-700">{booking.transaction_number}</span>
+                              </td>
                               
-                              {/* Package & Price */}
-                              <div className="min-w-[100px]">
-                                <span className="inline-block px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-700">
-                                  {booking.selected_package === "with-ski" ? "مع سكي" : "بدون سكي"}
-                                </span>
-                                <p className="text-lg font-bold text-gray-900 mt-2">{Number(booking.total_price).toLocaleString()} ج</p>
-                              </div>
+                              {/* Sender */}
+                              <td className="px-3 py-2 text-gray-700">
+                                {booking.sender_name || booking.sender_phone || "-"}
+                              </td>
+                              
+                              {/* Price */}
+                              <td className="px-3 py-2">
+                                <span className="font-bold text-green-600">{Number(booking.total_price).toLocaleString()} ج</span>
+                              </td>
                               
                               {/* Actions */}
-                              <div className="flex flex-col gap-2">
-                                {booking.status === "pending" ? (
-                                  <>
+                              <td className="px-3 py-2">
+                                <div className="flex items-center justify-center gap-2">
+                                  {booking.payment_screenshot_url && (
                                     <Button
-                                      size="sm"
-                                      className="bg-green-600 hover:bg-green-700 text-white"
-                                      onClick={() => updateBookingStatus(booking.id, "approved")}
+                                      variant="outline"
+                                      size="icon"
+                                      className="h-7 w-7 bg-gray-100"
+                                      onClick={() => setSelectedImage(booking.payment_screenshot_url)}
                                     >
-                                      <CheckCircle className="w-4 h-4 ml-1" />
-                                      موافقة
+                                      <Eye className="w-3 h-3" />
                                     </Button>
-                                    <Button
-                                      size="sm"
-                                      className="bg-red-600 hover:bg-red-700 text-white"
-                                      onClick={() => updateBookingStatus(booking.id, "rejected")}
+                                  )}
+                                  {booking.status === "pending" ? (
+                                    <>
+                                      <Button
+                                        size="sm"
+                                        className="h-7 bg-green-600 hover:bg-green-700 text-white text-xs"
+                                        onClick={() => updateBookingStatus(booking.id, "approved")}
+                                      >
+                                        موافقة
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        className="h-7 bg-red-600 hover:bg-red-700 text-white text-xs"
+                                        onClick={() => updateBookingStatus(booking.id, "rejected")}
+                                      >
+                                        رفض
+                                      </Button>
+                                    </>
+                                  ) : (
+                                    <Select
+                                      value={booking.status}
+                                      onValueChange={(value) => updateBookingStatus(booking.id, value)}
                                     >
-                                      <XCircle className="w-4 h-4 ml-1" />
-                                      رفض
-                                    </Button>
-                                  </>
-                                ) : (
-                                  <Select
-                                    value={booking.status}
-                                    onValueChange={(value) => updateBookingStatus(booking.id, value)}
-                                  >
-                                    <SelectTrigger className="w-[140px] bg-white">
-                                      <SelectValue placeholder="تغيير الحالة" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="pending">قيد الانتظار</SelectItem>
-                                      <SelectItem value="approved">موافق</SelectItem>
-                                      <SelectItem value="rejected">مرفوض</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                )}
-                                {booking.payment_screenshot_url && (
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="bg-white"
-                                    onClick={() => setSelectedImage(booking.payment_screenshot_url)}
-                                  >
-                                    <Eye className="w-4 h-4 ml-1" />
-                                    الإيصال
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                                      <SelectTrigger className="h-7 w-[100px] text-xs bg-gray-100">
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="pending">انتظار</SelectItem>
+                                        <SelectItem value="approved">موافق</SelectItem>
+                                        <SelectItem value="rejected">مرفوض</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 )}
               </div>
@@ -556,6 +555,7 @@ const Dashboard = () => {
                     <th className="px-4 py-3 text-right font-medium text-gray-600">المحول منه</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-600">الدفع</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-600">الباكدج</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-600">المرافقين</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-600">المبلغ</th>
                     <th className="px-4 py-3 text-center font-medium text-gray-600">الإجراءات</th>
                   </tr>
@@ -615,6 +615,28 @@ const Dashboard = () => {
                         }`}>
                           {booking.selected_package === "with-ski" ? "سكي" : "بدون"}
                         </span>
+                      </td>
+                      
+                      {/* Companions */}
+                      <td className="px-4 py-3">
+                        {booking.companion_tickets > 0 ? (
+                          <div className="text-xs text-gray-600">
+                            {booking.companions_details && booking.companions_details.length > 0 ? (
+                              booking.companions_details.map((comp, idx) => (
+                                <div key={idx} className="flex items-center gap-1">
+                                  <span>م{idx + 1}:</span>
+                                  <span className={comp.packageType === "with-ski" ? "text-blue-600 font-medium" : "text-gray-500"}>
+                                    {comp.packageType === "with-ski" ? "سكي" : "رحلة"}
+                                  </span>
+                                </div>
+                              ))
+                            ) : (
+                              <span className="text-gray-400">غير محدد</span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-gray-400 text-xs">-</span>
+                        )}
                       </td>
                       
                       {/* Price */}
