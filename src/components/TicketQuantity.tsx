@@ -48,7 +48,7 @@ const TicketQuantity = ({
         {/* Pricing Info */}
         <div className="p-3 rounded-lg border border-border bg-muted/30">
           <p className="text-sm text-muted-foreground">
-            سعر الطلاب: <span className="font-bold text-foreground">{pkg.studentPrice}ج</span> | سعر المرافقين: <span className="font-bold text-foreground">{pkg.nonStudentPrice}ج</span>
+            سعر الطلاب: <span className="font-bold text-foreground">310ج</span> | سعر المرافقين: <span className="font-bold text-foreground">410ج</span>
           </p>
         </div>
 
