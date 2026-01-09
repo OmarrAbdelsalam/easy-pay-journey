@@ -1,39 +1,31 @@
-import { CheckCircle, Calendar, MapPin, Phone } from "lucide-react";
-import { PaymentMethod } from "./PaymentSelection";
-import { PackageType } from "./PackageSelection";
+import { CheckCircle, Calendar, MapPin, Phone, Ticket } from "lucide-react";
+import { PaymentMethod } from "./PaymentUpload";
+import { PackageType, packages } from "./PackageSelection";
 
 interface OrderConfirmationProps {
   orderDetails: {
-    participantType: "student" | "non-student";
     selectedPackage: PackageType;
+    studentTickets: number;
+    nonStudentTickets: number;
     customerInfo: {
       name: string;
       phone: string;
       nationalId: string;
-      year: string;
     };
     paymentMethod: PaymentMethod;
-    transactionRef: string;
   };
 }
 
 const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
-  const isStudent = orderDetails.participantType === "student";
-  const basePrice = isStudent ? 310 : 410;
-  const skiPrice = 350;
-  const total = orderDetails.selectedPackage === "with-ski" ? basePrice + skiPrice : basePrice;
+  const pkg = packages.find((p) => p.id === orderDetails.selectedPackage);
+  const studentTotal = pkg ? orderDetails.studentTickets * pkg.studentPrice : 0;
+  const nonStudentTotal = pkg ? orderDetails.nonStudentTickets * pkg.nonStudentPrice : 0;
+  const total = studentTotal + nonStudentTotal;
 
   const paymentMethodNames = {
     instapay: "InstaPay",
     vodafone: "Vodafone Cash",
     orange: "Orange Cash",
-  };
-
-  const yearLabels: Record<string, string> = {
-    first: "أولى",
-    second: "تانية",
-    third: "تالتة",
-    fourth: "رابعة",
   };
 
   const orderNumber = `CAI-${Date.now().toString().slice(-8)}`;
@@ -45,10 +37,10 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
       </div>
 
       <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-        تم تأكيد الحجز!
+        تم استلام طلبك!
       </h2>
       <p className="text-muted-foreground mb-8">
-        شكراً ليك يا {orderDetails.customerInfo.name.split(" ")[0]}، هنتواصل معاك قريب على الواتساب
+        شكراً ليك يا {orderDetails.customerInfo.name.split(" ")[0]}، هنراجع التحويل ونتواصل معاك على الواتساب
       </p>
 
       <div className="bg-muted/50 rounded-xl p-6 text-right max-w-md mx-auto">
@@ -69,35 +61,37 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">نوع الاشتراك</span>
-            <span className="font-medium">
-              {orderDetails.participantType === "student" ? "طالب" : "غير طالب"}
-            </span>
-          </div>
-          {isStudent && orderDetails.customerInfo.year && (
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">الفرقة</span>
-              <span className="font-medium">
-                {yearLabels[orderDetails.customerInfo.year]}
-              </span>
-            </div>
-          )}
-          <div className="flex justify-between">
             <span className="text-muted-foreground">الباكدج</span>
             <span className="font-medium">
               {orderDetails.selectedPackage === "with-ski" ? "مع Ski Egypt" : "بدون Ski Egypt"}
             </span>
           </div>
+          
+          <div className="border-t border-border pt-3 mt-3 space-y-2">
+            {orderDetails.studentTickets > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground flex items-center gap-1">
+                  <Ticket className="w-4 h-4" />
+                  تذاكر طلاب × {orderDetails.studentTickets}
+                </span>
+                <span className="font-medium">{studentTotal} جنيه</span>
+              </div>
+            )}
+            {orderDetails.nonStudentTickets > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground flex items-center gap-1">
+                  <Ticket className="w-4 h-4" />
+                  تذاكر غير طلاب × {orderDetails.nonStudentTickets}
+                </span>
+                <span className="font-medium">{nonStudentTotal} جنيه</span>
+              </div>
+            )}
+          </div>
+
           <div className="flex justify-between">
             <span className="text-muted-foreground">طريقة الدفع</span>
             <span className="font-medium">
               {orderDetails.paymentMethod && paymentMethodNames[orderDetails.paymentMethod]}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">رقم المعاملة</span>
-            <span className="font-mono font-medium" dir="ltr">
-              {orderDetails.transactionRef}
             </span>
           </div>
 

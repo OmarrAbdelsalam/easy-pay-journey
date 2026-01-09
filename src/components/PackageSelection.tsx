@@ -1,36 +1,34 @@
-import { Check, Snowflake } from "lucide-react";
+import { Check, Snowflake, Building2 } from "lucide-react";
 
 export type PackageType = "with-ski" | "without-ski" | null;
 
 interface PackageSelectionProps {
   selectedPackage: PackageType;
   onSelect: (pkg: PackageType) => void;
-  participantType: "student" | "non-student" | null;
 }
 
-const PackageSelection = ({ selectedPackage, onSelect, participantType }: PackageSelectionProps) => {
-  const isStudent = participantType === "student";
-  
-  const packages = [
-    {
-      id: "with-ski" as const,
-      title: "باكدج مع Ski Egypt",
-      description: "المتحف المصري الكبير - مول مصر - Ski Egypt - شارع المعز",
-      studentPrice: 660,
-      nonStudentPrice: 760,
-      highlight: true,
-      savings: "وفر 350 جنيه!",
-    },
-    {
-      id: "without-ski" as const,
-      title: "باكدج بدون Ski Egypt",
-      description: "المتحف المصري الكبير - مول مصر - شارع المعز",
-      studentPrice: 310,
-      nonStudentPrice: 410,
-      highlight: false,
-    },
-  ];
+const packages = [
+  {
+    id: "without-ski" as const,
+    title: "بدون سكي ايجيبت",
+    icon: <Building2 className="w-6 h-6" />,
+    studentPrice: 310,
+    nonStudentPrice: 410,
+    description: "المتحف المصري الكبير - مول مصر - شارع المعز",
+  },
+  {
+    id: "with-ski" as const,
+    title: "مع Ski Egypt",
+    icon: <Snowflake className="w-6 h-6" />,
+    studentPrice: 660,
+    nonStudentPrice: 760,
+    description: "المتحف المصري الكبير - مول مصر - Ski Egypt - شارع المعز",
+    highlight: true,
+    savings: "وفر 350 جنيه على تيكت سكي!",
+  },
+];
 
+const PackageSelection = ({ selectedPackage, onSelect }: PackageSelectionProps) => {
   return (
     <div className="animate-fade-in" dir="rtl">
       <h2 className="text-xl md:text-2xl font-semibold text-foreground mb-2">
@@ -42,7 +40,6 @@ const PackageSelection = ({ selectedPackage, onSelect, participantType }: Packag
 
       <div className="grid gap-4">
         {packages.map((pkg) => {
-          const price = isStudent ? pkg.studentPrice : pkg.nonStudentPrice;
           const isSelected = selectedPackage === pkg.id;
           
           return (
@@ -73,23 +70,27 @@ const PackageSelection = ({ selectedPackage, onSelect, participantType }: Packag
                   )}
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-foreground">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className={`p-2 rounded-lg ${isSelected ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                      {pkg.icon}
+                    </div>
+                    <h3 className="font-semibold text-foreground text-lg">
                       {pkg.title}
                     </h3>
-                    <div className="text-lg font-bold text-primary">
-                      {price} جنيه
-                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="text-sm text-muted-foreground mb-3">
                     {pkg.description}
                   </p>
-                  {pkg.highlight && (
-                    <p className="text-xs text-accent mt-2 flex items-center gap-1">
-                      <Snowflake className="w-3 h-3" />
-                      جولة في القطب الجنوبي بـ 350 جنيه بدلاً من 700 جنيه
-                    </p>
-                  )}
+                  <div className="flex gap-4 text-sm">
+                    <div className="bg-muted/50 rounded-lg px-3 py-2">
+                      <span className="text-muted-foreground">طالب: </span>
+                      <span className="font-bold text-primary">{pkg.studentPrice} جنيه</span>
+                    </div>
+                    <div className="bg-muted/50 rounded-lg px-3 py-2">
+                      <span className="text-muted-foreground">غير طالب: </span>
+                      <span className="font-bold text-primary">{pkg.nonStudentPrice} جنيه</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -100,4 +101,5 @@ const PackageSelection = ({ selectedPackage, onSelect, participantType }: Packag
   );
 };
 
+export { packages };
 export default PackageSelection;

@@ -2,45 +2,43 @@ import { useState } from "react";
 import { ArrowRight, ArrowLeft, MapPin } from "lucide-react";
 import heroImage from "@/assets/hero-trip.jpg";
 import StepIndicator from "@/components/StepIndicator";
-import ParticipantType from "@/components/ParticipantType";
 import PackageSelection, { PackageType } from "@/components/PackageSelection";
-import CustomerForm from "@/components/CustomerForm";
-import PaymentSelection, { PaymentMethod } from "@/components/PaymentSelection";
+import TicketQuantity from "@/components/TicketQuantity";
+import CustomerInfo from "@/components/CustomerInfo";
+import PaymentUpload, { PaymentMethod } from "@/components/PaymentUpload";
 import OrderConfirmation from "@/components/OrderConfirmation";
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [participantType, setParticipantType] = useState<"student" | "non-student" | null>(null);
   const [selectedPackage, setSelectedPackage] = useState<PackageType>(null);
+  const [studentTickets, setStudentTickets] = useState(0);
+  const [nonStudentTickets, setNonStudentTickets] = useState(0);
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
     phone: "",
     nationalId: "",
-    year: "",
   });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(null);
-  const [transactionRef, setTransactionRef] = useState("");
+  const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
 
   const totalSteps = 5;
-  const stepLabels = ["النوع", "الباكدج", "البيانات", "الدفع", "التأكيد"];
+  const stepLabels = ["الباكدج", "التذاكر", "البيانات", "الدفع", "التأكيد"];
 
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return participantType !== null;
-      case 2:
         return selectedPackage !== null;
+      case 2:
+        return studentTickets > 0 || nonStudentTickets > 0;
       case 3:
-        const hasBasicInfo = customerInfo.name.trim() !== "" && 
-                            customerInfo.phone.trim() !== "" && 
-                            customerInfo.nationalId.trim().length === 14;
-        if (participantType === "student") {
-          return hasBasicInfo && customerInfo.year !== "";
-        }
-        return hasBasicInfo;
+        return (
+          customerInfo.name.trim() !== "" &&
+          customerInfo.phone.trim() !== "" &&
+          customerInfo.nationalId.trim().length === 14
+        );
       case 4:
-        return paymentMethod !== null && transactionRef.trim() !== "";
+        return paymentMethod !== null && paymentScreenshot !== null;
       default:
         return true;
     }
@@ -62,46 +60,49 @@ const Index = () => {
     switch (currentStep) {
       case 1:
         return (
-          <ParticipantType
-            selectedType={participantType}
-            onSelect={setParticipantType}
+          <PackageSelection
+            selectedPackage={selectedPackage}
+            onSelect={setSelectedPackage}
           />
         );
       case 2:
         return (
-          <PackageSelection
+          <TicketQuantity
             selectedPackage={selectedPackage}
-            onSelect={setSelectedPackage}
-            participantType={participantType}
+            studentTickets={studentTickets}
+            nonStudentTickets={nonStudentTickets}
+            onStudentTicketsChange={setStudentTickets}
+            onNonStudentTicketsChange={setNonStudentTickets}
           />
         );
       case 3:
         return (
-          <CustomerForm
-            participantType={participantType}
-            selectedPackage={selectedPackage}
+          <CustomerInfo
             customerInfo={customerInfo}
             onCustomerInfoChange={setCustomerInfo}
           />
         );
       case 4:
         return (
-          <PaymentSelection
+          <PaymentUpload
+            selectedPackage={selectedPackage}
+            studentTickets={studentTickets}
+            nonStudentTickets={nonStudentTickets}
             selectedMethod={paymentMethod}
-            onSelect={setPaymentMethod}
-            transactionRef={transactionRef}
-            onTransactionRefChange={setTransactionRef}
+            onMethodSelect={setPaymentMethod}
+            paymentScreenshot={paymentScreenshot}
+            onScreenshotChange={setPaymentScreenshot}
           />
         );
       case 5:
         return (
           <OrderConfirmation
             orderDetails={{
-              participantType: participantType!,
               selectedPackage,
+              studentTickets,
+              nonStudentTickets,
               customerInfo,
               paymentMethod,
-              transactionRef,
             }}
           />
         );
@@ -188,11 +189,12 @@ const Index = () => {
                 variant="outline"
                 onClick={() => {
                   setCurrentStep(1);
-                  setParticipantType(null);
                   setSelectedPackage(null);
-                  setCustomerInfo({ name: "", phone: "", nationalId: "", year: "" });
+                  setStudentTickets(0);
+                  setNonStudentTickets(0);
+                  setCustomerInfo({ name: "", phone: "", nationalId: "" });
                   setPaymentMethod(null);
-                  setTransactionRef("");
+                  setPaymentScreenshot(null);
                 }}
               >
                 حجز رحلة جديدة
