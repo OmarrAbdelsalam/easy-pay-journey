@@ -69,7 +69,7 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
               <p className="font-medium">
                 {orderDetails.selectedPackage === "with-ski" ? "رحلة القاهرة + Ski Egypt" : "رحلة القاهرة"}
               </p>
-              <p className="text-primary font-bold">{studentTotal} جنيه</p>
+              <p className="text-foreground font-bold">{studentTotal} جنيه</p>
             </div>
           </div>
           
