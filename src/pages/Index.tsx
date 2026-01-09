@@ -3,7 +3,7 @@ import { ArrowRight, ArrowLeft } from "lucide-react";
 import heroImage from "@/assets/cairo-trip-hero.webp";
 import StepIndicator from "@/components/StepIndicator";
 import PackageSelection, { PackageType } from "@/components/PackageSelection";
-import TicketQuantity from "@/components/TicketQuantity";
+import TicketQuantity, { Companion } from "@/components/TicketQuantity";
 import CustomerInfo from "@/components/CustomerInfo";
 import PaymentUpload, { PaymentMethod } from "@/components/PaymentUpload";
 import OrderConfirmation from "@/components/OrderConfirmation";
@@ -11,8 +11,7 @@ import { Button } from "@/components/ui/button";
 const Index = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedPackage, setSelectedPackage] = useState<PackageType>(null);
-  const [studentTickets, setStudentTickets] = useState(0);
-  const [nonStudentTickets, setNonStudentTickets] = useState(0);
+  const [companions, setCompanions] = useState<Companion[]>([]);
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
     phone: "",
@@ -27,7 +26,7 @@ const Index = () => {
       case 1:
         return selectedPackage !== null;
       case 2:
-        return studentTickets > 0 || nonStudentTickets > 0;
+        return true; // Always at least 1 student ticket
       case 3:
         return customerInfo.name.trim() !== "" && customerInfo.phone.trim() !== "" && customerInfo.nationalId.trim().length === 14;
       case 4:
@@ -51,16 +50,15 @@ const Index = () => {
       case 1:
         return <PackageSelection selectedPackage={selectedPackage} onSelect={setSelectedPackage} />;
       case 2:
-        return <TicketQuantity selectedPackage={selectedPackage} studentTickets={studentTickets} nonStudentTickets={nonStudentTickets} onStudentTicketsChange={setStudentTickets} onNonStudentTicketsChange={setNonStudentTickets} />;
+        return <TicketQuantity selectedPackage={selectedPackage} companions={companions} onCompanionsChange={setCompanions} />;
       case 3:
         return <CustomerInfo customerInfo={customerInfo} onCustomerInfoChange={setCustomerInfo} />;
       case 4:
-        return <PaymentUpload selectedPackage={selectedPackage} studentTickets={studentTickets} nonStudentTickets={nonStudentTickets} selectedMethod={paymentMethod} onMethodSelect={setPaymentMethod} paymentScreenshot={paymentScreenshot} onScreenshotChange={setPaymentScreenshot} />;
+        return <PaymentUpload selectedPackage={selectedPackage} companions={companions} selectedMethod={paymentMethod} onMethodSelect={setPaymentMethod} paymentScreenshot={paymentScreenshot} onScreenshotChange={setPaymentScreenshot} />;
       case 5:
         return <OrderConfirmation orderDetails={{
           selectedPackage,
-          studentTickets,
-          nonStudentTickets,
+          companions,
           customerInfo,
           paymentMethod
         }} />;
@@ -130,8 +128,7 @@ const Index = () => {
               <Button variant="outline" onClick={() => {
             setCurrentStep(1);
             setSelectedPackage(null);
-            setStudentTickets(0);
-            setNonStudentTickets(0);
+            setCompanions([]);
             setCustomerInfo({
               name: "",
               phone: "",

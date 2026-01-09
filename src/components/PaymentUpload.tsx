@@ -4,13 +4,13 @@ import instapayLogo from "@/assets/instapay-logo.png";
 import vodafoneLogo from "@/assets/vodafone-logo.png";
 import orangeLogo from "@/assets/orange-logo.png";
 import { PackageType, packages } from "./PackageSelection";
+import { Companion } from "./TicketQuantity";
 
 export type PaymentMethod = "instapay" | "vodafone" | "orange" | null;
 
 interface PaymentUploadProps {
   selectedPackage: PackageType;
-  studentTickets: number;
-  nonStudentTickets: number;
+  companions: Companion[];
   selectedMethod: PaymentMethod;
   onMethodSelect: (method: PaymentMethod) => void;
   paymentScreenshot: File | null;
@@ -41,8 +41,7 @@ const paymentMethods = [
 
 const PaymentUpload = ({
   selectedPackage,
-  studentTickets,
-  nonStudentTickets,
+  companions,
   selectedMethod,
   onMethodSelect,
   paymentScreenshot,
@@ -52,9 +51,12 @@ const PaymentUpload = ({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const pkg = packages.find((p) => p.id === selectedPackage);
-  const total = pkg
-    ? studentTickets * pkg.studentPrice + nonStudentTickets * pkg.nonStudentPrice
-    : 0;
+  const studentTotal = pkg?.studentPrice || 0;
+  const companionsTotal = companions.reduce((total, comp) => {
+    const compPkg = packages.find((p) => p.id === comp.packageType);
+    return total + (compPkg?.nonStudentPrice || 0);
+  }, 0);
+  const total = studentTotal + companionsTotal;
 
   const selectedPayment = paymentMethods.find((p) => p.id === selectedMethod);
 

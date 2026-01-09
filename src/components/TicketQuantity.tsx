@@ -1,109 +1,152 @@
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, Snowflake, Building2 } from "lucide-react";
 import { PackageType, packages } from "./PackageSelection";
+
+interface Companion {
+  packageType: PackageType;
+}
 
 interface TicketQuantityProps {
   selectedPackage: PackageType;
-  studentTickets: number;
-  nonStudentTickets: number;
-  onStudentTicketsChange: (count: number) => void;
-  onNonStudentTicketsChange: (count: number) => void;
+  companions: Companion[];
+  onCompanionsChange: (companions: Companion[]) => void;
 }
 
 const TicketQuantity = ({
   selectedPackage,
-  studentTickets,
-  nonStudentTickets,
-  onStudentTicketsChange,
-  onNonStudentTicketsChange,
+  companions,
+  onCompanionsChange,
 }: TicketQuantityProps) => {
   const pkg = packages.find((p) => p.id === selectedPackage);
   if (!pkg) return null;
 
-  const studentTotal = studentTickets * pkg.studentPrice;
-  const nonStudentTotal = nonStudentTickets * pkg.nonStudentPrice;
-  const grandTotal = studentTotal + nonStudentTotal;
+  const studentTotal = pkg.studentPrice;
+  const companionsTotal = companions.reduce((total, comp) => {
+    const compPkg = packages.find((p) => p.id === comp.packageType);
+    return total + (compPkg?.nonStudentPrice || 0);
+  }, 0);
+  const grandTotal = studentTotal + companionsTotal;
+
+  const addCompanion = () => {
+    onCompanionsChange([...companions, { packageType: selectedPackage }]);
+  };
+
+  const removeCompanion = () => {
+    if (companions.length > 0) {
+      onCompanionsChange(companions.slice(0, -1));
+    }
+  };
+
+  const updateCompanionPackage = (index: number, packageType: PackageType) => {
+    const updated = [...companions];
+    updated[index] = { packageType };
+    onCompanionsChange(updated);
+  };
 
   return (
     <div className="animate-fade-in" dir="rtl">
       <div className="space-y-6">
-        {/* Student Tickets */}
-        <div>
-          <label className="gform-label">
-            عدد تذاكر الطلاب <span className="text-destructive">*</span>
-          </label>
-          <p className="text-sm text-muted-foreground mb-3">
-            {pkg.studentPrice} جنيه للتذكرة
-          </p>
-          <div className="flex items-center gap-4">
-            <button
-              type="button"
-              onClick={() => onStudentTicketsChange(Math.max(0, studentTickets - 1))}
-              className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
-              disabled={studentTickets === 0}
-            >
-              <Minus className="w-4 h-4" />
-            </button>
-            <span className="w-16 text-center text-2xl font-bold">{studentTickets}</span>
-            <button
-              type="button"
-              onClick={() => onStudentTicketsChange(studentTickets + 1)}
-              className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-            {studentTickets > 0 && (
-              <span className="text-sm text-muted-foreground">
-                = {studentTotal} جنيه
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Non-Student Tickets */}
-        <div>
-          <label className="gform-label">
-            عدد تذاكر غير الطلاب (إن وجد)
-          </label>
-          <p className="text-sm text-muted-foreground mb-3">
-            {pkg.nonStudentPrice} جنيه للتذكرة
-          </p>
-          <div className="flex items-center gap-4">
-            <button
-              type="button"
-              onClick={() => onNonStudentTicketsChange(Math.max(0, nonStudentTickets - 1))}
-              className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
-              disabled={nonStudentTickets === 0}
-            >
-              <Minus className="w-4 h-4" />
-            </button>
-            <span className="w-16 text-center text-2xl font-bold">{nonStudentTickets}</span>
-            <button
-              type="button"
-              onClick={() => onNonStudentTicketsChange(nonStudentTickets + 1)}
-              className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-            {nonStudentTickets > 0 && (
-              <span className="text-sm text-muted-foreground">
-                = {nonStudentTotal} جنيه
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Total */}
-        {(studentTickets > 0 || nonStudentTickets > 0) && (
-          <div className="pt-4 border-t border-border">
-            <div className="flex items-center justify-between">
-              <span className="font-bold text-lg">الإجمالي المطلوب تحويله</span>
-              <span className="font-bold text-2xl text-primary">{grandTotal} جنيه</span>
+        {/* Student Ticket - Fixed 1 */}
+        <div className="p-4 rounded-lg border border-primary bg-primary/5">
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="gform-label mb-0">تذكرتك (طالب)</span>
+              <p className="text-sm text-muted-foreground">
+                {pkg.studentPrice} جنيه
+              </p>
             </div>
+            <span className="text-lg font-bold text-primary">1 تذكرة</span>
+          </div>
+        </div>
+
+        {/* Companions Counter */}
+        <div>
+          <label className="gform-label">
+            عدد المرافقين (إن وجد)
+          </label>
+          <p className="text-sm text-muted-foreground mb-3">
+            يمكن لكل مرافق اختيار باكدج مختلف
+          </p>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={removeCompanion}
+              className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
+              disabled={companions.length === 0}
+            >
+              <Minus className="w-4 h-4" />
+            </button>
+            <span className="w-16 text-center text-2xl font-bold">{companions.length}</span>
+            <button
+              type="button"
+              onClick={addCompanion}
+              className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Companions Package Selection */}
+        {companions.length > 0 && (
+          <div className="space-y-3">
+            <label className="gform-label">اختر باكدج كل مرافق</label>
+            {companions.map((companion, index) => (
+              <div key={index} className="p-3 rounded-lg border border-border bg-card">
+                <p className="text-sm font-medium mb-2">المرافق {index + 1}</p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => updateCompanionPackage(index, "without-ski")}
+                    className={`flex-1 p-2 rounded-lg border text-sm transition-all flex items-center justify-center gap-2 ${
+                      companion.packageType === "without-ski"
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border hover:border-primary/30"
+                    }`}
+                  >
+                    <Building2 className="w-4 h-4" />
+                    <span>بدون سكي (410ج)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => updateCompanionPackage(index, "with-ski")}
+                    className={`flex-1 p-2 rounded-lg border text-sm transition-all flex items-center justify-center gap-2 ${
+                      companion.packageType === "with-ski"
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border hover:border-primary/30"
+                    }`}
+                  >
+                    <Snowflake className="w-4 h-4" />
+                    <span>مع سكي (760ج)</span>
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
+
+        {/* Total */}
+        <div className="pt-4 border-t border-border">
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span>تذكرتك</span>
+              <span>{studentTotal} جنيه</span>
+            </div>
+            {companions.length > 0 && (
+              <div className="flex justify-between">
+                <span>المرافقين ({companions.length})</span>
+                <span>{companionsTotal} جنيه</span>
+              </div>
+            )}
+          </div>
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+            <span className="font-bold text-lg">الإجمالي المطلوب تحويله</span>
+            <span className="font-bold text-2xl text-primary">{grandTotal} جنيه</span>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
 export default TicketQuantity;
+export type { Companion };

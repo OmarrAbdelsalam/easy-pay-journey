@@ -1,12 +1,12 @@
 import { CheckCircle, Calendar, MapPin, Phone, Ticket } from "lucide-react";
 import { PaymentMethod } from "./PaymentUpload";
 import { PackageType, packages } from "./PackageSelection";
+import { Companion } from "./TicketQuantity";
 
 interface OrderConfirmationProps {
   orderDetails: {
     selectedPackage: PackageType;
-    studentTickets: number;
-    nonStudentTickets: number;
+    companions: Companion[];
     customerInfo: {
       name: string;
       phone: string;
@@ -18,9 +18,12 @@ interface OrderConfirmationProps {
 
 const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
   const pkg = packages.find((p) => p.id === orderDetails.selectedPackage);
-  const studentTotal = pkg ? orderDetails.studentTickets * pkg.studentPrice : 0;
-  const nonStudentTotal = pkg ? orderDetails.nonStudentTickets * pkg.nonStudentPrice : 0;
-  const total = studentTotal + nonStudentTotal;
+  const studentTotal = pkg?.studentPrice || 0;
+  const companionsTotal = orderDetails.companions.reduce((total, comp) => {
+    const compPkg = packages.find((p) => p.id === comp.packageType);
+    return total + (compPkg?.nonStudentPrice || 0);
+  }, 0);
+  const total = studentTotal + companionsTotal;
 
   const paymentMethodNames = {
     instapay: "InstaPay",
@@ -61,32 +64,23 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">الباكدج</span>
+            <span className="text-muted-foreground">تذكرتك (طالب)</span>
             <span className="font-medium">
-              {orderDetails.selectedPackage === "with-ski" ? "مع Ski Egypt" : "بدون Ski Egypt"}
+              {orderDetails.selectedPackage === "with-ski" ? "مع Ski Egypt" : "بدون Ski Egypt"} - {studentTotal} جنيه
             </span>
           </div>
           
-          <div className="border-t border-border pt-3 mt-3 space-y-2">
-            {orderDetails.studentTickets > 0 && (
+          {orderDetails.companions.length > 0 && (
+            <div className="border-t border-border pt-3 mt-3 space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground flex items-center gap-1">
                   <Ticket className="w-4 h-4" />
-                  تذاكر طلاب × {orderDetails.studentTickets}
+                  المرافقين ({orderDetails.companions.length})
                 </span>
-                <span className="font-medium">{studentTotal} جنيه</span>
+                <span className="font-medium">{companionsTotal} جنيه</span>
               </div>
-            )}
-            {orderDetails.nonStudentTickets > 0 && (
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground flex items-center gap-1">
-                  <Ticket className="w-4 h-4" />
-                  تذاكر غير طلاب × {orderDetails.nonStudentTickets}
-                </span>
-                <span className="font-medium">{nonStudentTotal} جنيه</span>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
 
           <div className="flex justify-between">
             <span className="text-muted-foreground">طريقة الدفع</span>
