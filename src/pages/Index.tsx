@@ -119,7 +119,7 @@ const Index = () => {
           <img
             src={heroImage}
             alt="رحلة القاهرة - Cairo Trip"
-            className="w-full h-[166%] object-cover object-bottom"
+            className="w-full h-[166%] object-cover object-[center_100%]"
           />
         </div>
 
