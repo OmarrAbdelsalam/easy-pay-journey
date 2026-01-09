@@ -267,6 +267,58 @@ const Dashboard = () => {
           </Button>
         </div>
 
+        {/* Duplicates Warning Section */}
+        {(() => {
+          const duplicateSenders = bookings.filter(b => getDuplicateCount(b, 'sender') > 0);
+          const duplicateTransactions = bookings.filter(b => getDuplicateCount(b, 'transaction') > 0);
+          const hasDuplicates = duplicateSenders.length > 0 || duplicateTransactions.length > 0;
+          
+          if (!hasDuplicates) return null;
+          
+          return (
+            <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <AlertTriangle className="w-5 h-5 text-orange-600" />
+                <h3 className="font-bold text-orange-800">تنبيهات مهمة - بيانات مكررة</h3>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {duplicateTransactions.length > 0 && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <AlertTriangle className="w-4 h-4 text-red-600" />
+                      <span className="font-medium text-red-800">أرقام معاملات مكررة ({duplicateTransactions.length})</span>
+                    </div>
+                    <div className="space-y-1 max-h-32 overflow-y-auto">
+                      {duplicateTransactions.map(b => (
+                        <div key={b.id} className="text-xs bg-white px-2 py-1 rounded flex justify-between">
+                          <span className="text-gray-600">{b.customer_name}</span>
+                          <span className="font-mono text-red-700">{b.transaction_number}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {duplicateSenders.length > 0 && (
+                  <div className="bg-orange-50 border border-orange-300 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <AlertTriangle className="w-4 h-4 text-orange-600" />
+                      <span className="font-medium text-orange-800">محولين مكررين ({duplicateSenders.length})</span>
+                    </div>
+                    <div className="space-y-1 max-h-32 overflow-y-auto">
+                      {duplicateSenders.map(b => (
+                        <div key={b.id} className="text-xs bg-white px-2 py-1 rounded flex justify-between">
+                          <span className="text-gray-600">{b.customer_name}</span>
+                          <span className="font-mono text-orange-700">{b.sender_name || b.sender_phone}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
@@ -459,37 +511,38 @@ const Dashboard = () => {
 
                 {/* Companions Row */}
                 {booking.companion_tickets > 0 && (
-                  <div className="px-4 py-3 bg-gray-50 border-t border-gray-100">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Users className="w-4 h-4 text-gray-500" />
-                      <span className="text-sm font-medium text-gray-700">
+                  <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-gray-50 border-t border-gray-200">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Users className="w-4 h-4 text-blue-600" />
+                      <span className="text-sm font-bold text-gray-800">
                         المرافقين ({booking.companion_tickets})
                       </span>
                     </div>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
                       {booking.companions_details && booking.companions_details.length > 0 ? (
                         booking.companions_details.map((comp, idx) => (
                           <div 
                             key={idx}
-                            className={`px-3 py-2 rounded-lg border ${
+                            className={`p-3 rounded-lg border-2 text-center ${
                               comp.packageType === "with-ski"
-                                ? "bg-blue-50 border-blue-200"
-                                : "bg-gray-100 border-gray-200"
+                                ? "bg-blue-100 border-blue-400"
+                                : "bg-amber-50 border-amber-300"
                             }`}
                           >
-                            <span className="text-xs text-gray-500">مرافق {idx + 1}:</span>
-                            <span className={`mr-2 text-sm font-medium ${
-                              comp.packageType === "with-ski" ? "text-blue-700" : "text-gray-700"
+                            <div className="text-xs text-gray-600 mb-1">مرافق {idx + 1}</div>
+                            <div className={`text-sm font-bold ${
+                              comp.packageType === "with-ski" ? "text-blue-700" : "text-amber-700"
                             }`}>
-                              {comp.packageType === "with-ski" ? "رحلة + سكي" : "رحلة فقط"}
-                            </span>
+                              {comp.packageType === "with-ski" ? "🎿 رحلة + سكي" : "🚌 رحلة فقط"}
+                            </div>
                           </div>
                         ))
                       ) : (
                         // For old bookings without details
                         Array.from({ length: booking.companion_tickets }, (_, idx) => (
-                          <div key={idx} className="px-3 py-2 rounded-lg bg-gray-100 border border-gray-200">
-                            <span className="text-xs text-gray-500">مرافق {idx + 1}</span>
+                          <div key={idx} className="p-3 rounded-lg bg-gray-100 border-2 border-gray-300 text-center">
+                            <div className="text-xs text-gray-600 mb-1">مرافق {idx + 1}</div>
+                            <div className="text-sm font-medium text-gray-500">غير محدد</div>
                           </div>
                         ))
                       )}
