@@ -115,11 +115,11 @@ const Index = () => {
     <div className="min-h-screen bg-background py-4 sm:py-8">
       <div className="container max-w-2xl mx-auto px-3 sm:px-4">
         {/* Hero Image */}
-        <div className="mb-4 rounded-lg overflow-hidden shadow-sm">
+        <div className="mb-4 rounded-lg overflow-hidden shadow-sm h-32 sm:h-40 md:h-48">
           <img
             src={heroImage}
             alt="رحلة القاهرة - Cairo Trip"
-            className="w-full h-auto object-cover"
+            className="w-full h-[166%] object-cover object-bottom"
           />
         </div>
 
