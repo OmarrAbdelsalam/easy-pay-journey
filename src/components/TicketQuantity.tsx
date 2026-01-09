@@ -120,22 +120,22 @@ const TicketQuantity = ({
         )}
 
         {/* Total */}
-        <div className="pt-4 border-t border-border">
-          <div className="space-y-2 text-sm">
+        <div className="mt-4 p-4 rounded-xl bg-gradient-to-l from-primary/10 to-primary/5 border border-primary/20">
+          <div className="space-y-2 text-sm text-muted-foreground">
             <div className="flex justify-between">
               <span>تذكرتك (طالب)</span>
-              <span>{studentTotal} جنيه</span>
+              <span className="text-foreground">{studentTotal} جنيه</span>
             </div>
             {companions.length > 0 && (
               <div className="flex justify-between">
                 <span>المرافقين ({companions.length})</span>
-                <span>{companionsTotal} جنيه</span>
+                <span className="text-foreground">{companionsTotal} جنيه</span>
               </div>
             )}
           </div>
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
-            <span className="font-bold text-base">الإجمالي المطلوب تحويله</span>
-            <span className="font-bold text-xl text-primary">{grandTotal} جنيه</span>
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-primary/20">
+            <span className="font-bold text-foreground">الإجمالي المطلوب تحويله</span>
+            <span className="font-bold text-2xl text-primary">{grandTotal} جنيه</span>
           </div>
         </div>
       </div>
