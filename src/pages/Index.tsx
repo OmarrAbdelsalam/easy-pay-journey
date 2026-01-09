@@ -18,7 +18,7 @@ const Index = () => {
   });
   const [selectedPackage, setSelectedPackage] = useState<PackageType>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved).selectedPackage || null : null;
+    return saved ? JSON.parse(saved).selectedPackage || "with-ski" : "with-ski";
   });
   const [companions, setCompanions] = useState<Companion[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
