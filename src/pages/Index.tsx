@@ -79,9 +79,9 @@ const Index = () => {
         return true;
       // Always at least 1 student ticket
       case 3:
-        return customerInfo.name.trim() !== "" && customerInfo.phone.trim() !== "" && customerInfo.nationalId.trim().length === 14 && customerInfo.year !== "";
+        return customerInfo.name.trim() !== "" && customerInfo.phone.trim().length === 11 && customerInfo.nationalId.trim().length === 14 && customerInfo.year !== "";
       case 4:
-        const hasRequiredDetails = paymentMethod === "instapay" ? paymentDetails.senderName.trim() !== "" : paymentDetails.senderPhone.trim() !== "";
+        const hasRequiredDetails = paymentMethod === "instapay" ? paymentDetails.senderName.trim() !== "" : paymentDetails.senderPhone.trim().length === 11;
         return paymentMethod !== null && paymentScreenshot !== null && paymentDetails.transactionNumber.trim() !== "" && hasRequiredDetails;
       default:
         return true;

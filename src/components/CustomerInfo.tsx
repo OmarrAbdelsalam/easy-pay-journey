@@ -44,13 +44,20 @@ const CustomerInfo = ({
           <input
             type="tel"
             value={customerInfo.phone}
-            onChange={(e) =>
-              onCustomerInfoChange({ ...customerInfo, phone: e.target.value })
-            }
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, "").slice(0, 11);
+              onCustomerInfoChange({ ...customerInfo, phone: value });
+            }}
             placeholder="01xxxxxxxxx"
-            className="gform-input text-sm"
+            maxLength={11}
+            className={`gform-input text-sm ${customerInfo.phone.length > 0 && customerInfo.phone.length < 11 ? "border-destructive focus:border-destructive" : ""}`}
             dir="ltr"
           />
+          {customerInfo.phone.length > 0 && customerInfo.phone.length < 11 && (
+            <p className="text-xs text-destructive mt-1">
+              الرقم لازم يكون 11 رقم ({customerInfo.phone.length}/11)
+            </p>
+          )}
         </div>
 
         <div>
