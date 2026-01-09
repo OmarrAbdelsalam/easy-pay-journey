@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
 
 @layer base {
   :root {
@@ -97,7 +97,8 @@
   }
 
   body {
-    @apply bg-background text-foreground font-cairo;
+    @apply bg-background text-foreground;
+    font-family: 'Tajawal', sans-serif;
   }
 
   html {
@@ -140,8 +141,8 @@
 }
 
 @layer utilities {
-  .font-cairo {
-    font-family: 'Cairo', sans-serif;
+  .font-tajawal {
+    font-family: 'Tajawal', sans-serif;
   }
 
   .animate-fade-in {
