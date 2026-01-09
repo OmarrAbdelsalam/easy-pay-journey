@@ -43,6 +43,7 @@ const Dashboard = () => {
   const [packageFilter, setPackageFilter] = useState<string>("all");
   const [paymentFilter, setPaymentFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [yearFilter, setYearFilter] = useState<string>("all");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [warningsExpanded, setWarningsExpanded] = useState(true);
 
@@ -164,7 +165,10 @@ const Dashboard = () => {
     const matchesStatus =
       statusFilter === "all" || booking.status === statusFilter;
 
-    return matchesSearch && matchesPackage && matchesPayment && matchesStatus;
+    const matchesYear =
+      yearFilter === "all" || booking.customer_year === yearFilter;
+
+    return matchesSearch && matchesPackage && matchesPayment && matchesStatus && matchesYear;
   });
 
   const totalRevenue = filteredBookings.reduce((sum, b) => sum + Number(b.total_price), 0);
@@ -520,12 +524,27 @@ const Dashboard = () => {
                 <SelectItem value="orange">Orange Cash</SelectItem>
               </SelectContent>
             </Select>
+            <Select value={yearFilter} onValueChange={setYearFilter}>
+              <SelectTrigger className="w-full sm:w-40 bg-gray-100">
+                <SelectValue placeholder="السنة الدراسية" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">كل السنين</SelectItem>
+                <SelectItem value="السنة الأولى">السنة الأولى</SelectItem>
+                <SelectItem value="السنة الثانية">السنة الثانية</SelectItem>
+                <SelectItem value="السنة الثالثة">السنة الثالثة</SelectItem>
+                <SelectItem value="السنة الرابعة">السنة الرابعة</SelectItem>
+                <SelectItem value="السنة الخامسة">السنة الخامسة</SelectItem>
+                <SelectItem value="السنة السادسة">السنة السادسة</SelectItem>
+                <SelectItem value="خريج">خريج</SelectItem>
+              </SelectContent>
+            </Select>
             <Button variant="outline" size="icon" className="bg-gray-100 hover:bg-gray-200" onClick={exportToCSV} title="تصدير CSV">
               <Download className="w-4 h-4" />
             </Button>
           </div>
           {/* Approve All Button - shows when filter is not "all" */}
-          {(paymentFilter !== "all" || packageFilter !== "all" || statusFilter !== "all") && (
+          {(paymentFilter !== "all" || packageFilter !== "all" || statusFilter !== "all" || yearFilter !== "all") && (
             <div className="mt-3 flex justify-end">
               <Button
                 size="sm"
@@ -571,6 +590,8 @@ const Dashboard = () => {
                         </div>
                         <div className="font-semibold text-gray-900">{booking.customer_name}</div>
                         <div className="text-xs text-gray-500" dir="ltr">{booking.customer_phone}</div>
+                        <div className="text-xs text-gray-400">{booking.customer_year}</div>
+                        <div className="text-[10px] text-gray-400 font-mono">{booking.customer_national_id}</div>
                       </td>
                       
                       {/* Transaction Number */}
