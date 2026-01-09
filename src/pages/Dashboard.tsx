@@ -45,7 +45,7 @@ const Dashboard = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [yearFilter, setYearFilter] = useState<string>("all");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [warningsExpanded, setWarningsExpanded] = useState(true);
+  const [warningsExpanded, setWarningsExpanded] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -300,9 +300,15 @@ const Dashboard = () => {
 
         {/* Duplicates Warning Section - Collapsible */}
         {(() => {
-          const warningBookings = bookings.filter(b => 
-            getDuplicateCount(b, 'sender') > 0 || getDuplicateCount(b, 'transaction') > 0
-          );
+          const warningBookings = bookings
+            .filter(b => getDuplicateCount(b, 'sender') > 0 || getDuplicateCount(b, 'transaction') > 0)
+            .sort((a, b) => {
+              // Pending first, then approved, then rejected
+              const order = { pending: 0, approved: 1, rejected: 2 };
+              return (order[a.status as keyof typeof order] || 0) - (order[b.status as keyof typeof order] || 0);
+            });
+          
+          const pendingWarnings = warningBookings.filter(b => b.status === "pending").length;
           
           if (warningBookings.length === 0) return null;
           
@@ -316,7 +322,10 @@ const Dashboard = () => {
                 >
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5 text-red-600" />
-                    <h3 className="font-bold text-gray-800">⚠️ حجوزات تحتاج مراجعة ({warningBookings.length})</h3>
+                    <h3 className="font-bold text-gray-800">⚠️ حجوزات تحتاج مراجعة ({pendingWarnings})</h3>
+                    {pendingWarnings !== warningBookings.length && (
+                      <span className="text-xs text-gray-500">({warningBookings.length} إجمالي)</span>
+                    )}
                   </div>
                   {warningsExpanded ? (
                     <ChevronUp className="w-5 h-5 text-gray-500" />
