@@ -235,53 +235,55 @@ const PaymentUpload = ({
           </div>
         )}
 
-        {/* File Upload */}
-        <div>
-          <label className="gform-label">
-            سكرين بالتحويل <span className="text-destructive">*</span>
-          </label>
-          <p className="text-sm text-muted-foreground mb-3">
-            يمكنك تحميل ملف واحد متوافق. الحد الأقصى لحجم الملف: 10 MB
-          </p>
-          
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="hidden"
-          />
+        {/* File Upload - Only show when payment method is selected */}
+        {selectedMethod && (
+          <div>
+            <label className="gform-label">
+              سكرين بالتحويل <span className="text-destructive">*</span>
+            </label>
+            <p className="text-sm text-muted-foreground mb-3">
+              يمكنك تحميل ملف واحد متوافق. الحد الأقصى لحجم الملف: 10 MB
+            </p>
+            
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
 
-          {!paymentScreenshot ? (
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full border border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 hover:bg-muted/30 transition-colors"
-            >
-              <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-              <p className="text-foreground font-medium">
-                اضغط لرفع الصورة
-              </p>
-            </button>
-          ) : (
-            <div className="relative border border-primary rounded-lg overflow-hidden">
+            {!paymentScreenshot ? (
               <button
                 type="button"
-                onClick={handleRemoveFile}
-                className="absolute top-1.5 right-1.5 z-10 bg-black/60 text-white rounded-full p-1 hover:bg-black/80 transition-colors"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full border border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 hover:bg-muted/30 transition-colors"
               >
-                <X className="w-3.5 h-3.5" />
+                <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                <p className="text-foreground font-medium">
+                  اضغط لرفع الصورة
+                </p>
               </button>
-              {previewUrl && (
-                <img
-                  src={previewUrl}
-                  alt="Payment screenshot"
-                  className="w-full max-h-48 object-contain bg-muted"
-                />
-              )}
-            </div>
-          )}
-        </div>
+            ) : (
+              <div className="relative border border-primary rounded-lg overflow-hidden">
+                <button
+                  type="button"
+                  onClick={handleRemoveFile}
+                  className="absolute top-1.5 right-1.5 z-10 bg-black/60 text-white rounded-full p-1 hover:bg-black/80 transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+                {previewUrl && (
+                  <img
+                    src={previewUrl}
+                    alt="Payment screenshot"
+                    className="w-full max-h-48 object-contain bg-muted"
+                  />
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
