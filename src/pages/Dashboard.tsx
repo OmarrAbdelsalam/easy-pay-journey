@@ -526,12 +526,12 @@ const Dashboard = () => {
                             className={`p-3 rounded-lg border-2 text-center ${
                               comp.packageType === "with-ski"
                                 ? "bg-blue-100 border-blue-400"
-                                : "bg-amber-50 border-amber-300"
+                                : "bg-gray-100 border-gray-300"
                             }`}
                           >
                             <div className="text-xs text-gray-600 mb-1">مرافق {idx + 1}</div>
                             <div className={`text-sm font-bold ${
-                              comp.packageType === "with-ski" ? "text-blue-700" : "text-amber-700"
+                              comp.packageType === "with-ski" ? "text-blue-700" : "text-gray-700"
                             }`}>
                               {comp.packageType === "with-ski" ? "🎿 رحلة + سكي" : "🚌 رحلة فقط"}
                             </div>
