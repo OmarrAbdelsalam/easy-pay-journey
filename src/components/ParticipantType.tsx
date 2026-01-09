@@ -11,14 +11,14 @@ const ParticipantType = ({ selectedType, onSelect }: ParticipantTypeProps) => {
       id: "student" as const,
       title: "طالب",
       subtitle: "Student",
-      price: "250 جنيه",
-      description: "سعر مخفض للطلاب بإظهار كارنيه الجامعة",
+      price: "310 جنيه",
+      description: "سعر مخفض للطلاب من كل المراحل العمرية",
     },
     {
       id: "non-student" as const,
       title: "غير طالب",
       subtitle: "Non-Student",
-      price: "350 جنيه",
+      price: "410 جنيه",
       description: "السعر الأساسي للرحلة",
     },
   ];
