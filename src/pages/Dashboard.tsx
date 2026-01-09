@@ -741,12 +741,12 @@ const Dashboard = () => {
                               <Button
                                 variant="outline"
                                 size="icon"
-                                className="h-8 w-8 text-red-600 border-red-200 hover:bg-red-50"
+                                className="h-8 w-8 bg-white text-red-600 border-red-200 hover:bg-red-50"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
                             </AlertDialogTrigger>
-                            <AlertDialogContent dir="rtl">
+                            <AlertDialogContent dir="rtl" className="bg-white">
                               <AlertDialogHeader>
                                 <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
                                 <AlertDialogDescription>
@@ -754,9 +754,9 @@ const Dashboard = () => {
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter className="flex gap-2">
-                                <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                                <AlertDialogCancel className="bg-white">إلغاء</AlertDialogCancel>
                                 <AlertDialogAction
-                                  className="bg-red-600 hover:bg-red-700"
+                                  className="bg-red-600 hover:bg-red-700 text-white"
                                   onClick={() => deleteBooking(booking.id)}
                                 >
                                   حذف
