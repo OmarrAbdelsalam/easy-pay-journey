@@ -75,6 +75,7 @@ const PackageSelection = ({
                       <div className="flex items-center gap-2 pt-1 border-t border-border">
                         <span className="text-muted-foreground">الإجمالي:</span>
                         <span className="font-bold text-foreground">{pkg.studentPrice}ج</span>
+                        <span className="text-destructive line-through">1010ج</span>
                       </div>
                     </div>
                   ) : (
