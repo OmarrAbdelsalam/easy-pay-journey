@@ -19,8 +19,9 @@ const Index = () => {
   });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(null);
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
-  const totalSteps = 5;
-  const stepLabels = ["الباكدج", "التذاكر", "البيانات", "الدفع", "التأكيد"];
+  const totalSteps = 4;
+  const stepLabels = ["الباكدج", "التذاكر", "البيانات", "الدفع"];
+  const showConfirmation = currentStep === 5;
   const canProceed = () => {
     switch (currentStep) {
       case 1:
@@ -103,10 +104,12 @@ const Index = () => {
           
         </div>
 
-        {/* Step Indicator */}
-        <div className="gform-section p-4 mb-3">
-          <StepIndicator currentStep={currentStep} totalSteps={totalSteps} labels={stepLabels} />
-        </div>
+        {/* Step Indicator - hide on confirmation */}
+        {!showConfirmation && (
+          <div className="gform-section p-4 mb-3">
+            <StepIndicator currentStep={currentStep} totalSteps={totalSteps} labels={stepLabels} />
+          </div>
+        )}
 
         {/* Form Content */}
         <div className="gform-section p-4 sm:p-6 mb-3">
