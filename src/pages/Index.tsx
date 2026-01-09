@@ -26,7 +26,8 @@ const Index = () => {
       case 1:
         return selectedPackage !== null;
       case 2:
-        return true; // Always at least 1 student ticket
+        return true;
+      // Always at least 1 student ticket
       case 3:
         return customerInfo.name.trim() !== "" && customerInfo.phone.trim() !== "" && customerInfo.nationalId.trim().length === 14;
       case 4:
@@ -70,7 +71,7 @@ const Index = () => {
       <div className="container max-w-2xl mx-auto px-3 sm:px-4">
         {/* Hero Image */}
         <div className="mb-4 rounded-lg overflow-hidden shadow-sm h-32 sm:h-40 md:h-48">
-          <img src={heroImage} alt="رحلة القاهرة - Cairo Trip" className="w-full h-[166%] object-[center_100%] object-contain" />
+          <img src={heroImage} alt="رحلة القاهرة - Cairo Trip" className="w-full h-[166%] object-[center_100%] object-cover" />
         </div>
 
         {/* Header Card */}
