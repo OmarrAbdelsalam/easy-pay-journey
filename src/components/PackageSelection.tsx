@@ -15,7 +15,7 @@ const packages = [{
   description: "المتحف المصري الكبير - مول مصر - شارع المعز"
 }, {
   id: "with-ski" as const,
-  title: "مع Ski Egypt",
+  title: "رحلة القاهرة + Ski Egypt",
   icon: <Snowflake className="w-5 h-5" />,
   studentPrice: 660,
   nonStudentPrice: 760,
