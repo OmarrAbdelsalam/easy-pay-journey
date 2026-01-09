@@ -1,42 +1,53 @@
-import { addons } from "./AddonsSelection";
+import { PackageType } from "./PackageSelection";
 
-interface CartSummaryProps {
+interface CustomerFormProps {
   participantType: "student" | "non-student" | null;
-  selectedAddons: string[];
+  selectedPackage: PackageType;
   customerInfo: {
     name: string;
     phone: string;
-    email: string;
+    nationalId: string;
+    year: string;
   };
-  onCustomerInfoChange: (info: { name: string; phone: string; email: string }) => void;
+  onCustomerInfoChange: (info: {
+    name: string;
+    phone: string;
+    nationalId: string;
+    year: string;
+  }) => void;
 }
 
-const CartSummary = ({
+const CustomerForm = ({
   participantType,
-  selectedAddons,
+  selectedPackage,
   customerInfo,
   onCustomerInfoChange,
-}: CartSummaryProps) => {
-  const basePrice = participantType === "student" ? 250 : 350;
-  const addonsTotal = selectedAddons.reduce((total, addonId) => {
-    const addon = addons.find((a) => a.id === addonId);
-    return total + (addon?.price || 0);
-  }, 0);
-  const total = basePrice + addonsTotal;
+}: CustomerFormProps) => {
+  const isStudent = participantType === "student";
+  const basePrice = isStudent ? 310 : 410;
+  const skiPrice = 350;
+  const total = selectedPackage === "with-ski" ? basePrice + skiPrice : basePrice;
+
+  const years = [
+    { id: "first", label: "أولى" },
+    { id: "second", label: "تانية" },
+    { id: "third", label: "تالتة" },
+    { id: "fourth", label: "رابعة" },
+  ];
 
   return (
     <div className="animate-fade-in" dir="rtl">
       <h2 className="text-xl md:text-2xl font-semibold text-foreground mb-2">
-        ملخص الطلب
+        بياناتك
       </h2>
       <p className="text-muted-foreground mb-6">
-        راجع طلبك وأدخل بياناتك
+        أدخل بياناتك الشخصية
       </p>
 
       <div className="space-y-6">
         {/* Order Summary */}
         <div className="bg-muted/50 rounded-xl p-4">
-          <h3 className="font-semibold text-foreground mb-4">تفاصيل الطلب</h3>
+          <h3 className="font-semibold text-foreground mb-4">ملخص الطلب</h3>
           
           <div className="space-y-3">
             <div className="flex justify-between items-center">
@@ -46,24 +57,11 @@ const CartSummary = ({
               <span className="font-medium">{basePrice} جنيه</span>
             </div>
 
-            {selectedAddons.length > 0 && (
-              <>
-                <div className="border-t border-border my-2" />
-                <p className="text-sm text-muted-foreground">الإضافات:</p>
-                {selectedAddons.map((addonId) => {
-                  const addon = addons.find((a) => a.id === addonId);
-                  if (!addon) return null;
-                  return (
-                    <div
-                      key={addonId}
-                      className="flex justify-between items-center text-sm"
-                    >
-                      <span className="text-muted-foreground">{addon.name}</span>
-                      <span className="font-medium">+{addon.price} جنيه</span>
-                    </div>
-                  );
-                })}
-              </>
+            {selectedPackage === "with-ski" && (
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground">Ski Egypt</span>
+                <span className="font-medium">+{skiPrice} جنيه</span>
+              </div>
             )}
 
             <div className="border-t border-border pt-3 mt-3">
@@ -79,11 +77,9 @@ const CartSummary = ({
 
         {/* Customer Info Form */}
         <div className="space-y-4">
-          <h3 className="font-semibold text-foreground">بياناتك</h3>
-          
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
-              الاسم بالكامل
+              اسمك رباعي باللغة العربية <span className="text-destructive">*</span>
             </label>
             <input
               type="text"
@@ -91,14 +87,14 @@ const CartSummary = ({
               onChange={(e) =>
                 onCustomerInfoChange({ ...customerInfo, name: e.target.value })
               }
-              placeholder="أدخل اسمك الكامل"
+              placeholder="مثال: عمر أحمد محمد علي"
               className="w-full px-4 py-3 rounded-lg border border-input bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
-              رقم الموبايل
+              رقم الواتساب <span className="text-destructive">*</span>
             </label>
             <input
               type="tel"
@@ -114,23 +110,50 @@ const CartSummary = ({
 
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
-              البريد الإلكتروني
+              الرقم القومي <span className="text-destructive">*</span>
             </label>
             <input
-              type="email"
-              value={customerInfo.email}
+              type="text"
+              value={customerInfo.nationalId}
               onChange={(e) =>
-                onCustomerInfoChange({ ...customerInfo, email: e.target.value })
+                onCustomerInfoChange({ ...customerInfo, nationalId: e.target.value })
               }
-              placeholder="example@email.com"
+              placeholder="أدخل الرقم القومي (14 رقم)"
+              maxLength={14}
               className="w-full px-4 py-3 rounded-lg border border-input bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
               dir="ltr"
             />
           </div>
+
+          {isStudent && (
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                فرقة كام <span className="text-destructive">*</span>
+              </label>
+              <div className="grid grid-cols-4 gap-2">
+                {years.map((year) => (
+                  <button
+                    key={year.id}
+                    type="button"
+                    onClick={() =>
+                      onCustomerInfoChange({ ...customerInfo, year: year.id })
+                    }
+                    className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${
+                      customerInfo.year === year.id
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border hover:border-primary/50"
+                    }`}
+                  >
+                    {year.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default CartSummary;
+export default CustomerForm;

@@ -1,15 +1,16 @@
 import { CheckCircle, Calendar, MapPin, Phone } from "lucide-react";
-import { addons } from "./AddonsSelection";
 import { PaymentMethod } from "./PaymentSelection";
+import { PackageType } from "./PackageSelection";
 
 interface OrderConfirmationProps {
   orderDetails: {
     participantType: "student" | "non-student";
-    selectedAddons: string[];
+    selectedPackage: PackageType;
     customerInfo: {
       name: string;
       phone: string;
-      email: string;
+      nationalId: string;
+      year: string;
     };
     paymentMethod: PaymentMethod;
     transactionRef: string;
@@ -17,12 +18,10 @@ interface OrderConfirmationProps {
 }
 
 const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
-  const basePrice = orderDetails.participantType === "student" ? 250 : 350;
-  const addonsTotal = orderDetails.selectedAddons.reduce((total, addonId) => {
-    const addon = addons.find((a) => a.id === addonId);
-    return total + (addon?.price || 0);
-  }, 0);
-  const total = basePrice + addonsTotal;
+  const isStudent = orderDetails.participantType === "student";
+  const basePrice = isStudent ? 310 : 410;
+  const skiPrice = 350;
+  const total = orderDetails.selectedPackage === "with-ski" ? basePrice + skiPrice : basePrice;
 
   const paymentMethodNames = {
     instapay: "InstaPay",
@@ -30,7 +29,14 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
     orange: "Orange Cash",
   };
 
-  const orderNumber = `TRP-${Date.now().toString().slice(-8)}`;
+  const yearLabels: Record<string, string> = {
+    first: "أولى",
+    second: "تانية",
+    third: "تالتة",
+    fourth: "رابعة",
+  };
+
+  const orderNumber = `CAI-${Date.now().toString().slice(-8)}`;
 
   return (
     <div className="animate-fade-in text-center" dir="rtl">
@@ -42,7 +48,7 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
         تم تأكيد الحجز!
       </h2>
       <p className="text-muted-foreground mb-8">
-        شكراً ليك يا {orderDetails.customerInfo.name.split(" ")[0]}، هنتواصل معاك قريب
+        شكراً ليك يا {orderDetails.customerInfo.name.split(" ")[0]}، هنتواصل معاك قريب على الواتساب
       </p>
 
       <div className="bg-muted/50 rounded-xl p-6 text-right max-w-md mx-auto">
@@ -57,7 +63,7 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
             <span className="font-medium">{orderDetails.customerInfo.name}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">الموبايل</span>
+            <span className="text-muted-foreground">الواتساب</span>
             <span className="font-medium" dir="ltr">
               {orderDetails.customerInfo.phone}
             </span>
@@ -66,6 +72,20 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
             <span className="text-muted-foreground">نوع الاشتراك</span>
             <span className="font-medium">
               {orderDetails.participantType === "student" ? "طالب" : "غير طالب"}
+            </span>
+          </div>
+          {isStudent && orderDetails.customerInfo.year && (
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">الفرقة</span>
+              <span className="font-medium">
+                {yearLabels[orderDetails.customerInfo.year]}
+              </span>
+            </div>
+          )}
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">الباكدج</span>
+            <span className="font-medium">
+              {orderDetails.selectedPackage === "with-ski" ? "مع Ski Egypt" : "بدون Ski Egypt"}
             </span>
           </div>
           <div className="flex justify-between">
@@ -95,14 +115,14 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
           <Calendar className="w-5 h-5 text-primary" />
           <div className="text-right">
             <p className="text-xs text-muted-foreground">التاريخ</p>
-            <p className="font-medium text-sm">15 يناير 2025</p>
+            <p className="font-medium text-sm">قريباً</p>
           </div>
         </div>
         <div className="flex items-center gap-3 bg-card rounded-lg p-4 border border-border">
           <MapPin className="w-5 h-5 text-primary" />
           <div className="text-right">
-            <p className="text-xs text-muted-foreground">نقطة التجمع</p>
-            <p className="font-medium text-sm">ميدان التحرير</p>
+            <p className="text-xs text-muted-foreground">الوجهة</p>
+            <p className="font-medium text-sm">القاهرة</p>
           </div>
         </div>
         <div className="flex items-center gap-3 bg-card rounded-lg p-4 border border-border">

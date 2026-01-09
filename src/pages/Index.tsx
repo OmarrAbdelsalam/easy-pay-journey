@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, MapPin } from "lucide-react";
 import heroImage from "@/assets/hero-trip.jpg";
 import StepIndicator from "@/components/StepIndicator";
 import ParticipantType from "@/components/ParticipantType";
-import AddonsSelection from "@/components/AddonsSelection";
-import CartSummary from "@/components/CartSummary";
+import PackageSelection, { PackageType } from "@/components/PackageSelection";
+import CustomerForm from "@/components/CustomerForm";
 import PaymentSelection, { PaymentMethod } from "@/components/PaymentSelection";
 import OrderConfirmation from "@/components/OrderConfirmation";
 import { Button } from "@/components/ui/button";
@@ -12,34 +12,33 @@ import { Button } from "@/components/ui/button";
 const Index = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [participantType, setParticipantType] = useState<"student" | "non-student" | null>(null);
-  const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+  const [selectedPackage, setSelectedPackage] = useState<PackageType>(null);
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
     phone: "",
-    email: "",
+    nationalId: "",
+    year: "",
   });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(null);
   const [transactionRef, setTransactionRef] = useState("");
 
   const totalSteps = 5;
-  const stepLabels = ["النوع", "الإضافات", "البيانات", "الدفع", "التأكيد"];
-
-  const handleAddonToggle = (addonId: string) => {
-    setSelectedAddons((prev) =>
-      prev.includes(addonId)
-        ? prev.filter((id) => id !== addonId)
-        : [...prev, addonId]
-    );
-  };
+  const stepLabels = ["النوع", "الباكدج", "البيانات", "الدفع", "التأكيد"];
 
   const canProceed = () => {
     switch (currentStep) {
       case 1:
         return participantType !== null;
       case 2:
-        return true; // Addons are optional
+        return selectedPackage !== null;
       case 3:
-        return customerInfo.name.trim() !== "" && customerInfo.phone.trim() !== "";
+        const hasBasicInfo = customerInfo.name.trim() !== "" && 
+                            customerInfo.phone.trim() !== "" && 
+                            customerInfo.nationalId.trim().length === 14;
+        if (participantType === "student") {
+          return hasBasicInfo && customerInfo.year !== "";
+        }
+        return hasBasicInfo;
       case 4:
         return paymentMethod !== null && transactionRef.trim() !== "";
       default:
@@ -70,16 +69,17 @@ const Index = () => {
         );
       case 2:
         return (
-          <AddonsSelection
-            selectedAddons={selectedAddons}
-            onToggle={handleAddonToggle}
+          <PackageSelection
+            selectedPackage={selectedPackage}
+            onSelect={setSelectedPackage}
+            participantType={participantType}
           />
         );
       case 3:
         return (
-          <CartSummary
+          <CustomerForm
             participantType={participantType}
-            selectedAddons={selectedAddons}
+            selectedPackage={selectedPackage}
             customerInfo={customerInfo}
             onCustomerInfoChange={setCustomerInfo}
           />
@@ -98,7 +98,7 @@ const Index = () => {
           <OrderConfirmation
             orderDetails={{
               participantType: participantType!,
-              selectedAddons,
+              selectedPackage,
               customerInfo,
               paymentMethod,
               transactionRef,
@@ -110,24 +110,39 @@ const Index = () => {
     }
   };
 
+  const destinations = [
+    "المتحف المصري الكبير",
+    "مول مصر",
+    "Ski Egypt (اختياري)",
+    "شارع المعز",
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="relative h-64 md:h-80 overflow-hidden">
+      <div className="relative h-72 md:h-96 overflow-hidden">
         <img
           src={heroImage}
-          alt="رحلة مغامرة"
+          alt="رحلة القاهرة"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-background" />
         <div className="absolute inset-0 flex items-center justify-center text-center px-4">
           <div>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-2 drop-shadow-lg">
-              رحلة المغامرة 🏕️
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
+              رحلة القاهرة 🏛️
             </h1>
-            <p className="text-lg md:text-xl text-white/90 drop-shadow">
-              انضم لينا في رحلة مش هتنساها
-            </p>
+            <div className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto">
+              {destinations.map((dest, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center gap-1 bg-white/20 backdrop-blur-sm text-white text-sm px-3 py-1 rounded-full"
+                >
+                  <MapPin className="w-3 h-3" />
+                  {dest}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -174,8 +189,8 @@ const Index = () => {
                 onClick={() => {
                   setCurrentStep(1);
                   setParticipantType(null);
-                  setSelectedAddons([]);
-                  setCustomerInfo({ name: "", phone: "", email: "" });
+                  setSelectedPackage(null);
+                  setCustomerInfo({ name: "", phone: "", nationalId: "", year: "" });
                   setPaymentMethod(null);
                   setTransactionRef("");
                 }}
