@@ -14,6 +14,7 @@ interface OrderConfirmationProps {
       nationalId: string;
     };
     paymentMethod: PaymentMethod;
+    orderNumber?: string | null;
   };
 }
 
@@ -32,7 +33,7 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
     orange: "Orange Cash",
   };
 
-  const orderNumber = `CAI-${Date.now().toString().slice(-8)}`;
+  const orderNumber = orderDetails.orderNumber || `CAI-${Date.now().toString().slice(-8)}`;
 
   return (
     <div className="animate-fade-in text-center" dir="rtl">
