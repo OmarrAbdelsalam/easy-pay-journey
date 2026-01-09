@@ -1,4 +1,6 @@
 import { Check, Snowflake, Building2 } from "lucide-react";
+import skiEgypt1 from "@/assets/ski-egypt-1.png";
+import skiEgypt2 from "@/assets/ski-egypt-2.png";
 
 export type PackageType = "with-ski" | "without-ski" | null;
 
@@ -25,6 +27,7 @@ const packages = [
     description: "المتحف المصري الكبير - مول مصر - Ski Egypt - شارع المعز",
     highlight: true,
     savings: "وفر 350ج!",
+    images: [skiEgypt1, skiEgypt2],
   },
 ];
 
@@ -79,13 +82,28 @@ const PackageSelection = ({ selectedPackage, onSelect }: PackageSelectionProps) 
                   <p className="text-sm text-muted-foreground mb-2">
                     {pkg.description}
                   </p>
+                  
+                  {/* Ski Egypt Images */}
+                  {pkg.images && (
+                    <div className="flex gap-2 mb-3">
+                      {pkg.images.map((img, index) => (
+                        <img
+                          key={index}
+                          src={img}
+                          alt={`Ski Egypt ${index + 1}`}
+                          className="w-20 h-20 rounded-lg object-cover"
+                        />
+                      ))}
+                    </div>
+                  )}
+                  
                   <div className="flex flex-wrap gap-3 text-sm">
                     <span>
                       <span className="text-muted-foreground">طالب: </span>
                       <span className="font-bold text-foreground">{pkg.studentPrice}ج</span>
                     </span>
                     <span>
-                      <span className="text-muted-foreground">غير طالب: </span>
+                      <span className="text-muted-foreground">مرافق: </span>
                       <span className="font-bold text-foreground">{pkg.nonStudentPrice}ج</span>
                     </span>
                   </div>
