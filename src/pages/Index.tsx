@@ -5,7 +5,7 @@ import StepIndicator from "@/components/StepIndicator";
 import PackageSelection, { PackageType } from "@/components/PackageSelection";
 import TicketQuantity, { Companion } from "@/components/TicketQuantity";
 import CustomerInfo from "@/components/CustomerInfo";
-import PaymentUpload, { PaymentMethod } from "@/components/PaymentUpload";
+import PaymentUpload, { PaymentMethod, PaymentDetails } from "@/components/PaymentUpload";
 import OrderConfirmation from "@/components/OrderConfirmation";
 import { Button } from "@/components/ui/button";
 const Index = () => {
@@ -20,6 +20,11 @@ const Index = () => {
   });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(null);
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
+    transactionNumber: "",
+    senderPhone: "",
+    senderName: ""
+  });
   const totalSteps = 4;
   const stepLabels = ["الباكدج", "التذاكر", "البيانات", "الدفع"];
   const showConfirmation = currentStep === 5;
@@ -33,7 +38,10 @@ const Index = () => {
       case 3:
         return customerInfo.name.trim() !== "" && customerInfo.phone.trim() !== "" && customerInfo.nationalId.trim().length === 14 && customerInfo.year !== "";
       case 4:
-        return paymentMethod !== null && paymentScreenshot !== null;
+        const hasRequiredDetails = paymentMethod === "instapay" 
+          ? paymentDetails.senderName.trim() !== ""
+          : paymentDetails.senderPhone.trim() !== "";
+        return paymentMethod !== null && paymentScreenshot !== null && paymentDetails.transactionNumber.trim() !== "" && hasRequiredDetails;
       default:
         return true;
     }
@@ -57,7 +65,7 @@ const Index = () => {
       case 3:
         return <CustomerInfo customerInfo={customerInfo} onCustomerInfoChange={setCustomerInfo} />;
       case 4:
-        return <PaymentUpload selectedPackage={selectedPackage} companions={companions} selectedMethod={paymentMethod} onMethodSelect={setPaymentMethod} paymentScreenshot={paymentScreenshot} onScreenshotChange={setPaymentScreenshot} />;
+        return <PaymentUpload selectedPackage={selectedPackage} companions={companions} selectedMethod={paymentMethod} onMethodSelect={setPaymentMethod} paymentScreenshot={paymentScreenshot} onScreenshotChange={setPaymentScreenshot} paymentDetails={paymentDetails} onPaymentDetailsChange={setPaymentDetails} />;
       case 5:
         return <OrderConfirmation orderDetails={{
           selectedPackage,
@@ -142,6 +150,11 @@ const Index = () => {
             });
             setPaymentMethod(null);
             setPaymentScreenshot(null);
+            setPaymentDetails({
+              transactionNumber: "",
+              senderPhone: "",
+              senderName: ""
+            });
           }} className="text-sm text-primary border-primary hover:bg-primary/10">
                 حجز رحلة جديدة
               </Button>

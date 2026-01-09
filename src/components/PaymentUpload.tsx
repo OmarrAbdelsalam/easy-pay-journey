@@ -8,6 +8,12 @@ import { Companion } from "./TicketQuantity";
 
 export type PaymentMethod = "instapay" | "vodafone" | "orange" | null;
 
+export interface PaymentDetails {
+  transactionNumber: string;
+  senderPhone: string;
+  senderName: string;
+}
+
 interface PaymentUploadProps {
   selectedPackage: PackageType;
   companions: Companion[];
@@ -15,6 +21,8 @@ interface PaymentUploadProps {
   onMethodSelect: (method: PaymentMethod) => void;
   paymentScreenshot: File | null;
   onScreenshotChange: (file: File | null) => void;
+  paymentDetails: PaymentDetails;
+  onPaymentDetailsChange: (details: PaymentDetails) => void;
 }
 
 const paymentMethods = [
@@ -46,6 +54,8 @@ const PaymentUpload = ({
   onMethodSelect,
   paymentScreenshot,
   onScreenshotChange,
+  paymentDetails,
+  onPaymentDetailsChange,
 }: PaymentUploadProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -141,6 +151,62 @@ const PaymentUpload = ({
                 <span className="font-bold text-primary">{total} جنيه</span>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Payment Details Inputs */}
+        {selectedMethod && (
+          <div className="animate-fade-in space-y-3">
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5 text-right">
+                رقم المعاملة <span className="text-destructive">*</span>
+              </label>
+              <input
+                type="text"
+                value={paymentDetails.transactionNumber}
+                onChange={(e) =>
+                  onPaymentDetailsChange({ ...paymentDetails, transactionNumber: e.target.value })
+                }
+                placeholder="أدخل رقم المعاملة من التحويل"
+                className="gform-input text-sm"
+                dir="ltr"
+              />
+            </div>
+
+            {(selectedMethod === "vodafone" || selectedMethod === "orange") && (
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1.5 text-right">
+                  الرقم اللي حولت منه <span className="text-destructive">*</span>
+                </label>
+                <input
+                  type="tel"
+                  value={paymentDetails.senderPhone}
+                  onChange={(e) =>
+                    onPaymentDetailsChange({ ...paymentDetails, senderPhone: e.target.value })
+                  }
+                  placeholder="01xxxxxxxxx"
+                  className="gform-input text-sm"
+                  dir="ltr"
+                />
+              </div>
+            )}
+
+            {selectedMethod === "instapay" && (
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1.5 text-right">
+                  الاسم على الحساب <span className="text-destructive">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={paymentDetails.senderName}
+                  onChange={(e) =>
+                    onPaymentDetailsChange({ ...paymentDetails, senderName: e.target.value })
+                  }
+                  placeholder="الاسم المسجل على InstaPay"
+                  className="gform-input text-sm text-right"
+                />
+              </div>
+            )}
           </div>
         )}
 
