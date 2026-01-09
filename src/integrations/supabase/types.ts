@@ -29,6 +29,7 @@ export type Database = {
           selected_package: string
           sender_name: string | null
           sender_phone: string | null
+          status: string
           student_tickets: number
           total_price: number
           transaction_number: string
@@ -48,6 +49,7 @@ export type Database = {
           selected_package: string
           sender_name?: string | null
           sender_phone?: string | null
+          status?: string
           student_tickets?: number
           total_price: number
           transaction_number: string
@@ -67,6 +69,7 @@ export type Database = {
           selected_package?: string
           sender_name?: string | null
           sender_phone?: string | null
+          status?: string
           student_tickets?: number
           total_price?: number
           transaction_number?: string
