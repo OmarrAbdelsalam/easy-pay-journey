@@ -87,7 +87,7 @@ const CustomerInfo = ({
                 className={`py-2 px-3 rounded-lg border text-sm font-medium transition-all ${
                   customerInfo.year === year
                     ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-slate-100 border-border hover:border-primary/50"
+                    : "bg-gray-100 border-border hover:border-primary/50"
                 }`}
               >
                 {year}
