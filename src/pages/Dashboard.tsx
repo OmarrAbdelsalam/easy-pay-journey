@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Lock, Search, Download, Eye, X, Calendar, CreditCard, Package, Users, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Lock, Search, Download, Eye, X, Calendar, CreditCard, Package, Users, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
@@ -145,8 +145,33 @@ const Dashboard = () => {
   const totalTickets = filteredBookings.reduce((sum, b) => sum + b.student_tickets + b.companion_tickets, 0);
   const pendingCount = bookings.filter(b => b.status === "pending").length;
 
+  // Check for duplicates
+  const getDuplicateCount = (booking: Booking, field: 'sender' | 'transaction') => {
+    if (field === 'sender') {
+      const senderValue = booking.sender_name || booking.sender_phone;
+      if (!senderValue) return 0;
+      return bookings.filter(b => 
+        b.id !== booking.id && 
+        ((b.sender_name && b.sender_name === booking.sender_name) || 
+         (b.sender_phone && b.sender_phone === booking.sender_phone))
+      ).length;
+    } else {
+      if (!booking.transaction_number) return 0;
+      return bookings.filter(b => 
+        b.id !== booking.id && 
+        b.transaction_number === booking.transaction_number
+      ).length;
+    }
+  };
+
+  const paymentMethodLabels: Record<string, string> = {
+    instapay: "InstaPay",
+    vodafone: "Vodafone",
+    orange: "Orange"
+  };
+
   const exportToCSV = () => {
-    const headers = ["رقم الطلب", "الاسم", "الهاتف", "الرقم القومي", "السنة", "الباكدج", "تذاكر طلاب", "تذاكر مرافقين", "طريقة الدفع", "رقم التحويل", "المحول منه", "الإجمالي", "الحالة", "التاريخ"];
+    const headers = ["رقم الطلب", "الاسم", "الهاتف", "الرقم القومي", "السنة", "الباكدج", "تذاكر طلاب", "تذاكر مرافقين", "وسيلة الدفع", "رقم المعاملة", "المحول منه", "الإجمالي", "الحالة", "التاريخ"];
     const rows = filteredBookings.map((b) => [
       b.order_number,
       b.customer_name,
@@ -156,7 +181,7 @@ const Dashboard = () => {
       b.selected_package === "with-ski" ? "مع سكي" : "بدون سكي",
       b.student_tickets,
       b.companion_tickets,
-      b.payment_method,
+      paymentMethodLabels[b.payment_method] || b.payment_method,
       b.transaction_number,
       b.sender_name || b.sender_phone || "-",
       b.total_price,
@@ -336,9 +361,10 @@ const Dashboard = () => {
                   <th className="text-right p-3 font-medium text-slate-300">الاسم</th>
                   <th className="text-right p-3 font-medium text-slate-300">الهاتف</th>
                   <th className="text-right p-3 font-medium text-slate-300">المحول منه</th>
+                  <th className="text-right p-3 font-medium text-slate-300">وسيلة الدفع</th>
+                  <th className="text-right p-3 font-medium text-slate-300">رقم المعاملة</th>
                   <th className="text-right p-3 font-medium text-slate-300">الباكدج</th>
                   <th className="text-right p-3 font-medium text-slate-300">المرافقين</th>
-                  <th className="text-right p-3 font-medium text-slate-300">رقم التحويل</th>
                   <th className="text-right p-3 font-medium text-slate-300">الإجمالي</th>
                   <th className="text-right p-3 font-medium text-slate-300">الحالة</th>
                   <th className="text-right p-3 font-medium text-slate-300">الإجراء</th>
@@ -348,13 +374,13 @@ const Dashboard = () => {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={11} className="text-center p-8 text-slate-400">
+                    <td colSpan={12} className="text-center p-8 text-slate-400">
                       جاري التحميل...
                     </td>
                   </tr>
                 ) : filteredBookings.length === 0 ? (
                   <tr>
-                    <td colSpan={11} className="text-center p-8 text-slate-400">
+                    <td colSpan={12} className="text-center p-8 text-slate-400">
                       لا توجد حجوزات
                     </td>
                   </tr>
@@ -364,8 +390,34 @@ const Dashboard = () => {
                       <td className="p-3 font-mono text-xs text-slate-300">{booking.order_number}</td>
                       <td className="p-3 font-medium text-white">{booking.customer_name}</td>
                       <td className="p-3 text-slate-300" dir="ltr">{booking.customer_phone}</td>
-                      <td className="p-3 text-slate-300">
-                        {booking.sender_name || booking.sender_phone || "-"}
+                      <td className="p-3">
+                        <div className="flex items-center gap-1">
+                          <span className="text-slate-300">
+                            {booking.sender_name || booking.sender_phone || "-"}
+                          </span>
+                          {getDuplicateCount(booking, 'sender') > 0 && (
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 text-[10px]" title={`مستخدم في ${getDuplicateCount(booking, 'sender')} حجز آخر`}>
+                              <AlertTriangle className="w-3 h-3" />
+                              {getDuplicateCount(booking, 'sender')}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="p-3">
+                        <span className="px-2 py-1 rounded text-xs bg-slate-600 text-slate-300">
+                          {paymentMethodLabels[booking.payment_method] || booking.payment_method}
+                        </span>
+                      </td>
+                      <td className="p-3">
+                        <div className="flex items-center gap-1">
+                          <span className="font-mono text-xs text-slate-300">{booking.transaction_number}</span>
+                          {getDuplicateCount(booking, 'transaction') > 0 && (
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 text-[10px]" title={`رقم معاملة مكرر في ${getDuplicateCount(booking, 'transaction')} حجز آخر`}>
+                              <AlertTriangle className="w-3 h-3" />
+                              {getDuplicateCount(booking, 'transaction')}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="p-3">
                         <span className={`px-2 py-1 rounded text-xs ${
@@ -403,7 +455,6 @@ const Dashboard = () => {
                           <span className="text-slate-500 text-xs">-</span>
                         )}
                       </td>
-                      <td className="p-3 font-mono text-xs text-slate-300">{booking.transaction_number}</td>
                       <td className="p-3 font-bold text-green-400">{Number(booking.total_price).toLocaleString()} ج</td>
                       <td className="p-3">
                         {getStatusBadge(booking.status)}
