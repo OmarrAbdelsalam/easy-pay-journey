@@ -65,10 +65,10 @@ const PackageSelection = ({
                   
                   <div className="text-sm flex items-center gap-2">
                     <span className="text-muted-foreground">السعر: </span>
+                    <span className="font-bold text-foreground">{pkg.studentPrice}ج</span>
                     {pkg.highlight && (
                       <span className="text-muted-foreground line-through">{pkg.studentPrice + 350}ج</span>
                     )}
-                    <span className="font-bold text-foreground">{pkg.studentPrice}ج</span>
                   </div>
                 </div>
               </div>
