@@ -236,7 +236,7 @@ const Index = () => {
             });
             localStorage.removeItem(STORAGE_KEY);
           }} className="text-sm text-primary border-primary hover:bg-primary/10">
-                حجز رحلة جديدة
+                حجز آخر
               </Button>
             </div>}
         </div>
