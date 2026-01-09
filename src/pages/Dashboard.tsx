@@ -361,25 +361,39 @@ const Dashboard = () => {
                               
                               {/* Actions */}
                               <div className="flex flex-col gap-2">
-                                {booking.status !== "approved" && (
-                                  <Button
-                                    size="sm"
-                                    className="bg-green-600 hover:bg-green-700 text-white"
-                                    onClick={() => updateBookingStatus(booking.id, "approved")}
+                                {booking.status === "pending" ? (
+                                  <>
+                                    <Button
+                                      size="sm"
+                                      className="bg-green-600 hover:bg-green-700 text-white"
+                                      onClick={() => updateBookingStatus(booking.id, "approved")}
+                                    >
+                                      <CheckCircle className="w-4 h-4 ml-1" />
+                                      موافقة
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      className="bg-red-600 hover:bg-red-700 text-white"
+                                      onClick={() => updateBookingStatus(booking.id, "rejected")}
+                                    >
+                                      <XCircle className="w-4 h-4 ml-1" />
+                                      رفض
+                                    </Button>
+                                  </>
+                                ) : (
+                                  <Select
+                                    value={booking.status}
+                                    onValueChange={(value) => updateBookingStatus(booking.id, value)}
                                   >
-                                    <CheckCircle className="w-4 h-4 ml-1" />
-                                    موافقة
-                                  </Button>
-                                )}
-                                {booking.status !== "rejected" && (
-                                  <Button
-                                    size="sm"
-                                    className="bg-red-600 hover:bg-red-700 text-white"
-                                    onClick={() => updateBookingStatus(booking.id, "rejected")}
-                                  >
-                                    <XCircle className="w-4 h-4 ml-1" />
-                                    رفض
-                                  </Button>
+                                    <SelectTrigger className="w-[140px] bg-white">
+                                      <SelectValue placeholder="تغيير الحالة" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="pending">قيد الانتظار</SelectItem>
+                                      <SelectItem value="approved">موافق</SelectItem>
+                                      <SelectItem value="rejected">مرفوض</SelectItem>
+                                    </SelectContent>
+                                  </Select>
                                 )}
                                 {booking.payment_screenshot_url && (
                                   <Button
@@ -560,27 +574,41 @@ const Dashboard = () => {
 
                   {/* Actions */}
                   <div className="flex items-center gap-2">
-                    {booking.status !== "approved" && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-green-600 border-green-200 hover:bg-green-50"
-                        onClick={() => updateBookingStatus(booking.id, "approved")}
+                    {booking.status === "pending" ? (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-green-600 border-green-200 hover:bg-green-50"
+                          onClick={() => updateBookingStatus(booking.id, "approved")}
+                        >
+                          <CheckCircle className="w-4 h-4 ml-1" />
+                          موافقة
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-red-600 border-red-200 hover:bg-red-50"
+                          onClick={() => updateBookingStatus(booking.id, "rejected")}
+                        >
+                          <XCircle className="w-4 h-4 ml-1" />
+                          رفض
+                        </Button>
+                      </>
+                    ) : (
+                      <Select
+                        value={booking.status}
+                        onValueChange={(value) => updateBookingStatus(booking.id, value)}
                       >
-                        <CheckCircle className="w-4 h-4 ml-1" />
-                        موافقة
-                      </Button>
-                    )}
-                    {booking.status !== "rejected" && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-red-600 border-red-200 hover:bg-red-50"
-                        onClick={() => updateBookingStatus(booking.id, "rejected")}
-                      >
-                        <XCircle className="w-4 h-4 ml-1" />
-                        رفض
-                      </Button>
+                        <SelectTrigger className="w-[140px]">
+                          <SelectValue placeholder="تغيير الحالة" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">قيد الانتظار</SelectItem>
+                          <SelectItem value="approved">موافق</SelectItem>
+                          <SelectItem value="rejected">مرفوض</SelectItem>
+                        </SelectContent>
+                      </Select>
                     )}
                     {booking.payment_screenshot_url && (
                       <Button
