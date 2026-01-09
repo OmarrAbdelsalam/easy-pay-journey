@@ -61,11 +61,28 @@ const PackageSelection = ({
                       {pkg.images.map((img, index) => <img key={index} src={img} alt={`Ski Egypt ${index + 1}`} className="w-20 h-20 rounded-lg object-cover" />)}
                     </div>}
                   
-                  <div className="text-sm flex items-center gap-2">
-                    <span className="text-muted-foreground">السعر: </span>
-                    <span className="font-bold text-foreground">{pkg.studentPrice}ج</span>
-                    {pkg.highlight && <span className="text-destructive line-through">{pkg.studentPrice + 350}ج</span>}
-                  </div>
+                  {pkg.highlight ? (
+                    <div className="text-sm space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">رحلة القاهرة:</span>
+                        <span className="font-bold text-foreground">310ج</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">Ski Egypt:</span>
+                        <span className="font-bold text-foreground">350ج</span>
+                        <span className="text-destructive line-through">700ج</span>
+                      </div>
+                      <div className="flex items-center gap-2 pt-1 border-t border-border">
+                        <span className="text-muted-foreground">الإجمالي:</span>
+                        <span className="font-bold text-foreground">{pkg.studentPrice}ج</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-sm flex items-center gap-2">
+                      <span className="text-muted-foreground">السعر: </span>
+                      <span className="font-bold text-foreground">{pkg.studentPrice}ج</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>;
