@@ -8,7 +8,6 @@ import CustomerInfo from "@/components/CustomerInfo";
 import PaymentUpload, { PaymentMethod } from "@/components/PaymentUpload";
 import OrderConfirmation from "@/components/OrderConfirmation";
 import { Button } from "@/components/ui/button";
-
 const Index = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedPackage, setSelectedPackage] = useState<PackageType>(null);
@@ -17,14 +16,12 @@ const Index = () => {
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
     phone: "",
-    nationalId: "",
+    nationalId: ""
   });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(null);
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
-
   const totalSteps = 5;
   const stepLabels = ["الباكدج", "التذاكر", "البيانات", "الدفع", "التأكيد"];
-
   const canProceed = () => {
     switch (currentStep) {
       case 1:
@@ -32,95 +29,50 @@ const Index = () => {
       case 2:
         return studentTickets > 0 || nonStudentTickets > 0;
       case 3:
-        return (
-          customerInfo.name.trim() !== "" &&
-          customerInfo.phone.trim() !== "" &&
-          customerInfo.nationalId.trim().length === 14
-        );
+        return customerInfo.name.trim() !== "" && customerInfo.phone.trim() !== "" && customerInfo.nationalId.trim().length === 14;
       case 4:
         return paymentMethod !== null && paymentScreenshot !== null;
       default:
         return true;
     }
   };
-
   const handleNext = () => {
     if (currentStep < totalSteps && canProceed()) {
-      setCurrentStep((prev) => prev + 1);
+      setCurrentStep(prev => prev + 1);
     }
   };
-
   const handleBack = () => {
     if (currentStep > 1) {
-      setCurrentStep((prev) => prev - 1);
+      setCurrentStep(prev => prev - 1);
     }
   };
-
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return (
-          <PackageSelection
-            selectedPackage={selectedPackage}
-            onSelect={setSelectedPackage}
-          />
-        );
+        return <PackageSelection selectedPackage={selectedPackage} onSelect={setSelectedPackage} />;
       case 2:
-        return (
-          <TicketQuantity
-            selectedPackage={selectedPackage}
-            studentTickets={studentTickets}
-            nonStudentTickets={nonStudentTickets}
-            onStudentTicketsChange={setStudentTickets}
-            onNonStudentTicketsChange={setNonStudentTickets}
-          />
-        );
+        return <TicketQuantity selectedPackage={selectedPackage} studentTickets={studentTickets} nonStudentTickets={nonStudentTickets} onStudentTicketsChange={setStudentTickets} onNonStudentTicketsChange={setNonStudentTickets} />;
       case 3:
-        return (
-          <CustomerInfo
-            customerInfo={customerInfo}
-            onCustomerInfoChange={setCustomerInfo}
-          />
-        );
+        return <CustomerInfo customerInfo={customerInfo} onCustomerInfoChange={setCustomerInfo} />;
       case 4:
-        return (
-          <PaymentUpload
-            selectedPackage={selectedPackage}
-            studentTickets={studentTickets}
-            nonStudentTickets={nonStudentTickets}
-            selectedMethod={paymentMethod}
-            onMethodSelect={setPaymentMethod}
-            paymentScreenshot={paymentScreenshot}
-            onScreenshotChange={setPaymentScreenshot}
-          />
-        );
+        return <PaymentUpload selectedPackage={selectedPackage} studentTickets={studentTickets} nonStudentTickets={nonStudentTickets} selectedMethod={paymentMethod} onMethodSelect={setPaymentMethod} paymentScreenshot={paymentScreenshot} onScreenshotChange={setPaymentScreenshot} />;
       case 5:
-        return (
-          <OrderConfirmation
-            orderDetails={{
-              selectedPackage,
-              studentTickets,
-              nonStudentTickets,
-              customerInfo,
-              paymentMethod,
-            }}
-          />
-        );
+        return <OrderConfirmation orderDetails={{
+          selectedPackage,
+          studentTickets,
+          nonStudentTickets,
+          customerInfo,
+          paymentMethod
+        }} />;
       default:
         return null;
     }
   };
-
-  return (
-    <div className="min-h-screen bg-background py-4 sm:py-8">
+  return <div className="min-h-screen bg-background py-4 sm:py-8">
       <div className="container max-w-2xl mx-auto px-3 sm:px-4">
         {/* Hero Image */}
         <div className="mb-4 rounded-lg overflow-hidden shadow-sm h-32 sm:h-40 md:h-48">
-          <img
-            src={heroImage}
-            alt="رحلة القاهرة - Cairo Trip"
-            className="w-full h-[166%] object-cover object-[center_100%]"
-          />
+          <img src={heroImage} alt="رحلة القاهرة - Cairo Trip" className="w-full h-[166%] object-[center_100%] object-contain" />
         </div>
 
         {/* Header Card */}
@@ -149,18 +101,12 @@ const Index = () => {
           <p className="mt-4 text-muted-foreground text-sm">
             بدل + 700ج
           </p>
-          <p className="mt-6 text-destructive text-sm">
-            * تشير إلى أنّ السؤال مطلوب
-          </p>
+          
         </div>
 
         {/* Step Indicator */}
         <div className="gform-section p-4 mb-3">
-          <StepIndicator
-            currentStep={currentStep}
-            totalSteps={totalSteps}
-            labels={stepLabels}
-          />
+          <StepIndicator currentStep={currentStep} totalSteps={totalSteps} labels={stepLabels} />
         </div>
 
         {/* Form Content */}
@@ -168,60 +114,40 @@ const Index = () => {
           <div className="min-h-[300px] sm:min-h-[350px]">{renderStep()}</div>
 
           {/* Navigation Buttons */}
-          {currentStep < totalSteps && (
-            <div className="flex justify-between mt-6 pt-4 border-t border-border" dir="rtl">
-              <Button
-                variant="ghost"
-                onClick={handleBack}
-                disabled={currentStep === 1}
-                className="flex items-center gap-2 text-primary hover:text-primary hover:bg-primary/10"
-              >
+          {currentStep < totalSteps && <div className="flex justify-between mt-6 pt-4 border-t border-border" dir="rtl">
+              <Button variant="ghost" onClick={handleBack} disabled={currentStep === 1} className="flex items-center gap-2 text-primary hover:text-primary hover:bg-primary/10">
                 <ArrowRight className="w-4 h-4" />
                 رجوع
               </Button>
 
-              <Button
-                onClick={handleNext}
-                disabled={!canProceed()}
-                className="flex items-center gap-2 bg-primary hover:bg-primary/90"
-              >
+              <Button onClick={handleNext} disabled={!canProceed()} className="flex items-center gap-2 bg-primary hover:bg-primary/90">
                 {currentStep === 4 ? "تأكيد الحجز" : "التالي"}
                 <ArrowLeft className="w-4 h-4" />
               </Button>
-            </div>
-          )}
+            </div>}
 
-          {currentStep === totalSteps && (
-            <div className="mt-6 pt-4 border-t border-border text-center">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setCurrentStep(1);
-                  setSelectedPackage(null);
-                  setStudentTickets(0);
-                  setNonStudentTickets(0);
-                  setCustomerInfo({ name: "", phone: "", nationalId: "" });
-                  setPaymentMethod(null);
-                  setPaymentScreenshot(null);
-                }}
-                className="text-primary border-primary hover:bg-primary/10"
-              >
+          {currentStep === totalSteps && <div className="mt-6 pt-4 border-t border-border text-center">
+              <Button variant="outline" onClick={() => {
+            setCurrentStep(1);
+            setSelectedPackage(null);
+            setStudentTickets(0);
+            setNonStudentTickets(0);
+            setCustomerInfo({
+              name: "",
+              phone: "",
+              nationalId: ""
+            });
+            setPaymentMethod(null);
+            setPaymentScreenshot(null);
+          }} className="text-primary border-primary hover:bg-primary/10">
                 حجز رحلة جديدة
               </Button>
-            </div>
-          )}
+            </div>}
         </div>
 
         {/* Footer */}
-        <p className="text-center text-sm text-muted-foreground mt-4" dir="rtl">
-          للاستفسار تواصل معانا على{" "}
-          <a href="tel:01012345678" className="text-primary hover:underline" dir="ltr">
-            01012345678
-          </a>
-        </p>
+        
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
