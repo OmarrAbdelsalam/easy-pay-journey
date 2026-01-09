@@ -63,8 +63,11 @@ const PackageSelection = ({
                       {pkg.images.map((img, index) => <img key={index} src={img} alt={`Ski Egypt ${index + 1}`} className="w-20 h-20 rounded-lg object-cover" />)}
                     </div>}
                   
-                  <div className="text-sm">
+                  <div className="text-sm flex items-center gap-2">
                     <span className="text-muted-foreground">السعر: </span>
+                    {pkg.highlight && (
+                      <span className="text-muted-foreground line-through">{pkg.studentPrice + 350}ج</span>
+                    )}
                     <span className="font-bold text-foreground">{pkg.studentPrice}ج</span>
                   </div>
                 </div>
