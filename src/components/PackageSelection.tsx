@@ -29,39 +29,39 @@ const PackageSelection = ({
   onSelect
 }: PackageSelectionProps) => {
   return <div className="animate-fade-in" dir="rtl">
-      <label className="gform-label">
+      <label className="gform-label md:text-base">
         اختار باكدج رحلتك <span className="text-destructive">*</span>
       </label>
 
-      <div className="space-y-3 mt-4">
+      <div className="space-y-3 md:space-y-4 mt-4">
         {packages.map(pkg => {
         const isSelected = selectedPackage === pkg.id;
-        return <div key={pkg.id} onClick={() => onSelect(pkg.id)} className={`relative p-4 rounded-lg border cursor-pointer transition-all ${isSelected ? "border-primary bg-primary/5" : "border-border hover:border-primary/30 bg-card"}`}>
-              {pkg.highlight && <span className="absolute -top-2 left-4 bg-primary text-primary-foreground text-xs font-bold px-2 py-0.5 rounded">
+        return <div key={pkg.id} onClick={() => onSelect(pkg.id)} className={`relative p-4 md:p-5 rounded-lg border cursor-pointer transition-all ${isSelected ? "border-primary bg-primary/5" : "border-border hover:border-primary/30 bg-card"}`}>
+              {pkg.highlight && <span className="absolute -top-2 left-4 bg-primary text-primary-foreground text-xs md:text-sm font-bold px-2 py-0.5 rounded">
                   {pkg.savings}
                 </span>}
               
-              <div className="flex items-start gap-3">
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${isSelected ? "border-primary bg-primary" : "border-muted-foreground"}`}>
-                  {isSelected && <div className="w-2 h-2 rounded-full bg-primary-foreground" />}
+              <div className="flex items-start gap-3 md:gap-4">
+                <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${isSelected ? "border-primary bg-primary" : "border-muted-foreground"}`}>
+                  {isSelected && <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-primary-foreground" />}
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 mb-1 md:mb-2">
                     
-                    <h3 className="font-semibold text-foreground">
+                    <h3 className="font-semibold text-foreground md:text-lg">
                       {pkg.title}
                     </h3>
                   </div>
-                  <p className="text-sm text-muted-foreground mb-2">
+                  <p className="text-sm md:text-base text-muted-foreground mb-2 md:mb-3">
                     {pkg.description}
                   </p>
                   
                   {/* Ski Egypt Images */}
-                  {pkg.images && <div className="flex gap-2 mb-3">
-                      {pkg.images.map((img, index) => <img key={index} src={img} alt={`Ski Egypt ${index + 1}`} className="w-20 h-20 rounded-lg object-cover" />)}
+                  {pkg.images && <div className="flex gap-2 md:gap-3 mb-3 md:mb-4">
+                      {pkg.images.map((img, index) => <img key={index} src={img} alt={`Ski Egypt ${index + 1}`} className="w-20 h-20 md:w-24 md:h-24 rounded-lg object-cover" />)}
                     </div>}
                   
-                  <div className="text-sm flex items-center gap-2">
+                  <div className="text-sm md:text-base flex items-center gap-2">
                     <span className="text-muted-foreground">السعر: </span>
                     <span className="font-bold text-foreground">{pkg.studentPrice}ج</span>
                     {pkg.highlight && <span className="text-destructive line-through">{pkg.studentPrice + 350}ج</span>}

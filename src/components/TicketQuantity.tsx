@@ -39,45 +39,45 @@ const TicketQuantity = ({
     onCompanionsChange(updated);
   };
   return <div className="animate-fade-in" dir="rtl">
-      <div className="space-y-6">
+      <div className="space-y-6 md:space-y-8">
         {/* Pricing Info */}
-        <div className="p-3 rounded-lg border border-border bg-muted/30">
-          <p className="text-sm text-muted-foreground">
+        <div className="p-3 md:p-4 rounded-lg border border-border bg-muted/30">
+          <p className="text-sm md:text-base text-muted-foreground">
             سعر الطلاب: <span className="font-bold text-foreground">310ج</span> | سعر المرافقين: <span className="font-bold text-foreground">410ج</span>
           </p>
         </div>
 
         {/* Companions Counter */}
         <div>
-          <label className="text-sm font-medium text-foreground">
+          <label className="text-sm md:text-base font-medium text-foreground">
             عدد المرافقين (إن وجد)
           </label>
-          <p className="text-xs text-muted-foreground mb-3">
+          <p className="text-xs md:text-sm text-muted-foreground mb-3 md:mb-4">
             يمكن لكل مرافق اختيار باكدج مختلف
           </p>
-          <div className="flex items-center gap-4">
-            <button type="button" onClick={removeCompanion} className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors" disabled={companions.length === 0}>
-              <Minus className="w-4 h-4" />
+          <div className="flex items-center gap-4 md:gap-6">
+            <button type="button" onClick={removeCompanion} className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors" disabled={companions.length === 0}>
+              <Minus className="w-4 h-4 md:w-5 md:h-5" />
             </button>
-            <span className="w-16 text-center text-2xl font-bold">{companions.length}</span>
-            <button type="button" onClick={addCompanion} className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors">
-              <Plus className="w-4 h-4" />
+            <span className="w-16 text-center text-2xl md:text-3xl font-bold">{companions.length}</span>
+            <button type="button" onClick={addCompanion} className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors">
+              <Plus className="w-4 h-4 md:w-5 md:h-5" />
             </button>
           </div>
         </div>
 
         {/* Companions Package Selection */}
-        {companions.length > 0 && <div className="space-y-3">
-            <label className="gform-label">اختر باكدج كل مرافق</label>
-            {companions.map((companion, index) => <div key={index} className="p-3 rounded-lg border border-border bg-card">
-                <p className="text-sm font-medium mb-2">المرافق {index + 1}</p>
-                <div className="flex gap-2">
-                  <button type="button" onClick={() => updateCompanionPackage(index, "without-ski")} className={`flex-1 p-2 rounded-lg border text-sm transition-all flex items-center justify-center gap-2 ${companion.packageType === "without-ski" ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/30"}`}>
+        {companions.length > 0 && <div className="space-y-3 md:space-y-4">
+            <label className="gform-label md:text-base">اختر باكدج كل مرافق</label>
+            {companions.map((companion, index) => <div key={index} className="p-3 md:p-4 rounded-lg border border-border bg-card">
+                <p className="text-sm md:text-base font-medium mb-2 md:mb-3">المرافق {index + 1}</p>
+                <div className="flex gap-2 md:gap-3">
+                  <button type="button" onClick={() => updateCompanionPackage(index, "without-ski")} className={`flex-1 p-2 md:p-3 rounded-lg border text-sm md:text-base transition-all flex items-center justify-center gap-2 ${companion.packageType === "without-ski" ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/30"}`}>
                     
                     <span>رحلة القاهرة (410ج)</span>
                   </button>
-                  <button type="button" onClick={() => updateCompanionPackage(index, "with-ski")} className={`relative flex-1 p-2 pt-3 rounded-lg border text-sm transition-all flex items-center justify-center gap-2 ${companion.packageType === "with-ski" ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/30"}`}>
-                    <span className="absolute -top-3 left-2 bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded">وفر 350ج!</span>
+                  <button type="button" onClick={() => updateCompanionPackage(index, "with-ski")} className={`relative flex-1 p-2 md:p-3 pt-3 md:pt-4 rounded-lg border text-sm md:text-base transition-all flex items-center justify-center gap-2 ${companion.packageType === "with-ski" ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/30"}`}>
+                    <span className="absolute -top-3 left-2 bg-primary text-primary-foreground text-[10px] md:text-xs font-bold px-1.5 py-0.5 rounded">وفر 350ج!</span>
                     
                     <span>+ Ski Egypt (760ج)</span>
                   </button>
@@ -86,8 +86,8 @@ const TicketQuantity = ({
           </div>}
 
         {/* Total */}
-        <div className="pt-4 border-t border-border">
-          <div className="space-y-2 text-sm">
+        <div className="pt-4 md:pt-5 border-t border-border">
+          <div className="space-y-2 md:space-y-3 text-sm md:text-base">
             <div className="flex justify-between">
               <span>تذكرتك (طالب) - {selectedPackage === "with-ski" ? "رحلة القاهرة + Ski Egypt" : "رحلة القاهرة"}</span>
               <span>{studentTotal} جنيه</span>
@@ -97,9 +97,9 @@ const TicketQuantity = ({
                 <span>{companionsTotal} جنيه</span>
               </div>}
           </div>
-        <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
-            <span className="font-medium text-sm">الإجمالي المطلوب تحويله</span>
-            <span className="font-semibold text-base text-primary">{grandTotal} جنيه</span>
+        <div className="flex items-center justify-between mt-2 md:mt-3 pt-2 md:pt-3 border-t border-border">
+            <span className="font-medium text-sm md:text-base">الإجمالي المطلوب تحويله</span>
+            <span className="font-semibold text-base md:text-lg text-primary">{grandTotal} جنيه</span>
           </div>
         </div>
       </div>
