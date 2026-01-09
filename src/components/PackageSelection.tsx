@@ -47,9 +47,7 @@ const PackageSelection = ({
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className={isSelected ? "text-primary" : "text-muted-foreground"}>
-                      {pkg.icon}
-                    </span>
+                    
                     <h3 className="font-semibold text-foreground">
                       {pkg.title}
                     </h3>
@@ -66,9 +64,7 @@ const PackageSelection = ({
                   <div className="text-sm flex items-center gap-2">
                     <span className="text-muted-foreground">السعر: </span>
                     <span className="font-bold text-foreground">{pkg.studentPrice}ج</span>
-                    {pkg.highlight && (
-                      <span className="text-destructive line-through">{pkg.studentPrice + 350}ج</span>
-                    )}
+                    {pkg.highlight && <span className="text-destructive line-through">{pkg.studentPrice + 350}ج</span>}
                   </div>
                 </div>
               </div>
