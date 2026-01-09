@@ -142,6 +142,9 @@ const Index = () => {
         packageType: c.packageType
       }));
       
+      console.log('Companions:', companions);
+      console.log('Companions Details to save:', companionsDetails);
+      
       // Insert booking
       const { error: insertError } = await supabase
         .from('bookings')
@@ -150,7 +153,7 @@ const Index = () => {
           selected_package: selectedPackage,
           student_tickets: 1,
           companion_tickets: companions.length,
-          companions_details: companionsDetails,
+          companions_details: companionsDetails.length > 0 ? companionsDetails : null,
           customer_name: customerInfo.name,
           customer_phone: customerInfo.phone,
           customer_national_id: customerInfo.nationalId,
