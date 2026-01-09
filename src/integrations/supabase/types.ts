@@ -17,6 +17,7 @@ export type Database = {
       bookings: {
         Row: {
           companion_tickets: number
+          companions_details: Json | null
           created_at: string
           customer_name: string
           customer_national_id: string
@@ -37,6 +38,7 @@ export type Database = {
         }
         Insert: {
           companion_tickets?: number
+          companions_details?: Json | null
           created_at?: string
           customer_name: string
           customer_national_id: string
@@ -57,6 +59,7 @@ export type Database = {
         }
         Update: {
           companion_tickets?: number
+          companions_details?: Json | null
           created_at?: string
           customer_name?: string
           customer_national_id?: string

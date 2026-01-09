@@ -136,6 +136,12 @@ const Index = () => {
       }, 0);
       const totalPrice = studentTotal + companionsTotal;
       
+      // Prepare companions details
+      const companionsDetails = companions.map((c, index) => ({
+        index: index + 1,
+        packageType: c.packageType
+      }));
+      
       // Insert booking
       const { error: insertError } = await supabase
         .from('bookings')
@@ -144,6 +150,7 @@ const Index = () => {
           selected_package: selectedPackage,
           student_tickets: 1,
           companion_tickets: companions.length,
+          companions_details: companionsDetails,
           customer_name: customerInfo.name,
           customer_phone: customerInfo.phone,
           customer_national_id: customerInfo.nationalId,
