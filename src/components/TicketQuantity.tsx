@@ -35,34 +35,34 @@ const TicketQuantity = ({
       <div className="space-y-6">
         {/* Student Tickets */}
         <div className="bg-card rounded-xl border border-border p-4">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h3 className="font-semibold text-foreground">تذاكر الطلاب</h3>
               <p className="text-sm text-muted-foreground">
                 {pkg.studentPrice} جنيه للتذكرة
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center gap-3">
               <button
                 type="button"
                 onClick={() => onStudentTicketsChange(Math.max(0, studentTickets - 1))}
-                className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
+                className="w-12 h-12 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors active:scale-95"
                 disabled={studentTickets === 0}
               >
-                <Minus className="w-4 h-4" />
+                <Minus className="w-5 h-5" />
               </button>
-              <span className="w-12 text-center text-xl font-bold">{studentTickets}</span>
+              <span className="w-14 text-center text-2xl font-bold">{studentTickets}</span>
               <button
                 type="button"
                 onClick={() => onStudentTicketsChange(studentTickets + 1)}
-                className="w-10 h-10 rounded-full border border-primary bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors"
+                className="w-12 h-12 rounded-full border border-primary bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors active:scale-95"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-5 h-5" />
               </button>
             </div>
           </div>
           {studentTickets > 0 && (
-            <div className="text-left text-sm font-medium text-primary">
+            <div className="text-center sm:text-left text-sm font-medium text-primary mt-3 pt-3 border-t border-border">
               = {studentTotal} جنيه
             </div>
           )}
@@ -70,34 +70,34 @@ const TicketQuantity = ({
 
         {/* Non-Student Tickets */}
         <div className="bg-card rounded-xl border border-border p-4">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h3 className="font-semibold text-foreground">تذاكر غير الطلاب</h3>
               <p className="text-sm text-muted-foreground">
                 {pkg.nonStudentPrice} جنيه للتذكرة
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center gap-3">
               <button
                 type="button"
                 onClick={() => onNonStudentTicketsChange(Math.max(0, nonStudentTickets - 1))}
-                className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
+                className="w-12 h-12 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors active:scale-95"
                 disabled={nonStudentTickets === 0}
               >
-                <Minus className="w-4 h-4" />
+                <Minus className="w-5 h-5" />
               </button>
-              <span className="w-12 text-center text-xl font-bold">{nonStudentTickets}</span>
+              <span className="w-14 text-center text-2xl font-bold">{nonStudentTickets}</span>
               <button
                 type="button"
                 onClick={() => onNonStudentTicketsChange(nonStudentTickets + 1)}
-                className="w-10 h-10 rounded-full border border-primary bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors"
+                className="w-12 h-12 rounded-full border border-primary bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors active:scale-95"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-5 h-5" />
               </button>
             </div>
           </div>
           {nonStudentTickets > 0 && (
-            <div className="text-left text-sm font-medium text-primary">
+            <div className="text-center sm:text-left text-sm font-medium text-primary mt-3 pt-3 border-t border-border">
               = {nonStudentTotal} جنيه
             </div>
           )}
@@ -106,11 +106,11 @@ const TicketQuantity = ({
         {/* Total */}
         {(studentTickets > 0 || nonStudentTickets > 0) && (
           <div className="bg-primary/5 rounded-xl border-2 border-primary p-4">
-            <div className="flex items-center justify-between">
-              <span className="font-bold text-lg">الإجمالي المطلوب تحويله</span>
-              <span className="font-bold text-2xl text-primary">{grandTotal} جنيه</span>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-center sm:text-right">
+              <span className="font-bold text-base sm:text-lg">الإجمالي المطلوب تحويله</span>
+              <span className="font-bold text-2xl sm:text-3xl text-primary">{grandTotal} جنيه</span>
             </div>
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-muted-foreground mt-2 text-center sm:text-right">
               {studentTickets > 0 && `${studentTickets} تذكرة طالب`}
               {studentTickets > 0 && nonStudentTickets > 0 && " + "}
               {nonStudentTickets > 0 && `${nonStudentTickets} تذكرة غير طالب`}
