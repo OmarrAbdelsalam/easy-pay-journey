@@ -15,7 +15,8 @@ const Index = () => {
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
     phone: "",
-    nationalId: ""
+    nationalId: "",
+    year: ""
   });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(null);
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
@@ -30,7 +31,7 @@ const Index = () => {
         return true;
       // Always at least 1 student ticket
       case 3:
-        return customerInfo.name.trim() !== "" && customerInfo.phone.trim() !== "" && customerInfo.nationalId.trim().length === 14;
+        return customerInfo.name.trim() !== "" && customerInfo.phone.trim() !== "" && customerInfo.nationalId.trim().length === 14 && customerInfo.year !== "";
       case 4:
         return paymentMethod !== null && paymentScreenshot !== null;
       default:
@@ -136,7 +137,8 @@ const Index = () => {
             setCustomerInfo({
               name: "",
               phone: "",
-              nationalId: ""
+              nationalId: "",
+              year: ""
             });
             setPaymentMethod(null);
             setPaymentScreenshot(null);
