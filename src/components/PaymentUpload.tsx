@@ -99,12 +99,12 @@ const PaymentUpload = ({
           <label className="block text-sm font-medium text-foreground mb-3">
             اختر طريقة الدفع <span className="text-destructive">*</span>
           </label>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
             {paymentMethods.map((method) => (
               <div
                 key={method.id}
                 onClick={() => onMethodSelect(method.id)}
-                className={`payment-option flex items-center justify-center p-4 overflow-hidden ${
+                className={`payment-option flex items-center justify-center p-2 sm:p-4 overflow-hidden ${
                   selectedMethod === method.id ? "selected" : ""
                 }`}
               >
@@ -113,8 +113,8 @@ const PaymentUpload = ({
                   alt={method.name}
                   className={`w-full object-contain ${
                     method.id === "instapay" || method.id === "vodafone"
-                      ? "h-20 scale-150"
-                      : "h-16 scale-125"
+                      ? "h-12 sm:h-20 scale-125 sm:scale-150"
+                      : "h-10 sm:h-16 scale-110 sm:scale-125"
                   }`}
                 />
               </div>

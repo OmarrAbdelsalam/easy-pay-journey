@@ -81,12 +81,12 @@ const PackageSelection = ({ selectedPackage, onSelect }: PackageSelectionProps) 
                   <p className="text-sm text-muted-foreground mb-3">
                     {pkg.description}
                   </p>
-                  <div className="flex gap-4 text-sm">
-                    <div className="bg-muted/50 rounded-lg px-3 py-2">
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-sm">
+                    <div className="bg-muted/50 rounded-lg px-3 py-2 flex-1 text-center sm:text-right">
                       <span className="text-muted-foreground">طالب: </span>
                       <span className="font-bold text-primary">{pkg.studentPrice} جنيه</span>
                     </div>
-                    <div className="bg-muted/50 rounded-lg px-3 py-2">
+                    <div className="bg-muted/50 rounded-lg px-3 py-2 flex-1 text-center sm:text-right">
                       <span className="text-muted-foreground">غير طالب: </span>
                       <span className="font-bold text-primary">{pkg.nonStudentPrice} جنيه</span>
                     </div>

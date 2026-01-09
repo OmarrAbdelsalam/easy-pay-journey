@@ -123,24 +123,24 @@ const Index = () => {
       </div>
 
       {/* Form Section */}
-      <div className="container max-w-2xl mx-auto px-4 py-8 -mt-8 relative z-10">
-        <div className="form-card">
+      <div className="container max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8 -mt-4 sm:-mt-8 relative z-10">
+        <div className="form-card p-4 sm:p-6 md:p-8">
           <StepIndicator
             currentStep={currentStep}
             totalSteps={totalSteps}
             labels={stepLabels}
           />
 
-          <div className="min-h-[400px]">{renderStep()}</div>
+          <div className="min-h-[350px] sm:min-h-[400px]">{renderStep()}</div>
 
           {/* Navigation Buttons */}
           {currentStep < totalSteps && (
-            <div className="flex justify-between mt-8 pt-6 border-t border-border" dir="rtl">
+            <div className="flex justify-between mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-border" dir="rtl">
               <Button
                 variant="outline"
                 onClick={handleBack}
                 disabled={currentStep === 1}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-sm sm:text-base px-3 sm:px-4"
               >
                 <ArrowRight className="w-4 h-4" />
                 رجوع
@@ -149,7 +149,7 @@ const Index = () => {
               <Button
                 onClick={handleNext}
                 disabled={!canProceed()}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-sm sm:text-base px-4 sm:px-6"
               >
                 {currentStep === 4 ? "تأكيد الحجز" : "التالي"}
                 <ArrowLeft className="w-4 h-4" />

@@ -8,32 +8,32 @@ interface StepIndicatorProps {
 
 const StepIndicator = ({ currentStep, totalSteps, labels }: StepIndicatorProps) => {
   return (
-    <div className="flex items-center justify-center w-full mb-8">
+    <div className="flex items-center justify-center w-full mb-6 md:mb-8 overflow-x-auto px-2">
       {Array.from({ length: totalSteps }, (_, index) => {
         const stepNumber = index + 1;
         const isCompleted = stepNumber < currentStep;
         const isActive = stepNumber === currentStep;
         
         return (
-          <div key={stepNumber} className="flex items-center">
+          <div key={stepNumber} className="flex items-center flex-shrink-0">
             <div className="flex flex-col items-center">
               <div
-                className={`step-indicator ${
+                className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-semibold transition-all duration-300 ${
                   isCompleted
-                    ? "step-completed"
+                    ? "bg-accent text-accent-foreground"
                     : isActive
-                    ? "step-active"
-                    : "step-inactive"
+                    ? "bg-primary text-primary-foreground ring-4 ring-primary/20"
+                    : "bg-muted text-muted-foreground"
                 }`}
               >
                 {isCompleted ? (
-                  <Check className="w-5 h-5" />
+                  <Check className="w-4 h-4" />
                 ) : (
                   stepNumber
                 )}
               </div>
               <span
-                className={`mt-2 text-xs md:text-sm font-medium ${
+                className={`mt-1.5 text-[10px] md:text-xs font-medium whitespace-nowrap ${
                   isActive
                     ? "text-primary"
                     : isCompleted
@@ -46,7 +46,7 @@ const StepIndicator = ({ currentStep, totalSteps, labels }: StepIndicatorProps) 
             </div>
             {index < totalSteps - 1 && (
               <div
-                className={`w-12 md:w-20 h-1 mx-2 rounded-full transition-colors duration-300 ${
+                className={`w-6 md:w-16 h-0.5 mx-1 md:mx-2 rounded-full transition-colors duration-300 ${
                   isCompleted ? "bg-accent" : "bg-muted"
                 }`}
               />
