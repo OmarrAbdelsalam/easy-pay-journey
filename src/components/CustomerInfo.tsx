@@ -21,9 +21,9 @@ const CustomerInfo = ({
 
   return (
     <div className="animate-fade-in" dir="rtl">
-      <div className="space-y-4">
+      <div className="space-y-4 md:space-y-5">
         <div>
-          <label className="block text-sm font-medium text-foreground mb-1.5 text-right">
+          <label className="block text-sm md:text-base font-medium text-foreground mb-1.5 md:mb-2 text-right">
             اسمك رباعي باللغة العربية <span className="text-destructive">*</span>
           </label>
           <input
@@ -33,12 +33,12 @@ const CustomerInfo = ({
               onCustomerInfoChange({ ...customerInfo, name: e.target.value })
             }
             placeholder="مثال: عمر أحمد محمد علي"
-            className="gform-input text-right text-sm"
+            className="gform-input text-right text-sm md:text-base"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-foreground mb-1.5 text-right">
+          <label className="block text-sm md:text-base font-medium text-foreground mb-1.5 md:mb-2 text-right">
             رقم الواتساب <span className="text-destructive">*</span>
           </label>
           <input
@@ -50,18 +50,18 @@ const CustomerInfo = ({
             }}
             placeholder="01xxxxxxxxx"
             maxLength={11}
-            className={`gform-input text-sm ${customerInfo.phone.length > 0 && customerInfo.phone.length < 11 ? "border-destructive focus:border-destructive" : ""}`}
+            className={`gform-input text-sm md:text-base ${customerInfo.phone.length > 0 && customerInfo.phone.length < 11 ? "border-destructive focus:border-destructive" : ""}`}
             dir="ltr"
           />
           {customerInfo.phone.length > 0 && customerInfo.phone.length < 11 && (
-            <p className="text-xs text-destructive mt-1">
+            <p className="text-xs md:text-sm text-destructive mt-1">
               الرقم لازم يكون 11 رقم ({customerInfo.phone.length}/11)
             </p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-foreground mb-1.5 text-right">
+          <label className="block text-sm md:text-base font-medium text-foreground mb-1.5 md:mb-2 text-right">
             الرقم القومي <span className="text-destructive">*</span>
           </label>
           <input
@@ -73,25 +73,25 @@ const CustomerInfo = ({
             }}
             placeholder="أدخل الرقم القومي (14 رقم)"
             maxLength={14}
-            className="gform-input text-sm"
+            className="gform-input text-sm md:text-base"
             dir="ltr"
           />
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs md:text-sm text-muted-foreground mt-1">
             {customerInfo.nationalId.length}/14 رقم
           </p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-foreground mb-1.5 text-right">
+          <label className="block text-sm md:text-base font-medium text-foreground mb-1.5 md:mb-2 text-right">
             السنة الدراسية <span className="text-destructive">*</span>
           </label>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-4 gap-2 md:gap-3">
             {years.map((year) => (
               <button
                 key={year}
                 type="button"
                 onClick={() => onCustomerInfoChange({ ...customerInfo, year })}
-                className={`py-2 px-3 rounded-lg border text-sm font-medium transition-all ${
+                className={`py-2 md:py-3 px-3 md:px-4 rounded-lg border text-sm md:text-base font-medium transition-all ${
                   customerInfo.year === year
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-gray-100 border-border hover:border-primary/50"

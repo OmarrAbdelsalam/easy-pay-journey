@@ -207,24 +207,24 @@ const Index = () => {
 
         {/* Header Card - Only show on first step */}
         {currentStep === 1 && (
-          <div className="gform-card p-3 sm:p-4 mb-3" dir="rtl">
-            <h1 className="text-xl sm:text-2xl font-bold text-primary mb-2">
+          <div className="gform-card p-3 sm:p-4 md:p-5 mb-3" dir="rtl">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary mb-2 md:mb-3">
               رحلة القاهرة
             </h1>
-            <ul className="space-y-1 text-foreground text-xs sm:text-sm">
-              <li className="flex items-start gap-1.5">
+            <ul className="space-y-1 md:space-y-2 text-foreground text-xs sm:text-sm md:text-base">
+              <li className="flex items-start gap-1.5 md:gap-2">
                 <span className="text-foreground">•</span>
                 <span>(المتحف المصري الكبير - مول مصر - سكي ايجيبت "اختياري" - شارع المعز)</span>
               </li>
-              <li className="flex items-start gap-1.5">
+              <li className="flex items-start gap-1.5 md:gap-2">
                 <span className="text-foreground">•</span>
                 <span>سعر تيكت الرحلة للطلاب من كل المراحل العمرية = 310 ج</span>
               </li>
-              <li className="flex items-start gap-1.5">
+              <li className="flex items-start gap-1.5 md:gap-2">
                 <span className="text-foreground">•</span>
                 <span>سعر تيكت الرحلة لغير الطلاب = 410 ج</span>
               </li>
-              <li className="flex items-start gap-1.5">
+              <li className="flex items-start gap-1.5 md:gap-2">
                 <span className="text-foreground">•</span>
                 <span>سعر تيكت سكي ايجيبت + 350ج بدل 700 </span>
               </li>
@@ -238,8 +238,8 @@ const Index = () => {
           </div>}
 
         {/* Form Content */}
-        <div className="gform-section p-4 sm:p-6 mb-3">
-          <div className="min-h-[300px] sm:min-h-[350px]">{renderStep()}</div>
+        <div className="gform-section p-4 sm:p-6 md:p-8 mb-3">
+          <div className="min-h-[300px] sm:min-h-[350px] md:min-h-[400px] md:text-base">{renderStep()}</div>
 
           {/* Navigation Buttons */}
           {currentStep <= totalSteps && <div className="flex justify-between mt-4 pt-3 border-t border-border" dir="rtl">
