@@ -206,13 +206,20 @@ const PaymentUpload = ({
                 <input
                   type="tel"
                   value={paymentDetails.senderPhone}
-                  onChange={(e) =>
-                    onPaymentDetailsChange({ ...paymentDetails, senderPhone: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "").slice(0, 11);
+                    onPaymentDetailsChange({ ...paymentDetails, senderPhone: value });
+                  }}
                   placeholder="01xxxxxxxxx"
-                  className="gform-input text-sm"
+                  maxLength={11}
+                  className={`gform-input text-sm ${paymentDetails.senderPhone.length > 0 && paymentDetails.senderPhone.length < 11 ? "border-destructive focus:border-destructive" : ""}`}
                   dir="ltr"
                 />
+                {paymentDetails.senderPhone.length > 0 && paymentDetails.senderPhone.length < 11 && (
+                  <p className="text-xs text-destructive mt-1">
+                    الرقم لازم يكون 11 رقم ({paymentDetails.senderPhone.length}/11)
+                  </p>
+                )}
               </div>
             )}
 
