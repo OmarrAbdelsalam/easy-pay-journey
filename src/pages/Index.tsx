@@ -38,9 +38,7 @@ const Index = () => {
       case 3:
         return customerInfo.name.trim() !== "" && customerInfo.phone.trim() !== "" && customerInfo.nationalId.trim().length === 14 && customerInfo.year !== "";
       case 4:
-        const hasRequiredDetails = paymentMethod === "instapay" 
-          ? paymentDetails.senderName.trim() !== ""
-          : paymentDetails.senderPhone.trim() !== "";
+        const hasRequiredDetails = paymentMethod === "instapay" ? paymentDetails.senderName.trim() !== "" : paymentDetails.senderPhone.trim() !== "";
         return paymentMethod !== null && paymentScreenshot !== null && paymentDetails.transactionNumber.trim() !== "" && hasRequiredDetails;
       default:
         return true;
@@ -104,20 +102,16 @@ const Index = () => {
             </li>
             <li className="flex items-start gap-1.5">
               <span className="text-foreground">•</span>
-              <span>سعر تيكت سكي ايجيبت + 350ج على تيكت الرحلة الأساسية</span>
+              <span>سعر تيكت سكي ايجيبت + 350ج بدل 700 </span>
             </li>
           </ul>
-          <p className="mt-2 text-muted-foreground text-xs">
-            بدل + 700ج
-          </p>
+          
         </div>
 
         {/* Step Indicator - hide on confirmation */}
-        {!showConfirmation && (
-          <div className="gform-section p-4 mb-3">
+        {!showConfirmation && <div className="gform-section p-4 mb-3">
             <StepIndicator currentStep={currentStep} totalSteps={totalSteps} labels={stepLabels} />
-          </div>
-        )}
+          </div>}
 
         {/* Form Content */}
         <div className="gform-section p-4 sm:p-6 mb-3">
