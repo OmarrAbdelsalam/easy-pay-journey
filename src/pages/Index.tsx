@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import heroImage from "@/assets/cairo-trip-hero.webp";
 import StepIndicator from "@/components/StepIndicator";
-import PackageSelection, { PackageType } from "@/components/PackageSelection";
+import PackageSelection, { PackageType, packages } from "@/components/PackageSelection";
 import TicketQuantity, { Companion } from "@/components/TicketQuantity";
 import CustomerInfo from "@/components/CustomerInfo";
 import PaymentUpload, { PaymentMethod, PaymentDetails } from "@/components/PaymentUpload";
 import OrderConfirmation from "@/components/OrderConfirmation";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const STORAGE_KEY = "cairo-trip-booking";
 
@@ -55,6 +57,8 @@ const Index = () => {
       senderName: ""
     };
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [orderNumber, setOrderNumber] = useState<string | null>(null);
 
   // Save to localStorage whenever data changes
   useEffect(() => {
@@ -87,9 +91,84 @@ const Index = () => {
         return true;
     }
   };
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep <= totalSteps && canProceed()) {
+      // If on payment step, submit to backend
+      if (currentStep === totalSteps) {
+        await submitBooking();
+      } else {
+        setCurrentStep(prev => prev + 1);
+      }
+    }
+  };
+
+  const submitBooking = async () => {
+    if (!paymentScreenshot || !selectedPackage) return;
+    
+    setIsSubmitting(true);
+    try {
+      // Generate order number
+      const generatedOrderNumber = `CT-${Date.now().toString(36).toUpperCase()}`;
+      
+      // Upload screenshot
+      const fileExt = paymentScreenshot.name.split('.').pop();
+      const fileName = `${generatedOrderNumber}-${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('payment-screenshots')
+        .upload(fileName, paymentScreenshot);
+      
+      if (uploadError) {
+        throw new Error('فشل في رفع صورة التحويل');
+      }
+      
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('payment-screenshots')
+        .getPublicUrl(fileName);
+      
+      // Calculate total price
+      const studentPkg = packages.find(p => p.id === selectedPackage);
+      const studentTotal = studentPkg?.studentPrice || 0;
+      const companionsTotal = companions.reduce((sum, c) => {
+        const pkg = packages.find(p => p.id === c.packageType);
+        return sum + (pkg?.nonStudentPrice || 0);
+      }, 0);
+      const totalPrice = studentTotal + companionsTotal;
+      
+      // Insert booking
+      const { error: insertError } = await supabase
+        .from('bookings')
+        .insert({
+          order_number: generatedOrderNumber,
+          selected_package: selectedPackage,
+          student_tickets: 1,
+          companion_tickets: companions.length,
+          customer_name: customerInfo.name,
+          customer_phone: customerInfo.phone,
+          customer_national_id: customerInfo.nationalId,
+          customer_year: customerInfo.year,
+          payment_method: paymentMethod || '',
+          transaction_number: paymentDetails.transactionNumber,
+          sender_phone: paymentDetails.senderPhone || null,
+          sender_name: paymentDetails.senderName || null,
+          payment_screenshot_url: urlData.publicUrl,
+          total_price: totalPrice
+        });
+      
+      if (insertError) {
+        throw new Error('فشل في حفظ الحجز');
+      }
+      
+      setOrderNumber(generatedOrderNumber);
       setCurrentStep(prev => prev + 1);
+      toast.success('تم تأكيد حجزك بنجاح!');
+      
+    } catch (error: any) {
+      console.error('Booking error:', error);
+      toast.error(error.message || 'حدث خطأ، حاول مرة أخرى');
+    } finally {
+      setIsSubmitting(false);
     }
   };
   const handleBack = () => {
@@ -112,7 +191,8 @@ const Index = () => {
           selectedPackage,
           companions,
           customerInfo,
-          paymentMethod
+          paymentMethod,
+          orderNumber
         }} />;
       default:
         return null;
@@ -168,9 +248,18 @@ const Index = () => {
                 رجوع
               </Button>
 
-              <Button size="sm" onClick={handleNext} disabled={!canProceed()} className="flex items-center gap-1.5 text-sm bg-primary hover:bg-primary/90">
-                {currentStep === totalSteps ? "إرسال" : "التالي"}
-                <ArrowLeft className="w-3.5 h-3.5" />
+              <Button size="sm" onClick={handleNext} disabled={!canProceed() || isSubmitting} className="flex items-center gap-1.5 text-sm bg-primary hover:bg-primary/90">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    جاري الإرسال...
+                  </>
+                ) : (
+                  <>
+                    {currentStep === totalSteps ? "إرسال" : "التالي"}
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                  </>
+                )}
               </Button>
             </div>}
 
