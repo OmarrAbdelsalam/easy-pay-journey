@@ -705,18 +705,16 @@ const Dashboard = () => {
                           {booking.status === "pending" ? (
                             <>
                               <Button
-                                variant="outline"
                                 size="sm"
-                                className="h-8 text-green-600 border-green-200 hover:bg-green-50"
+                                className="h-8 bg-green-600 hover:bg-green-700 text-white"
                                 onClick={() => updateBookingStatus(booking.id, "approved")}
                               >
                                 <CheckCircle className="w-4 h-4 ml-1" />
                                 موافقة
                               </Button>
                               <Button
-                                variant="outline"
                                 size="sm"
-                                className="h-8 text-red-600 border-red-200 hover:bg-red-50"
+                                className="h-8 bg-red-600 hover:bg-red-700 text-white"
                                 onClick={() => updateBookingStatus(booking.id, "rejected")}
                               >
                                 <XCircle className="w-4 h-4 ml-1" />
