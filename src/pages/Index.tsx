@@ -39,7 +39,7 @@ const Index = () => {
     }
   };
   const handleNext = () => {
-    if (currentStep < totalSteps && canProceed()) {
+    if (currentStep <= totalSteps && canProceed()) {
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -117,20 +117,20 @@ const Index = () => {
           <div className="min-h-[300px] sm:min-h-[350px]">{renderStep()}</div>
 
           {/* Navigation Buttons */}
-          {currentStep < totalSteps && <div className="flex justify-between mt-4 pt-3 border-t border-border" dir="rtl">
+          {currentStep <= totalSteps && <div className="flex justify-between mt-4 pt-3 border-t border-border" dir="rtl">
               <Button variant="ghost" size="sm" onClick={handleBack} disabled={currentStep === 1} className="flex items-center gap-1.5 text-sm text-primary hover:text-primary hover:bg-primary/10">
                 <ArrowRight className="w-3.5 h-3.5" />
                 رجوع
               </Button>
 
               <Button size="sm" onClick={handleNext} disabled={!canProceed()} className="flex items-center gap-1.5 text-sm bg-primary hover:bg-primary/90">
-                {currentStep === 4 ? "تأكيد الحجز" : "التالي"}
+                {currentStep === totalSteps ? "إرسال" : "التالي"}
                 <ArrowLeft className="w-3.5 h-3.5" />
               </Button>
             </div>}
 
-          {currentStep === totalSteps && <div className="mt-6 pt-4 border-t border-border text-center">
-              <Button variant="outline" onClick={() => {
+          {currentStep > totalSteps && <div className="mt-4 pt-3 border-t border-border text-center">
+              <Button variant="outline" size="sm" onClick={() => {
             setCurrentStep(1);
             setSelectedPackage(null);
             setCompanions([]);
@@ -142,7 +142,7 @@ const Index = () => {
             });
             setPaymentMethod(null);
             setPaymentScreenshot(null);
-          }} className="text-primary border-primary hover:bg-primary/10">
+          }} className="text-sm text-primary border-primary hover:bg-primary/10">
                 حجز رحلة جديدة
               </Button>
             </div>}
