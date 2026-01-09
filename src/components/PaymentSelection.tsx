@@ -64,7 +64,7 @@ const PaymentSelection = ({
               className={`w-full object-contain ${
                 method.id === "instapay" || method.id === "vodafone"
                   ? "h-32 scale-150"
-                  : "h-16"
+                  : "h-24 scale-125"
               }`}
             />
           </div>
