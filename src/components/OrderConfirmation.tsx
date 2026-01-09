@@ -1,4 +1,4 @@
-import { CircleCheckBig, Calendar, MapPin, Phone, Ticket } from "lucide-react";
+import { CircleCheckBig, Calendar, MapPin, MessageCircle, Ticket } from "lucide-react";
 import { PaymentMethod } from "./PaymentUpload";
 import { PackageType, packages } from "./PackageSelection";
 import { Companion } from "./TicketQuantity";
@@ -66,7 +66,7 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
           <div className="flex justify-between">
             <span className="text-muted-foreground">تذكرتك (طالب)</span>
             <span className="font-medium">
-              {orderDetails.selectedPackage === "with-ski" ? "مع Ski Egypt" : "بدون Ski Egypt"} - {studentTotal} جنيه
+              {orderDetails.selectedPackage === "with-ski" ? "رحلة القاهرة + Ski Egypt" : "رحلة القاهرة"} - {studentTotal} جنيه
             </span>
           </div>
           
@@ -103,23 +103,28 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
           <Calendar className="w-5 h-5 text-primary" />
           <div className="text-right">
             <p className="text-xs text-muted-foreground">التاريخ</p>
-            <p className="font-medium text-sm">قريباً</p>
+            <p className="font-medium text-sm">12 فبراير</p>
           </div>
         </div>
         <div className="flex items-center gap-3 bg-card rounded-lg p-4 border border-border">
           <MapPin className="w-5 h-5 text-primary" />
           <div className="text-right">
             <p className="text-xs text-muted-foreground">الوجهة</p>
-            <p className="font-medium text-sm">القاهرة</p>
+            <p className="font-medium text-xs">المتحف المصري الكبير - مول مصر - سكي ايجيبت - شارع المعز</p>
           </div>
         </div>
-        <div className="flex items-center gap-3 bg-card rounded-lg p-4 border border-border">
-          <Phone className="w-5 h-5 text-primary" />
+        <a 
+          href="https://wa.me/201012345678" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 bg-card rounded-lg p-4 border border-border hover:bg-muted/30 transition-colors"
+        >
+          <MessageCircle className="w-5 h-5 text-green-600" />
           <div className="text-right">
             <p className="text-xs text-muted-foreground">للاستفسار</p>
             <p className="font-medium text-sm" dir="ltr">01012345678</p>
           </div>
-        </div>
+        </a>
       </div>
     </div>
   );
