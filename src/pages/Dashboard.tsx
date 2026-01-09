@@ -267,53 +267,127 @@ const Dashboard = () => {
           </Button>
         </div>
 
-        {/* Duplicates Warning Section */}
+        {/* Duplicates Warning Section - Full Booking Cards */}
         {(() => {
-          const duplicateSenders = bookings.filter(b => getDuplicateCount(b, 'sender') > 0);
-          const duplicateTransactions = bookings.filter(b => getDuplicateCount(b, 'transaction') > 0);
-          const hasDuplicates = duplicateSenders.length > 0 || duplicateTransactions.length > 0;
+          const warningBookings = bookings.filter(b => 
+            getDuplicateCount(b, 'sender') > 0 || getDuplicateCount(b, 'transaction') > 0
+          );
           
-          if (!hasDuplicates) return null;
+          if (warningBookings.length === 0) return null;
           
           return (
-            <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6">
-              <div className="flex items-center gap-2 mb-3">
-                <AlertTriangle className="w-5 h-5 text-orange-600" />
-                <h3 className="font-bold text-orange-800">تنبيهات مهمة - بيانات مكررة</h3>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {duplicateTransactions.length > 0 && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-2">
-                      <AlertTriangle className="w-4 h-4 text-red-600" />
-                      <span className="font-medium text-red-800">أرقام معاملات مكررة ({duplicateTransactions.length})</span>
-                    </div>
-                    <div className="space-y-1 max-h-32 overflow-y-auto">
-                      {duplicateTransactions.map(b => (
-                        <div key={b.id} className="text-xs bg-white px-2 py-1 rounded flex justify-between">
-                          <span className="text-gray-600">{b.customer_name}</span>
-                          <span className="font-mono text-red-700">{b.transaction_number}</span>
+            <div className="mb-6">
+              <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                  <h3 className="font-bold text-red-800 text-lg">⚠️ حجوزات تحتاج مراجعة ({warningBookings.length})</h3>
+                </div>
+                
+                <div className="space-y-4">
+                  {warningBookings.map((booking) => {
+                    const senderDupes = getDuplicateCount(booking, 'sender');
+                    const transactionDupes = getDuplicateCount(booking, 'transaction');
+                    
+                    return (
+                      <div key={booking.id} className="bg-white rounded-lg border-2 border-red-200 overflow-hidden">
+                        {/* Warning Tags */}
+                        <div className="bg-red-100 px-4 py-2 flex flex-wrap gap-2">
+                          {transactionDupes > 0 && (
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-600 text-white text-xs font-bold">
+                              <AlertTriangle className="w-3 h-3" />
+                              رقم معاملة مكرر في {transactionDupes} حجز آخر
+                            </span>
+                          )}
+                          {senderDupes > 0 && (
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-orange-500 text-white text-xs font-bold">
+                              <AlertTriangle className="w-3 h-3" />
+                              محول منه مكرر في {senderDupes} حجز آخر
+                            </span>
+                          )}
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {duplicateSenders.length > 0 && (
-                  <div className="bg-orange-50 border border-orange-300 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-2">
-                      <AlertTriangle className="w-4 h-4 text-orange-600" />
-                      <span className="font-medium text-orange-800">محولين مكررين ({duplicateSenders.length})</span>
-                    </div>
-                    <div className="space-y-1 max-h-32 overflow-y-auto">
-                      {duplicateSenders.map(b => (
-                        <div key={b.id} className="text-xs bg-white px-2 py-1 rounded flex justify-between">
-                          <span className="text-gray-600">{b.customer_name}</span>
-                          <span className="font-mono text-orange-700">{b.sender_name || b.sender_phone}</span>
+                        
+                        {/* Booking Details */}
+                        <div className="p-4">
+                          <div className="flex flex-wrap gap-4 items-start">
+                            {/* Customer Info */}
+                            <div className="flex-1 min-w-[180px]">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="font-mono text-xs text-gray-500">{booking.order_number}</span>
+                                {getStatusBadge(booking.status)}
+                              </div>
+                              <h3 className="font-bold text-gray-900">{booking.customer_name}</h3>
+                              <p className="text-sm text-gray-500" dir="ltr">{booking.customer_phone}</p>
+                              <p className="text-xs text-gray-400">{booking.customer_year}</p>
+                            </div>
+                            
+                            {/* Payment Info */}
+                            <div className="min-w-[200px]">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-700">
+                                  {paymentMethodLabels[booking.payment_method] || booking.payment_method}
+                                </span>
+                              </div>
+                              <div className={`p-2 rounded-lg ${senderDupes > 0 ? 'bg-orange-100 border border-orange-300' : 'bg-gray-50'}`}>
+                                <div className="text-xs text-gray-600">المحول منه:</div>
+                                <div className="font-medium text-gray-900">{booking.sender_name || booking.sender_phone || "-"}</div>
+                              </div>
+                              <div className={`p-2 rounded-lg mt-2 ${transactionDupes > 0 ? 'bg-red-100 border border-red-300' : 'bg-gray-50'}`}>
+                                <div className="text-xs text-gray-600">رقم المعاملة:</div>
+                                <div className="font-mono font-medium text-gray-900">{booking.transaction_number}</div>
+                              </div>
+                            </div>
+                            
+                            {/* Package & Price */}
+                            <div className="min-w-[100px]">
+                              <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                                booking.selected_package === "with-ski" 
+                                  ? "bg-blue-100 text-blue-700" 
+                                  : "bg-gray-100 text-gray-700"
+                              }`}>
+                                {booking.selected_package === "with-ski" ? "مع سكي" : "بدون سكي"}
+                              </span>
+                              <p className="text-lg font-bold text-green-600 mt-2">{Number(booking.total_price).toLocaleString()} ج</p>
+                            </div>
+                            
+                            {/* Actions */}
+                            <div className="flex flex-col gap-2">
+                              {booking.status !== "approved" && (
+                                <Button
+                                  size="sm"
+                                  className="bg-green-600 hover:bg-green-700 text-white"
+                                  onClick={() => updateBookingStatus(booking.id, "approved")}
+                                >
+                                  <CheckCircle className="w-4 h-4 ml-1" />
+                                  موافقة
+                                </Button>
+                              )}
+                              {booking.status !== "rejected" && (
+                                <Button
+                                  size="sm"
+                                  className="bg-red-600 hover:bg-red-700 text-white"
+                                  onClick={() => updateBookingStatus(booking.id, "rejected")}
+                                >
+                                  <XCircle className="w-4 h-4 ml-1" />
+                                  رفض
+                                </Button>
+                              )}
+                              {booking.payment_screenshot_url && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setSelectedImage(booking.payment_screenshot_url)}
+                                >
+                                  <Eye className="w-4 h-4 ml-1" />
+                                  الإيصال
+                                </Button>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           );
