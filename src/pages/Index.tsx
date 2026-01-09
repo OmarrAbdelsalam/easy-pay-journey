@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ArrowRight, ArrowLeft, MapPin } from "lucide-react";
-import heroImage from "@/assets/hero-trip.jpg";
+import { ArrowRight, ArrowLeft } from "lucide-react";
+import heroImage from "@/assets/cairo-trip-hero.webp";
 import StepIndicator from "@/components/StepIndicator";
 import PackageSelection, { PackageType } from "@/components/PackageSelection";
 import TicketQuantity from "@/components/TicketQuantity";
@@ -111,41 +111,15 @@ const Index = () => {
     }
   };
 
-  const destinations = [
-    "المتحف المصري الكبير",
-    "مول مصر",
-    "Ski Egypt (اختياري)",
-    "شارع المعز",
-  ];
-
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="relative h-72 md:h-96 overflow-hidden">
+      <div className="relative w-full overflow-hidden">
         <img
           src={heroImage}
-          alt="رحلة القاهرة"
-          className="w-full h-full object-cover"
+          alt="رحلة القاهرة - Cairo Trip"
+          className="w-full h-auto object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-background" />
-        <div className="absolute inset-0 flex items-center justify-center text-center px-4">
-          <div>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
-              رحلة القاهرة 🏛️
-            </h1>
-            <div className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto">
-              {destinations.map((dest, index) => (
-                <span
-                  key={index}
-                  className="inline-flex items-center gap-1 bg-white/20 backdrop-blur-sm text-white text-sm px-3 py-1 rounded-full"
-                >
-                  <MapPin className="w-3 h-3" />
-                  {dest}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Form Section */}
