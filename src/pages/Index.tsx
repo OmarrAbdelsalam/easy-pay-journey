@@ -112,35 +112,69 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <div className="relative w-full overflow-hidden">
-        <img
-          src={heroImage}
-          alt="رحلة القاهرة - Cairo Trip"
-          className="w-full h-auto object-cover"
-        />
-      </div>
+    <div className="min-h-screen bg-background py-4 sm:py-8">
+      <div className="container max-w-2xl mx-auto px-3 sm:px-4">
+        {/* Hero Image */}
+        <div className="mb-4 rounded-lg overflow-hidden shadow-sm">
+          <img
+            src={heroImage}
+            alt="رحلة القاهرة - Cairo Trip"
+            className="w-full h-auto object-cover"
+          />
+        </div>
 
-      {/* Form Section */}
-      <div className="container max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8 -mt-4 sm:-mt-8 relative z-10">
-        <div className="form-card p-4 sm:p-6 md:p-8">
+        {/* Header Card */}
+        <div className="gform-card p-4 sm:p-6 mb-3" dir="rtl">
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary mb-4">
+            رحلة القاهرة
+          </h1>
+          <ul className="space-y-2 text-foreground text-sm sm:text-base">
+            <li className="flex items-start gap-2">
+              <span className="text-foreground">•</span>
+              <span>(المتحف المصري الكبير - مول مصر - سكي ايجيبت "اختياري" - شارع المعز)</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-foreground">•</span>
+              <span>سعر تيكت الرحلة للطلاب من كل المراحل العمرية = 310 ج</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-foreground">•</span>
+              <span>سعر تيكت الرحلة لغير الطلاب = 410 ج</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-foreground">•</span>
+              <span>سعر تيكت سكي ايجيبت + 350ج على تيكت الرحلة الأساسية</span>
+            </li>
+          </ul>
+          <p className="mt-4 text-muted-foreground text-sm">
+            بدل + 700ج
+          </p>
+          <p className="mt-6 text-destructive text-sm">
+            * تشير إلى أنّ السؤال مطلوب
+          </p>
+        </div>
+
+        {/* Step Indicator */}
+        <div className="gform-section p-4 mb-3">
           <StepIndicator
             currentStep={currentStep}
             totalSteps={totalSteps}
             labels={stepLabels}
           />
+        </div>
 
-          <div className="min-h-[350px] sm:min-h-[400px]">{renderStep()}</div>
+        {/* Form Content */}
+        <div className="gform-section p-4 sm:p-6 mb-3">
+          <div className="min-h-[300px] sm:min-h-[350px]">{renderStep()}</div>
 
           {/* Navigation Buttons */}
           {currentStep < totalSteps && (
-            <div className="flex justify-between mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-border" dir="rtl">
+            <div className="flex justify-between mt-6 pt-4 border-t border-border" dir="rtl">
               <Button
-                variant="outline"
+                variant="ghost"
                 onClick={handleBack}
                 disabled={currentStep === 1}
-                className="flex items-center gap-2 text-sm sm:text-base px-3 sm:px-4"
+                className="flex items-center gap-2 text-primary hover:text-primary hover:bg-primary/10"
               >
                 <ArrowRight className="w-4 h-4" />
                 رجوع
@@ -149,7 +183,7 @@ const Index = () => {
               <Button
                 onClick={handleNext}
                 disabled={!canProceed()}
-                className="flex items-center gap-2 text-sm sm:text-base px-4 sm:px-6"
+                className="flex items-center gap-2 bg-primary hover:bg-primary/90"
               >
                 {currentStep === 4 ? "تأكيد الحجز" : "التالي"}
                 <ArrowLeft className="w-4 h-4" />
@@ -158,7 +192,7 @@ const Index = () => {
           )}
 
           {currentStep === totalSteps && (
-            <div className="mt-8 pt-6 border-t border-border text-center">
+            <div className="mt-6 pt-4 border-t border-border text-center">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -170,6 +204,7 @@ const Index = () => {
                   setPaymentMethod(null);
                   setPaymentScreenshot(null);
                 }}
+                className="text-primary border-primary hover:bg-primary/10"
               >
                 حجز رحلة جديدة
               </Button>
@@ -178,7 +213,7 @@ const Index = () => {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-sm text-muted-foreground mt-6">
+        <p className="text-center text-sm text-muted-foreground mt-4" dir="rtl">
           للاستفسار تواصل معانا على{" "}
           <a href="tel:01012345678" className="text-primary hover:underline" dir="ltr">
             01012345678

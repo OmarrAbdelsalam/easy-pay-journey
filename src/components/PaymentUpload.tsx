@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Upload, X, Image as ImageIcon, Check } from "lucide-react";
+import { Upload, X, Check } from "lucide-react";
 import instapayLogo from "@/assets/instapay-logo.png";
 import vodafoneLogo from "@/assets/vodafone-logo.png";
 import orangeLogo from "@/assets/orange-logo.png";
@@ -80,32 +80,27 @@ const PaymentUpload = ({
 
   return (
     <div className="animate-fade-in" dir="rtl">
-      <h2 className="text-xl md:text-2xl font-semibold text-foreground mb-2">
-        الدفع ورفع السكرين
-      </h2>
-      <p className="text-muted-foreground mb-6">
-        حول المبلغ وارفع سكرين التحويل
-      </p>
-
       <div className="space-y-6">
         {/* Amount to Pay */}
-        <div className="bg-primary/5 rounded-xl border-2 border-primary p-4 text-center">
+        <div className="text-center py-4 border-b border-border">
           <p className="text-muted-foreground mb-1">المبلغ المطلوب تحويله</p>
           <p className="text-3xl font-bold text-primary">{total} جنيه</p>
         </div>
 
         {/* Payment Methods */}
         <div>
-          <label className="block text-sm font-medium text-foreground mb-3">
+          <label className="gform-label">
             اختر طريقة الدفع <span className="text-destructive">*</span>
           </label>
-          <div className="grid grid-cols-3 gap-2 sm:gap-3">
+          <div className="grid grid-cols-3 gap-2 mt-3">
             {paymentMethods.map((method) => (
               <div
                 key={method.id}
                 onClick={() => onMethodSelect(method.id)}
-                className={`payment-option flex items-center justify-center p-2 sm:p-4 overflow-hidden ${
-                  selectedMethod === method.id ? "selected" : ""
+                className={`p-2 sm:p-3 rounded-lg border-2 cursor-pointer transition-all flex items-center justify-center overflow-hidden ${
+                  selectedMethod === method.id 
+                    ? "border-primary bg-primary/5" 
+                    : "border-border hover:border-primary/30"
                 }`}
               >
                 <img
@@ -113,8 +108,8 @@ const PaymentUpload = ({
                   alt={method.name}
                   className={`w-full object-contain ${
                     method.id === "instapay" || method.id === "vodafone"
-                      ? "h-12 sm:h-20 scale-125 sm:scale-150"
-                      : "h-10 sm:h-16 scale-110 sm:scale-125"
+                      ? "h-10 sm:h-14 scale-125 sm:scale-150"
+                      : "h-8 sm:h-12 scale-110 sm:scale-125"
                   }`}
                 />
               </div>
@@ -124,22 +119,22 @@ const PaymentUpload = ({
 
         {/* Payment Instructions */}
         {selectedPayment && (
-          <div className="animate-slide-up bg-muted/50 rounded-xl p-4">
+          <div className="animate-fade-in bg-muted/30 rounded-lg p-4">
             <h4 className="font-semibold text-foreground mb-3">تعليمات التحويل</h4>
             <div className="space-y-2 text-sm">
-              <div className="flex justify-between items-center bg-card rounded-lg p-3">
+              <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">الرقم:</span>
                 <span className="font-mono font-bold text-lg" dir="ltr">
                   {selectedPayment.number}
                 </span>
               </div>
               {selectedPayment.holderName && (
-                <div className="flex justify-between items-center bg-card rounded-lg p-3">
+                <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">اسم المستفيد:</span>
                   <span className="font-bold">{selectedPayment.holderName}</span>
                 </div>
               )}
-              <div className="flex justify-between items-center bg-card rounded-lg p-3">
+              <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">المبلغ:</span>
                 <span className="font-bold text-primary">{total} جنيه</span>
               </div>
@@ -149,9 +144,12 @@ const PaymentUpload = ({
 
         {/* File Upload */}
         <div>
-          <label className="block text-sm font-medium text-foreground mb-3">
+          <label className="gform-label">
             سكرين بالتحويل <span className="text-destructive">*</span>
           </label>
+          <p className="text-sm text-muted-foreground mb-3">
+            يمكنك تحميل ملف واحد متوافق. الحد الأقصى لحجم الملف: 10 MB
+          </p>
           
           <input
             ref={fileInputRef}
@@ -162,20 +160,18 @@ const PaymentUpload = ({
           />
 
           {!paymentScreenshot ? (
-            <div
+            <button
+              type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-border rounded-xl p-8 text-center cursor-pointer hover:border-primary/50 hover:bg-muted/30 transition-colors"
+              className="w-full border border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 hover:bg-muted/30 transition-colors"
             >
-              <Upload className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-              <p className="text-foreground font-medium mb-1">
-                اضغط لرفع سكرين التحويل
+              <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+              <p className="text-foreground font-medium">
+                اضغط لرفع الصورة
               </p>
-              <p className="text-sm text-muted-foreground">
-                الحد الأقصى لحجم الملف: 10 MB
-              </p>
-            </div>
+            </button>
           ) : (
-            <div className="relative border-2 border-primary rounded-xl overflow-hidden">
+            <div className="relative border border-primary rounded-lg overflow-hidden">
               <div className="absolute top-2 right-2 z-10 flex gap-2">
                 <div className="bg-success text-success-foreground rounded-full p-1">
                   <Check className="w-4 h-4" />
@@ -188,17 +184,12 @@ const PaymentUpload = ({
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              {previewUrl ? (
+              {previewUrl && (
                 <img
                   src={previewUrl}
                   alt="Payment screenshot"
-                  className="w-full max-h-64 object-contain bg-muted"
+                  className="w-full max-h-48 object-contain bg-muted"
                 />
-              ) : (
-                <div className="p-4 flex items-center gap-3">
-                  <ImageIcon className="w-8 h-8 text-muted-foreground" />
-                  <span className="text-foreground">{paymentScreenshot.name}</span>
-                </div>
               )}
             </div>
           )}

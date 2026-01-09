@@ -17,16 +17,9 @@ const CustomerInfo = ({
 }: CustomerInfoProps) => {
   return (
     <div className="animate-fade-in" dir="rtl">
-      <h2 className="text-xl md:text-2xl font-semibold text-foreground mb-2">
-        بياناتك الشخصية
-      </h2>
-      <p className="text-muted-foreground mb-6">
-        أدخل بياناتك للتواصل
-      </p>
-
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
+          <label className="gform-label">
             اسمك رباعي باللغة العربية <span className="text-destructive">*</span>
           </label>
           <input
@@ -36,12 +29,12 @@ const CustomerInfo = ({
               onCustomerInfoChange({ ...customerInfo, name: e.target.value })
             }
             placeholder="مثال: عمر أحمد محمد علي"
-            className="w-full px-4 py-3 rounded-lg border border-input bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+            className="gform-input text-right"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
+          <label className="gform-label">
             رقم الواتساب <span className="text-destructive">*</span>
           </label>
           <input
@@ -51,13 +44,13 @@ const CustomerInfo = ({
               onCustomerInfoChange({ ...customerInfo, phone: e.target.value })
             }
             placeholder="01xxxxxxxxx"
-            className="w-full px-4 py-3 rounded-lg border border-input bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+            className="gform-input"
             dir="ltr"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
+          <label className="gform-label">
             الرقم القومي <span className="text-destructive">*</span>
           </label>
           <input
@@ -69,10 +62,10 @@ const CustomerInfo = ({
             }}
             placeholder="أدخل الرقم القومي (14 رقم)"
             maxLength={14}
-            className="w-full px-4 py-3 rounded-lg border border-input bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+            className="gform-input"
             dir="ltr"
           />
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground mt-2">
             {customerInfo.nationalId.length}/14 رقم
           </p>
         </div>

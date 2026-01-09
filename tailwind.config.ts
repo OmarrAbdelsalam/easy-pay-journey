@@ -54,9 +54,6 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        vodafone: "hsl(var(--vodafone))",
-        orange: "hsl(var(--orange))",
-        instapay: "hsl(var(--instapay))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

@@ -11,7 +11,7 @@ const packages = [
   {
     id: "without-ski" as const,
     title: "بدون سكي ايجيبت",
-    icon: <Building2 className="w-6 h-6" />,
+    icon: <Building2 className="w-5 h-5" />,
     studentPrice: 310,
     nonStudentPrice: 410,
     description: "المتحف المصري الكبير - مول مصر - شارع المعز",
@@ -19,26 +19,23 @@ const packages = [
   {
     id: "with-ski" as const,
     title: "مع Ski Egypt",
-    icon: <Snowflake className="w-6 h-6" />,
+    icon: <Snowflake className="w-5 h-5" />,
     studentPrice: 660,
     nonStudentPrice: 760,
     description: "المتحف المصري الكبير - مول مصر - Ski Egypt - شارع المعز",
     highlight: true,
-    savings: "وفر 350 جنيه على تيكت سكي!",
+    savings: "وفر 350ج!",
   },
 ];
 
 const PackageSelection = ({ selectedPackage, onSelect }: PackageSelectionProps) => {
   return (
     <div className="animate-fade-in" dir="rtl">
-      <h2 className="text-xl md:text-2xl font-semibold text-foreground mb-2">
-        اختار باكدج رحلتك
-      </h2>
-      <p className="text-muted-foreground mb-6">
-        اختر الباكدج المناسب ليك
-      </p>
+      <label className="gform-label">
+        اختار باكدج رحلتك <span className="text-destructive">*</span>
+      </label>
 
-      <div className="grid gap-4">
+      <div className="space-y-3 mt-4">
         {packages.map((pkg) => {
           const isSelected = selectedPackage === pkg.id;
           
@@ -46,50 +43,51 @@ const PackageSelection = ({ selectedPackage, onSelect }: PackageSelectionProps) 
             <div
               key={pkg.id}
               onClick={() => onSelect(pkg.id)}
-              className={`addon-card relative ${isSelected ? "selected" : ""} ${
-                pkg.highlight ? "ring-2 ring-accent" : ""
+              className={`relative p-4 rounded-lg border cursor-pointer transition-all ${
+                isSelected 
+                  ? "border-primary bg-primary/5" 
+                  : "border-border hover:border-primary/30 bg-card"
               }`}
             >
               {pkg.highlight && (
-                <div className="absolute -top-3 right-4 bg-accent text-accent-foreground text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
-                  <Snowflake className="w-3 h-3" />
+                <span className="absolute -top-2 left-4 bg-primary text-primary-foreground text-xs font-bold px-2 py-0.5 rounded">
                   {pkg.savings}
-                </div>
+                </span>
               )}
               
-              <div className="flex items-start gap-4 pt-2">
+              <div className="flex items-start gap-3">
                 <div
-                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all mt-1 ${
+                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${
                     isSelected
                       ? "border-primary bg-primary"
                       : "border-muted-foreground"
                   }`}
                 >
                   {isSelected && (
-                    <Check className="w-4 h-4 text-primary-foreground" />
+                    <div className="w-2 h-2 rounded-full bg-primary-foreground" />
                   )}
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className={`p-2 rounded-lg ${isSelected ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={isSelected ? "text-primary" : "text-muted-foreground"}>
                       {pkg.icon}
-                    </div>
-                    <h3 className="font-semibold text-foreground text-lg">
+                    </span>
+                    <h3 className="font-semibold text-foreground">
                       {pkg.title}
                     </h3>
                   </div>
-                  <p className="text-sm text-muted-foreground mb-3">
+                  <p className="text-sm text-muted-foreground mb-2">
                     {pkg.description}
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-sm">
-                    <div className="bg-muted/50 rounded-lg px-3 py-2 flex-1 text-center sm:text-right">
+                  <div className="flex flex-wrap gap-3 text-sm">
+                    <span>
                       <span className="text-muted-foreground">طالب: </span>
-                      <span className="font-bold text-primary">{pkg.studentPrice} جنيه</span>
-                    </div>
-                    <div className="bg-muted/50 rounded-lg px-3 py-2 flex-1 text-center sm:text-right">
+                      <span className="font-bold text-foreground">{pkg.studentPrice}ج</span>
+                    </span>
+                    <span>
                       <span className="text-muted-foreground">غير طالب: </span>
-                      <span className="font-bold text-primary">{pkg.nonStudentPrice} جنيه</span>
-                    </div>
+                      <span className="font-bold text-foreground">{pkg.nonStudentPrice}ج</span>
+                    </span>
                   </div>
                 </div>
               </div>
