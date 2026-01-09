@@ -45,25 +45,19 @@ const TicketQuantity = ({
   return (
     <div className="animate-fade-in" dir="rtl">
       <div className="space-y-6">
-        {/* Student Ticket - Fixed 1 */}
-        <div className="p-4 rounded-lg border border-primary bg-primary/5">
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="gform-label mb-0">تذكرتك (طالب)</span>
-              <p className="text-sm text-muted-foreground">
-                {pkg.studentPrice} جنيه
-              </p>
-            </div>
-            <span className="text-lg font-bold text-primary">1 تذكرة</span>
-          </div>
+        {/* Pricing Info */}
+        <div className="p-3 rounded-lg border border-border bg-muted/30">
+          <p className="text-sm text-muted-foreground">
+            سعر الطلاب: <span className="font-bold text-foreground">{pkg.studentPrice}ج</span> | سعر المرافقين: <span className="font-bold text-foreground">{pkg.nonStudentPrice}ج</span>
+          </p>
         </div>
 
         {/* Companions Counter */}
         <div>
-          <label className="gform-label">
+          <label className="text-sm font-medium text-foreground">
             عدد المرافقين (إن وجد)
           </label>
-          <p className="text-sm text-muted-foreground mb-3">
+          <p className="text-xs text-muted-foreground mb-3">
             يمكن لكل مرافق اختيار باكدج مختلف
           </p>
           <div className="flex items-center gap-4">
@@ -128,7 +122,7 @@ const TicketQuantity = ({
         <div className="pt-4 border-t border-border">
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span>تذكرتك</span>
+              <span>تذكرتك (طالب)</span>
               <span>{studentTotal} جنيه</span>
             </div>
             {companions.length > 0 && (
@@ -139,8 +133,8 @@ const TicketQuantity = ({
             )}
           </div>
           <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
-            <span className="font-bold text-lg">الإجمالي المطلوب تحويله</span>
-            <span className="font-bold text-2xl text-primary">{grandTotal} جنيه</span>
+            <span className="font-bold text-base">الإجمالي المطلوب تحويله</span>
+            <span className="font-bold text-xl text-primary">{grandTotal} جنيه</span>
           </div>
         </div>
       </div>
