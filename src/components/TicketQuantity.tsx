@@ -133,9 +133,9 @@ const TicketQuantity = ({
               </div>
             )}
           </div>
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
-            <span className="font-bold text-base">الإجمالي المطلوب تحويله</span>
-            <span className="font-bold text-xl text-primary">{grandTotal} جنيه</span>
+        <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
+            <span className="font-medium text-sm">الإجمالي المطلوب تحويله</span>
+            <span className="font-semibold text-base text-primary">{grandTotal} جنيه</span>
           </div>
         </div>
       </div>
