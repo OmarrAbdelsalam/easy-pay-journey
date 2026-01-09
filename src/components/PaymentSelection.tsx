@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Smartphone, CreditCard, Wallet } from "lucide-react";
+import instapayLogo from "@/assets/instapay-logo.png";
+import vodafoneLogo from "@/assets/vodafone-logo.png";
+import orangeLogo from "@/assets/orange-logo.png";
 
 export type PaymentMethod = "instapay" | "vodafone" | "orange" | null;
 
@@ -14,25 +15,19 @@ const paymentMethods = [
   {
     id: "instapay" as const,
     name: "InstaPay",
-    icon: <CreditCard className="w-6 h-6" />,
-    color: "text-instapay",
-    bgColor: "bg-instapay/10",
+    logo: instapayLogo,
     instructions: "حول المبلغ على رقم: 01012345678\nاسم المستفيد: رحلات مصر",
   },
   {
     id: "vodafone" as const,
     name: "Vodafone Cash",
-    icon: <Smartphone className="w-6 h-6" />,
-    color: "text-vodafone",
-    bgColor: "bg-vodafone/10",
+    logo: vodafoneLogo,
     instructions: "حول المبلغ على رقم: 01012345678\nفودافون كاش",
   },
   {
     id: "orange" as const,
     name: "Orange Cash",
-    icon: <Wallet className="w-6 h-6" />,
-    color: "text-orange",
-    bgColor: "bg-orange/10",
+    logo: orangeLogo,
     instructions: "حول المبلغ على رقم: 01212345678\nأورانج كاش",
   },
 ];
@@ -63,10 +58,12 @@ const PaymentSelection = ({
               selectedMethod === method.id ? "selected" : ""
             }`}
           >
-            <div
-              className={`w-14 h-14 rounded-full ${method.bgColor} ${method.color} flex items-center justify-center mx-auto mb-3`}
-            >
-              {method.icon}
+            <div className="h-16 flex items-center justify-center mx-auto mb-3">
+              <img
+                src={method.logo}
+                alt={method.name}
+                className="max-h-14 max-w-full object-contain"
+              />
             </div>
             <h3 className="font-semibold text-foreground">{method.name}</h3>
           </div>
