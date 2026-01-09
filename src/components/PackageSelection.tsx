@@ -64,6 +64,7 @@ const PackageSelection = ({
                     </div>}
                   
                   <div className="text-sm">
+                    <span className="text-muted-foreground">السعر: </span>
                     <span className="font-bold text-foreground">{pkg.studentPrice}ج</span>
                   </div>
                 </div>
