@@ -76,40 +76,12 @@ const Index = () => {
         </div>
 
         {/* Header Card */}
-        <div className="gform-card p-4 sm:p-6 mb-3" dir="rtl">
-          <h1 className="text-2xl sm:text-3xl font-bold text-primary mb-4">
-            رحلة القاهرة
-          </h1>
-          <ul className="space-y-2 text-foreground text-sm sm:text-base">
-            <li className="flex items-start gap-2">
-              <span className="text-foreground">•</span>
-              <span>(المتحف المصري الكبير - مول مصر - سكي ايجيبت "اختياري" - شارع المعز)</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-foreground">•</span>
-              <span>سعر تيكت الرحلة للطلاب من كل المراحل العمرية = 310 ج</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-foreground">•</span>
-              <span>سعر تيكت الرحلة لغير الطلاب = 410 ج</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-foreground">•</span>
-              <span>سعر تيكت سكي ايجيبت + 350ج على تيكت الرحلة الأساسية</span>
-            </li>
-          </ul>
-          <p className="mt-4 text-muted-foreground text-sm">
-            بدل + 700ج
-          </p>
-          
-        </div>
+        
 
         {/* Step Indicator - hide on confirmation */}
-        {!showConfirmation && (
-          <div className="gform-section p-4 mb-3">
+        {!showConfirmation && <div className="gform-section p-4 mb-3">
             <StepIndicator currentStep={currentStep} totalSteps={totalSteps} labels={stepLabels} />
-          </div>
-        )}
+          </div>}
 
         {/* Form Content */}
         <div className="gform-section p-4 sm:p-6 mb-3">
