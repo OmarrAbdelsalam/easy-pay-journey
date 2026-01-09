@@ -102,29 +102,12 @@ const PaymentUpload = ({
   return (
     <div className="animate-fade-in" dir="rtl">
       <div className="space-y-6">
-        {/* Amount to Pay */}
+        {/* Amount to Pay - Always simple style */}
         <div className="text-center py-3 border-b border-border">
-          {(selectedMethod === "vodafone" || selectedMethod === "orange") ? (
-            <div className="space-y-1 text-sm">
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">المبلغ:</span>
-                <span className="font-medium">{total} جنيه</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">نسبة التحويل:</span>
-                <span className="font-medium">{transferFee} جنيه</span>
-              </div>
-              <div className="flex justify-between items-center pt-1 border-t border-border">
-                <span className="font-medium">الإجمالي المطلوب تحويله:</span>
-                <span className="font-bold text-lg text-primary">{grandTotal} جنيه</span>
-              </div>
-            </div>
-          ) : (
-            <>
-              <p className="text-muted-foreground text-sm mb-1">المبلغ المطلوب تحويله</p>
-              <p className="text-2xl font-bold text-primary">{total} جنيه</p>
-            </>
-          )}
+          <p className="text-muted-foreground text-sm mb-1">المبلغ المطلوب تحويله</p>
+          <p className="text-2xl font-bold text-primary">
+            {(selectedMethod === "vodafone" || selectedMethod === "orange") ? grandTotal : total} جنيه
+          </p>
         </div>
 
         {/* Payment Methods */}
@@ -173,6 +156,18 @@ const PaymentUpload = ({
                   <span className="text-muted-foreground">اسم المستفيد:</span>
                   <span className="font-bold">{selectedPayment.holderName}</span>
                 </div>
+              )}
+              {(selectedMethod === "vodafone" || selectedMethod === "orange") && (
+                <>
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">سعر التذاكر:</span>
+                    <span className="font-medium">{total} جنيه</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">رسوم التحويل:</span>
+                    <span className="font-medium">{transferFee} جنيه</span>
+                  </div>
+                </>
               )}
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">المبلغ:</span>
