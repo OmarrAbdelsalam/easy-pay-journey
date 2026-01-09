@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import heroImage from "@/assets/cairo-trip-hero.webp";
 import StepIndicator from "@/components/StepIndicator";
@@ -8,23 +8,66 @@ import CustomerInfo from "@/components/CustomerInfo";
 import PaymentUpload, { PaymentMethod, PaymentDetails } from "@/components/PaymentUpload";
 import OrderConfirmation from "@/components/OrderConfirmation";
 import { Button } from "@/components/ui/button";
+
+const STORAGE_KEY = "cairo-trip-booking";
+
 const Index = () => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [selectedPackage, setSelectedPackage] = useState<PackageType>(null);
-  const [companions, setCompanions] = useState<Companion[]>([]);
-  const [customerInfo, setCustomerInfo] = useState({
-    name: "",
-    phone: "",
-    nationalId: "",
-    year: ""
+  const [currentStep, setCurrentStep] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved).currentStep || 1 : 1;
   });
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(null);
+  const [selectedPackage, setSelectedPackage] = useState<PackageType>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved).selectedPackage || null : null;
+  });
+  const [companions, setCompanions] = useState<Companion[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved).companions || [] : [];
+  });
+  const [customerInfo, setCustomerInfo] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved).customerInfo || {
+      name: "",
+      phone: "",
+      nationalId: "",
+      year: ""
+    } : {
+      name: "",
+      phone: "",
+      nationalId: "",
+      year: ""
+    };
+  });
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved).paymentMethod || null : null;
+  });
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
-  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
-    transactionNumber: "",
-    senderPhone: "",
-    senderName: ""
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved).paymentDetails || {
+      transactionNumber: "",
+      senderPhone: "",
+      senderName: ""
+    } : {
+      transactionNumber: "",
+      senderPhone: "",
+      senderName: ""
+    };
   });
+
+  // Save to localStorage whenever data changes
+  useEffect(() => {
+    const dataToSave = {
+      currentStep,
+      selectedPackage,
+      companions,
+      customerInfo,
+      paymentMethod,
+      paymentDetails
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+  }, [currentStep, selectedPackage, companions, customerInfo, paymentMethod, paymentDetails]);
   const totalSteps = 4;
   const stepLabels = ["الباكدج", "التذاكر", "البيانات", "الدفع"];
   const showConfirmation = currentStep === 5;
@@ -149,6 +192,7 @@ const Index = () => {
               senderPhone: "",
               senderName: ""
             });
+            localStorage.removeItem(STORAGE_KEY);
           }} className="text-sm text-primary border-primary hover:bg-primary/10">
                 حجز رحلة جديدة
               </Button>
