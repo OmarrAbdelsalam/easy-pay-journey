@@ -1,4 +1,4 @@
-import { CheckCircle, Calendar, MapPin, Phone, Ticket } from "lucide-react";
+import { CircleCheckBig, Calendar, MapPin, Phone, Ticket } from "lucide-react";
 import { PaymentMethod } from "./PaymentUpload";
 import { PackageType, packages } from "./PackageSelection";
 import { Companion } from "./TicketQuantity";
@@ -35,8 +35,8 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
 
   return (
     <div className="animate-fade-in text-center" dir="rtl">
-      <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6">
-        <CheckCircle className="w-12 h-12 text-success" />
+      <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-green-500/30">
+        <CircleCheckBig className="w-14 h-14 text-white" strokeWidth={2.5} />
       </div>
 
       <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
