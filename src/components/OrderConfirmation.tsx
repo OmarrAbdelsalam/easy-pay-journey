@@ -155,7 +155,7 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
           </div>
         </div>
         <a 
-          href="https://wa.me/201012345678" 
+          href="https://wa.me/201205992002" 
           target="_blank" 
           rel="noopener noreferrer"
           className="flex items-center gap-3 bg-card rounded-lg p-4 border border-border hover:bg-muted/30 transition-colors"
@@ -163,7 +163,7 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
           <img src={whatsappIcon} alt="WhatsApp" className="w-6 h-6" />
           <div className="text-right">
             <p className="text-xs text-muted-foreground">للاستفسار</p>
-            <p className="font-medium text-sm" dir="ltr">01012345678</p>
+            <p className="font-medium text-sm" dir="ltr">01205992002</p>
           </div>
         </a>
       </div>
