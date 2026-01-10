@@ -11,6 +11,7 @@ const DASHBOARD_PASSWORD = "cairo2024";
 
 interface CompanionDetail {
   index: number;
+  type: string;
   packageType: string;
 }
 
@@ -665,16 +666,34 @@ const Dashboard = () => {
                       {/* Companions */}
                       <td className="px-4 py-3">
                         {booking.companion_tickets > 0 ? (
-                          <div className="text-xs text-gray-600">
+                          <div className="text-xs text-gray-600 space-y-1">
                             {booking.companions_details && booking.companions_details.length > 0 ? (
-                              booking.companions_details.map((comp, idx) => (
-                                <div key={idx} className="flex items-center gap-1">
-                                  <span>م{idx + 1}:</span>
-                                  <span className={comp.packageType === "with-ski" ? "text-blue-600 font-medium" : "text-gray-500"}>
-                                    {comp.packageType === "with-ski" ? "سكي" : "رحلة"}
-                                  </span>
-                                </div>
-                              ))
+                              booking.companions_details.map((comp, idx) => {
+                                const typeLabels: Record<string, string> = {
+                                  student: "طالب",
+                                  graduate: "خريج",
+                                  senior: "كبير سن",
+                                  child: "طفل"
+                                };
+                                return (
+                                  <div key={idx} className="flex items-center gap-1">
+                                    <span className="text-gray-500">م{idx + 1}:</span>
+                                    <span className={`px-1.5 py-0.5 rounded text-[10px] ${
+                                      comp.type === "graduate" ? "bg-purple-100 text-purple-700" :
+                                      comp.type === "senior" ? "bg-amber-100 text-amber-700" :
+                                      comp.type === "child" ? "bg-pink-100 text-pink-700" :
+                                      "bg-green-100 text-green-700"
+                                    }`}>
+                                      {typeLabels[comp.type] || comp.type}
+                                    </span>
+                                    <span className={`px-1.5 py-0.5 rounded text-[10px] ${
+                                      comp.packageType === "with-ski" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"
+                                    }`}>
+                                      {comp.packageType === "with-ski" ? "سكي" : "رحلة"}
+                                    </span>
+                                  </div>
+                                );
+                              })
                             ) : (
                               <span className="text-gray-400">غير محدد</span>
                             )}

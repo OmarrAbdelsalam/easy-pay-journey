@@ -23,9 +23,33 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
   const studentTotal = pkg?.studentPrice || 0;
   const companionsTotal = orderDetails.companions.reduce((total, comp) => {
     const compPkg = packages.find((p) => p.id === comp.packageType);
-    return total + (compPkg?.nonStudentPrice || 0);
+    
+    if (comp.type === "student" || comp.type === "child" || comp.type === "senior") {
+      return total + (compPkg?.studentPrice || 0);
+    } else {
+      // خريجين فقط
+      return total + (compPkg?.nonStudentPrice || 0);
+    }
   }, 0);
   const total = studentTotal + companionsTotal;
+
+  const companionTypeLabels: Record<string, string> = {
+    student: "طالب",
+    graduate: "خريج",
+    senior: "كبار سن",
+    child: "طفل",
+  };
+
+  const getCompanionPrice = (comp: Companion) => {
+    if (comp.type === "student" || comp.type === "child" || comp.type === "senior") {
+      const compPkg = packages.find((p) => p.id === comp.packageType);
+      return compPkg?.studentPrice || 0;
+    } else {
+      // خريجين فقط
+      const compPkg = packages.find((p) => p.id === comp.packageType);
+      return compPkg?.nonStudentPrice || 0;
+    }
+  };
 
   const paymentMethodNames = {
     instapay: "InstaPay",
@@ -77,11 +101,23 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
           
           {orderDetails.companions.length > 0 && (
             <div className="border-t border-border pt-3 mt-3 space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground flex items-center gap-1">
-                  <Ticket className="w-4 h-4" />
-                  المرافقين ({orderDetails.companions.length})
-                </span>
+              <p className="text-muted-foreground flex items-center gap-1 mb-2">
+                <Ticket className="w-4 h-4" />
+                المرافقين ({orderDetails.companions.length})
+              </p>
+              {orderDetails.companions.map((comp, index) => {
+                const price = getCompanionPrice(comp);
+                return (
+                  <div key={index} className="flex justify-between text-xs">
+                    <span>
+                      {companionTypeLabels[comp.type] || comp.type} - {comp.packageType === "with-ski" ? "مع Ski" : "بدون Ski"}
+                    </span>
+                    <span>{price} جنيه</span>
+                  </div>
+                );
+              })}
+              <div className="flex justify-between pt-1">
+                <span className="text-muted-foreground">إجمالي المرافقين</span>
                 <span className="font-medium">{companionsTotal} جنيه</span>
               </div>
             </div>

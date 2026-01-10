@@ -64,7 +64,13 @@ const PaymentUpload = ({
   const studentTotal = pkg?.studentPrice || 0;
   const companionsTotal = companions.reduce((total, comp) => {
     const compPkg = packages.find((p) => p.id === comp.packageType);
-    return total + (compPkg?.nonStudentPrice || 0);
+    
+    if (comp.type === "student" || comp.type === "child" || comp.type === "senior") {
+      return total + (compPkg?.studentPrice || 0);
+    } else {
+      // خريجين فقط
+      return total + (compPkg?.nonStudentPrice || 0);
+    }
   }, 0);
   const total = studentTotal + companionsTotal;
 

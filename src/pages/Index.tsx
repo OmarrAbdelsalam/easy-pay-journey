@@ -14,51 +14,61 @@ import { toast } from "sonner";
 const STORAGE_KEY = "cairo-trip-booking";
 
 const Index = () => {
-  const [currentStep, setCurrentStep] = useState(() => {
+  // تحميل البيانات المحفوظة مرة واحدة
+  const getSavedData = () => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved).currentStep || 1 : 1;
+    return saved ? JSON.parse(saved) : null;
+  };
+
+  const savedData = getSavedData();
+
+  // لو الطلب مكتمل، نبدأ من step 5 (صفحة التأكيد)
+  // غير كده نبدأ من step 1 دايماً
+  const [currentStep, setCurrentStep] = useState<number>(() => {
+    if (savedData?.isCompleted && savedData?.orderNumber) {
+      return 5;
+    }
+    return 1;
   });
+  
   const [selectedPackage, setSelectedPackage] = useState<PackageType>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved).selectedPackage || "with-ski" : "with-ski";
+    return savedData?.selectedPackage || "with-ski";
   });
+  
   const [companions, setCompanions] = useState<Companion[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved).companions || [] : [];
+    return savedData?.companions || [];
   });
+  
   const [customerInfo, setCustomerInfo] = useState(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved).customerInfo || {
-      name: "",
-      phone: "",
-      nationalId: "",
-      year: ""
-    } : {
+    return savedData?.customerInfo || {
       name: "",
       phone: "",
       nationalId: "",
       year: ""
     };
   });
+  
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved).paymentMethod || null : null;
+    return savedData?.paymentMethod || null;
   });
+  
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
+  
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved).paymentDetails || {
-      transactionNumber: "",
-      senderPhone: "",
-      senderName: ""
-    } : {
+    return savedData?.paymentDetails || {
       transactionNumber: "",
       senderPhone: "",
       senderName: ""
     };
   });
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [orderNumber, setOrderNumber] = useState<string | null>(null);
+  
+  const [orderNumber, setOrderNumber] = useState<string | null>(() => {
+    return savedData?.orderNumber || null;
+  });
+  
+  const [hasCompanionPending, setHasCompanionPending] = useState(false);
 
   // Save to localStorage whenever data changes
   useEffect(() => {
@@ -68,10 +78,12 @@ const Index = () => {
       companions,
       customerInfo,
       paymentMethod,
-      paymentDetails
+      paymentDetails,
+      orderNumber,
+      isCompleted: currentStep === 5 && orderNumber !== null
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-  }, [currentStep, selectedPackage, companions, customerInfo, paymentMethod, paymentDetails]);
+  }, [currentStep, selectedPackage, companions, customerInfo, paymentMethod, paymentDetails, orderNumber]);
   const totalSteps = 4;
   const stepLabels = ["الباكدج", "التذاكر", "البيانات", "الدفع"];
   const showConfirmation = currentStep === 5;
@@ -80,8 +92,7 @@ const Index = () => {
       case 1:
         return selectedPackage !== null;
       case 2:
-        return true;
-      // Always at least 1 student ticket
+        return !hasCompanionPending; // مينفعش يكمل لو في مرافق لسه بيتضاف
       case 3:
         return customerInfo.name.trim() !== "" && customerInfo.phone.trim().length === 11 && customerInfo.nationalId.trim().length === 14 && customerInfo.year !== "";
       case 4:
@@ -97,7 +108,7 @@ const Index = () => {
       if (currentStep === totalSteps) {
         await submitBooking();
       } else {
-        setCurrentStep(prev => prev + 1);
+        setCurrentStep((prev: number) => prev + 1);
       }
     }
   };
@@ -132,13 +143,20 @@ const Index = () => {
       const studentTotal = studentPkg?.studentPrice || 0;
       const companionsTotal = companions.reduce((sum, c) => {
         const pkg = packages.find(p => p.id === c.packageType);
-        return sum + (pkg?.nonStudentPrice || 0);
+        
+        if (c.type === "student" || c.type === "child" || c.type === "senior") {
+          return sum + (pkg?.studentPrice || 0);
+        } else {
+          // خريجين فقط
+          return sum + (pkg?.nonStudentPrice || 0);
+        }
       }, 0);
       const totalPrice = studentTotal + companionsTotal;
       
       // Prepare companions details
       const companionsDetails = companions.map((c, index) => ({
         index: index + 1,
+        type: c.type,
         packageType: c.packageType
       }));
       
@@ -171,7 +189,7 @@ const Index = () => {
       }
       
       setOrderNumber(generatedOrderNumber);
-      setCurrentStep(prev => prev + 1);
+      setCurrentStep((prev: number) => prev + 1);
       toast.success('تم تأكيد حجزك بنجاح!');
       
     } catch (error: any) {
@@ -183,7 +201,7 @@ const Index = () => {
   };
   const handleBack = () => {
     if (currentStep > 1) {
-      setCurrentStep(prev => prev - 1);
+      setCurrentStep((prev: number) => prev - 1);
     }
   };
   const renderStep = () => {
@@ -191,7 +209,7 @@ const Index = () => {
       case 1:
         return <PackageSelection selectedPackage={selectedPackage} onSelect={setSelectedPackage} />;
       case 2:
-        return <TicketQuantity selectedPackage={selectedPackage} companions={companions} onCompanionsChange={setCompanions} />;
+        return <TicketQuantity selectedPackage={selectedPackage} companions={companions} onCompanionsChange={setCompanions} onPendingChange={setHasCompanionPending} />;
       case 3:
         return <CustomerInfo customerInfo={customerInfo} onCustomerInfoChange={setCustomerInfo} />;
       case 4:
@@ -230,10 +248,7 @@ const Index = () => {
                 <span className="text-foreground">•</span>
                 <span>سعر تيكت الرحلة للطلاب من كل المراحل العمرية = 310 ج</span>
               </li>
-              <li className="flex items-start gap-1.5 md:gap-2">
-                <span className="text-foreground">•</span>
-                <span>سعر تيكت الرحلة لغير الطلاب = 410 ج</span>
-              </li>
+           
               <li className="flex items-start gap-1.5 md:gap-2">
                 <span className="text-foreground">•</span>
                 <span>سعر تيكت سكي ايجيبت + 350ج بدل 700 </span>
