@@ -30,20 +30,23 @@ const paymentMethods = [
     id: "instapay" as const,
     name: "InstaPay",
     logo: instapayLogo,
-    number: "01012345678",
-    holderName: "رحلات مصر",
+    number: "mahmoud66297@instapay",
+    holderName: "Mahmoud",
+    link: "https://ipn.eg/S/mahmoud66297/instapay/6vAtfO",
   },
   {
     id: "vodafone" as const,
     name: "Vodafone Cash",
     logo: vodafoneLogo,
-    number: "01012345678",
+    number: "01011429433",
+    holderName: "محمد السيد",
   },
   {
     id: "orange" as const,
     name: "Orange Cash",
     logo: orangeLogo,
-    number: "01212345678",
+    number: "01205992002",
+    holderName: "امل علي",
   },
 ];
 
@@ -151,15 +154,31 @@ const PaymentUpload = ({
           <div className="animate-fade-in bg-muted/30 rounded-lg p-4">
             <h4 className="font-semibold text-foreground mb-3">تعليمات التحويل</h4>
             <div className="space-y-2 text-sm">
+              {selectedMethod === "instapay" && selectedPayment.link && (
+                <div className="mb-3">
+                  <a
+                    href={selectedPayment.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full py-2.5 px-4 bg-primary text-white text-center rounded-lg font-medium hover:bg-primary/90 transition-colors"
+                  >
+                    اضغط هنا للتحويل عبر InstaPay
+                  </a>
+                </div>
+              )}
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">الرقم:</span>
+                <span className="text-muted-foreground">
+                  {selectedMethod === "instapay" ? "IPA:" : "الرقم:"}
+                </span>
                 <span className="font-mono font-bold text-lg" dir="ltr">
                   {selectedPayment.number}
                 </span>
               </div>
               {selectedPayment.holderName && (
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">اسم المستفيد:</span>
+                  <span className="text-muted-foreground">
+                    {selectedMethod === "instapay" ? "اسم المستفيد:" : "اسم صاحب المحفظة:"}
+                  </span>
                   <span className="font-bold">{selectedPayment.holderName}</span>
                 </div>
               )}

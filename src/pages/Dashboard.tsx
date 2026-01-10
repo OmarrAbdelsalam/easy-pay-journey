@@ -89,6 +89,14 @@ const Dashboard = () => {
           : []
       }));
       setBookings(bookingsData);
+      
+      // Preload all payment screenshots
+      bookingsData.forEach(booking => {
+        if (booking.payment_screenshot_url) {
+          const img = new Image();
+          img.src = booking.payment_screenshot_url;
+        }
+      });
     } catch (error) {
       console.error("Error fetching bookings:", error);
       toast.error("فشل في تحميل الحجوزات");
