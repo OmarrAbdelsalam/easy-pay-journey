@@ -195,7 +195,8 @@ const Dashboard = () => {
       statusFilter === "all" || booking.status === statusFilter;
 
     const matchesYear =
-      yearFilter === "all" || booking.customer_year === yearFilter;
+      yearFilter === "all" || 
+      (yearFilter === "خريج" ? (booking.booking_type === "grad" || !booking.customer_year) : booking.customer_year === yearFilter);
 
     const matchesBookingType =
       bookingTypeFilter === "all" || booking.booking_type === bookingTypeFilter;
@@ -203,8 +204,12 @@ const Dashboard = () => {
     return matchesSearch && matchesPackage && matchesPayment && matchesStatus && matchesYear && matchesBookingType;
   });
 
-  const totalRevenue = filteredBookings.reduce((sum, b) => sum + Number(b.total_price), 0);
-  const totalTickets = filteredBookings.reduce((sum, b) => sum + b.student_tickets + b.companion_tickets, 0);
+  const totalRevenue = filteredBookings
+    .filter(b => b.status !== "rejected")
+    .reduce((sum, b) => sum + Number(b.total_price), 0);
+  const totalTickets = filteredBookings
+    .filter(b => b.status !== "rejected")
+    .reduce((sum, b) => sum + b.student_tickets + b.companion_tickets, 0);
   const pendingCount = bookings.filter(b => b.status === "pending").length;
 
   const getDuplicateCount = (booking: Booking, field: 'sender' | 'transaction') => {
@@ -575,6 +580,7 @@ const Dashboard = () => {
                 <SelectItem value="تانية">تانية</SelectItem>
                 <SelectItem value="تالتة">تالتة</SelectItem>
                 <SelectItem value="رابعة">رابعة</SelectItem>
+                <SelectItem value="خريج">خريج/معيد</SelectItem>
               </SelectContent>
             </Select>
             <Select value={bookingTypeFilter} onValueChange={setBookingTypeFilter}>
@@ -643,7 +649,9 @@ const Dashboard = () => {
                         </div>
                         <div className="font-semibold text-gray-900">{booking.customer_name}</div>
                         <div className="text-xs text-gray-500" dir="ltr">{booking.customer_phone}</div>
-                        <div className="text-xs text-gray-400">{booking.customer_year}</div>
+                        {booking.booking_type !== 'grad' && booking.customer_year && (
+                          <div className="text-xs text-gray-400">{booking.customer_year}</div>
+                        )}
                         <div className="text-[10px] text-gray-400 font-mono">{booking.customer_national_id}</div>
                       </td>
                       
