@@ -15,12 +15,14 @@ interface OrderConfirmationProps {
     };
     paymentMethod: PaymentMethod;
     orderNumber?: string | null;
+    isGrad?: boolean;
   };
 }
 
 const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
   const pkg = packages.find((p) => p.id === orderDetails.selectedPackage);
-  const studentTotal = pkg?.studentPrice || 0;
+  const isGrad = orderDetails.isGrad || false;
+  const mainTicketPrice = isGrad ? (pkg?.nonStudentPrice || 0) : (pkg?.studentPrice || 0);
   const companionsTotal = orderDetails.companions.reduce((total, comp) => {
     const compPkg = packages.find((p) => p.id === comp.packageType);
     
@@ -31,7 +33,7 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
       return total + (compPkg?.nonStudentPrice || 0);
     }
   }, 0);
-  const total = studentTotal + companionsTotal;
+  const total = mainTicketPrice + companionsTotal;
 
   const companionTypeLabels: Record<string, string> = {
     student: "طالب",
@@ -90,12 +92,12 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">تذكرتك (طالب)</span>
+            <span className="text-muted-foreground">تذكرتك ({isGrad ? "خريج/معيد" : "طالب"})</span>
             <div className="text-left">
               <p className="font-medium">
                 {orderDetails.selectedPackage === "with-ski" ? "رحلة القاهرة + Ski Egypt" : "رحلة القاهرة"}
               </p>
-              <p className="text-foreground font-bold">{studentTotal} جنيه</p>
+              <p className="text-foreground font-bold">{mainTicketPrice} جنيه</p>
             </div>
           </div>
           

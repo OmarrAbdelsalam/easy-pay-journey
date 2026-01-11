@@ -34,6 +34,7 @@ interface Booking {
   total_price: number;
   created_at: string;
   status: string;
+  booking_type: string;
 }
 
 const Dashboard = () => {
@@ -46,6 +47,7 @@ const Dashboard = () => {
   const [paymentFilter, setPaymentFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [yearFilter, setYearFilter] = useState<string>("all");
+  const [bookingTypeFilter, setBookingTypeFilter] = useState<string>("all");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [warningsExpanded, setWarningsExpanded] = useState(false);
 
@@ -195,7 +197,10 @@ const Dashboard = () => {
     const matchesYear =
       yearFilter === "all" || booking.customer_year === yearFilter;
 
-    return matchesSearch && matchesPackage && matchesPayment && matchesStatus && matchesYear;
+    const matchesBookingType =
+      bookingTypeFilter === "all" || booking.booking_type === bookingTypeFilter;
+
+    return matchesSearch && matchesPackage && matchesPayment && matchesStatus && matchesYear && matchesBookingType;
   });
 
   const totalRevenue = filteredBookings.reduce((sum, b) => sum + Number(b.total_price), 0);
@@ -572,6 +577,16 @@ const Dashboard = () => {
                 <SelectItem value="رابعة">رابعة</SelectItem>
               </SelectContent>
             </Select>
+            <Select value={bookingTypeFilter} onValueChange={setBookingTypeFilter}>
+              <SelectTrigger className="w-full sm:w-32 bg-gray-100">
+                <SelectValue placeholder="النوع" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">الكل</SelectItem>
+                <SelectItem value="student">طالب</SelectItem>
+                <SelectItem value="grad">خريج/معيد</SelectItem>
+              </SelectContent>
+            </Select>
             <Button variant="outline" size="icon" className="bg-gray-100 hover:bg-gray-200" onClick={exportToCSV} title="تصدير CSV">
               <Download className="w-4 h-4" />
             </Button>
@@ -620,6 +635,11 @@ const Dashboard = () => {
                         <div className="flex items-center gap-2">
                           {getStatusBadge(booking.status)}
                           <span className="font-mono text-[10px] text-gray-400">{booking.order_number}</span>
+                          {booking.booking_type === 'grad' && (
+                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-purple-100 text-purple-700 font-medium">
+                              خريج
+                            </span>
+                          )}
                         </div>
                         <div className="font-semibold text-gray-900">{booking.customer_name}</div>
                         <div className="text-xs text-gray-500" dir="ltr">{booking.customer_phone}</div>

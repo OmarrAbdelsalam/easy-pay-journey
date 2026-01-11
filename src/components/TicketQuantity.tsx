@@ -14,6 +14,7 @@ interface TicketQuantityProps {
   companions: Companion[];
   onCompanionsChange: (companions: Companion[]) => void;
   onPendingChange?: (isPending: boolean) => void;
+  isGrad?: boolean;
 }
 
 const companionTypes = [
@@ -27,7 +28,8 @@ const TicketQuantity = ({
   selectedPackage,
   companions,
   onCompanionsChange,
-  onPendingChange
+  onPendingChange,
+  isGrad = false
 }: TicketQuantityProps) => {
   const [addingCompanion, setAddingCompanion] = useState(false);
   const [selectedType, setSelectedType] = useState<CompanionType | null>(null);
@@ -51,7 +53,7 @@ const TicketQuantity = ({
     }
   };
 
-  const studentTotal = pkg.studentPrice;
+  const studentTotal = isGrad ? pkg.nonStudentPrice : pkg.studentPrice;
   const companionsTotal = companions.reduce((total, comp) => {
     return total + getCompanionPrice(comp);
   }, 0);
@@ -267,7 +269,7 @@ const TicketQuantity = ({
         <div className="pt-4 md:pt-5 border-t border-border">
           <div className="space-y-2 md:space-y-3 text-sm md:text-base">
             <div className="flex justify-between">
-              <span>تذكرتك (طالب) - {selectedPackage === "with-ski" ? "رحلة القاهرة + Ski Egypt" : "رحلة القاهرة"}</span>
+              <span>تذكرتك ({isGrad ? "خريج/معيد" : "طالب"}) - {selectedPackage === "with-ski" ? "رحلة القاهرة + Ski Egypt" : "رحلة القاهرة"}</span>
               <span>{studentTotal} جنيه</span>
             </div>
             {companions.length > 0 && (

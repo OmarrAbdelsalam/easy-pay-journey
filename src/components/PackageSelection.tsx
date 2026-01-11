@@ -5,6 +5,7 @@ export type PackageType = "with-ski" | "without-ski" | null;
 interface PackageSelectionProps {
   selectedPackage: PackageType;
   onSelect: (pkg: PackageType) => void;
+  isGrad?: boolean;
 }
 const packages = [{
   id: "without-ski" as const,
@@ -26,7 +27,8 @@ const packages = [{
 }];
 const PackageSelection = ({
   selectedPackage,
-  onSelect
+  onSelect,
+  isGrad = false
 }: PackageSelectionProps) => {
   return <div className="animate-fade-in" dir="rtl">
       <label className="gform-label md:text-base">
@@ -36,6 +38,7 @@ const PackageSelection = ({
       <div className="space-y-3 md:space-y-4 mt-4">
         {packages.map(pkg => {
         const isSelected = selectedPackage === pkg.id;
+        const displayPrice = isGrad ? pkg.nonStudentPrice : pkg.studentPrice;
         return <div key={pkg.id} onClick={() => onSelect(pkg.id)} className={`relative p-4 md:p-5 rounded-lg border cursor-pointer transition-all ${isSelected ? "border-primary bg-primary/5" : "border-border hover:border-primary/30 bg-card"}`}>
               {pkg.highlight && <span className="absolute -top-2 left-4 bg-primary text-primary-foreground text-xs md:text-sm font-bold px-2 py-0.5 rounded">
                   {pkg.savings}
@@ -63,8 +66,8 @@ const PackageSelection = ({
                   
                   <div className="text-sm md:text-base flex items-center gap-2">
                     <span className="text-muted-foreground">السعر: </span>
-                    <span className="font-bold text-foreground">{pkg.studentPrice}ج</span>
-                    {pkg.highlight && <span className="text-destructive line-through">{pkg.studentPrice + 350}ج</span>}
+                    <span className="font-bold text-foreground">{displayPrice}ج</span>
+                    {pkg.highlight && <span className="text-destructive line-through">{displayPrice + 350}ج</span>}
                   </div>
                 </div>
               </div>

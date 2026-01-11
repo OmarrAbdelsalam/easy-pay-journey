@@ -23,6 +23,7 @@ interface PaymentUploadProps {
   onScreenshotChange: (file: File | null) => void;
   paymentDetails: PaymentDetails;
   onPaymentDetailsChange: (details: PaymentDetails) => void;
+  isGrad?: boolean;
 }
 
 const paymentMethods = [
@@ -59,12 +60,16 @@ const PaymentUpload = ({
   onScreenshotChange,
   paymentDetails,
   onPaymentDetailsChange,
+  isGrad = false,
 }: PaymentUploadProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const pkg = packages.find((p) => p.id === selectedPackage);
-  const studentTotal = pkg?.studentPrice || 0;
+  // لو خريج/معيد يدفع سعر nonStudentPrice
+  const mainTicketPrice = isGrad 
+    ? (pkg?.nonStudentPrice || 0) 
+    : (pkg?.studentPrice || 0);
   const companionsTotal = companions.reduce((total, comp) => {
     const compPkg = packages.find((p) => p.id === comp.packageType);
     
@@ -75,7 +80,7 @@ const PaymentUpload = ({
       return total + (compPkg?.nonStudentPrice || 0);
     }
   }, 0);
-  const total = studentTotal + companionsTotal;
+  const total = mainTicketPrice + companionsTotal;
 
   const selectedPayment = paymentMethods.find((p) => p.id === selectedMethod);
 

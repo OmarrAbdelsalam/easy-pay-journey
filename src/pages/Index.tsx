@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
 import heroImage from "@/assets/cairo-trip-hero.webp";
 import StepIndicator from "@/components/StepIndicator";
 import PackageSelection, { PackageType, packages } from "@/components/PackageSelection";
@@ -11,12 +12,19 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const STORAGE_KEY = "cairo-trip-booking";
+interface IndexProps {
+  isGrad?: boolean;
+}
 
-const Index = () => {
+const STORAGE_KEY = "cairo-trip-booking";
+const STORAGE_KEY_GRAD = "cairo-trip-booking-grad";
+
+const Index = ({ isGrad = false }: IndexProps) => {
   // تحميل البيانات المحفوظة مرة واحدة
+  const storageKey = isGrad ? STORAGE_KEY_GRAD : STORAGE_KEY;
+  
   const getSavedData = () => {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(storageKey);
     return saved ? JSON.parse(saved) : null;
   };
 
@@ -82,8 +90,8 @@ const Index = () => {
       orderNumber,
       isCompleted: currentStep === 5 && orderNumber !== null
     };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-  }, [currentStep, selectedPackage, companions, customerInfo, paymentMethod, paymentDetails, orderNumber]);
+    localStorage.setItem(storageKey, JSON.stringify(dataToSave));
+  }, [currentStep, selectedPackage, companions, customerInfo, paymentMethod, paymentDetails, orderNumber, storageKey]);
   const totalSteps = 4;
   const stepLabels = ["الباكدج", "التذاكر", "البيانات", "الدفع"];
   const showConfirmation = currentStep === 5;
@@ -94,7 +102,9 @@ const Index = () => {
       case 2:
         return !hasCompanionPending; // مينفعش يكمل لو في مرافق لسه بيتضاف
       case 3:
-        return customerInfo.name.trim() !== "" && customerInfo.phone.trim().length === 11 && customerInfo.nationalId.trim().length === 14 && customerInfo.year !== "";
+        const baseValidation = customerInfo.name.trim() !== "" && customerInfo.phone.trim().length === 11 && customerInfo.nationalId.trim().length === 14;
+        // الخريجين مش محتاجين السنة الدراسية
+        return isGrad ? baseValidation : (baseValidation && customerInfo.year !== "");
       case 4:
         const hasRequiredDetails = paymentMethod === "instapay" ? paymentDetails.senderName.trim() !== "" : paymentDetails.senderPhone.trim().length === 11;
         return paymentMethod !== null && paymentScreenshot !== null && paymentDetails.transactionNumber.trim() !== "" && hasRequiredDetails;
@@ -140,7 +150,10 @@ const Index = () => {
       
       // Calculate total price
       const studentPkg = packages.find(p => p.id === selectedPackage);
-      const studentTotal = studentPkg?.studentPrice || 0;
+      // لو خريج/معيد يدفع سعر nonStudentPrice
+      const mainTicketPrice = isGrad 
+        ? (studentPkg?.nonStudentPrice || 0) 
+        : (studentPkg?.studentPrice || 0);
       const companionsTotal = companions.reduce((sum, c) => {
         const pkg = packages.find(p => p.id === c.packageType);
         
@@ -151,7 +164,7 @@ const Index = () => {
           return sum + (pkg?.nonStudentPrice || 0);
         }
       }, 0);
-      const totalPrice = studentTotal + companionsTotal;
+      const totalPrice = mainTicketPrice + companionsTotal;
       
       // Prepare companions details
       const companionsDetails = companions.map((c, index) => ({
@@ -181,7 +194,8 @@ const Index = () => {
           sender_phone: paymentDetails.senderPhone || null,
           sender_name: paymentDetails.senderName || null,
           payment_screenshot_url: urlData.publicUrl,
-          total_price: totalPrice
+          total_price: totalPrice,
+          booking_type: isGrad ? 'grad' : 'student'
         });
       
       if (insertError) {
@@ -207,20 +221,21 @@ const Index = () => {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <PackageSelection selectedPackage={selectedPackage} onSelect={setSelectedPackage} />;
+        return <PackageSelection selectedPackage={selectedPackage} onSelect={setSelectedPackage} isGrad={isGrad} />;
       case 2:
-        return <TicketQuantity selectedPackage={selectedPackage} companions={companions} onCompanionsChange={setCompanions} onPendingChange={setHasCompanionPending} />;
+        return <TicketQuantity selectedPackage={selectedPackage} companions={companions} onCompanionsChange={setCompanions} onPendingChange={setHasCompanionPending} isGrad={isGrad} />;
       case 3:
-        return <CustomerInfo customerInfo={customerInfo} onCustomerInfoChange={setCustomerInfo} />;
+        return <CustomerInfo customerInfo={customerInfo} onCustomerInfoChange={setCustomerInfo} isGrad={isGrad} />;
       case 4:
-        return <PaymentUpload selectedPackage={selectedPackage} companions={companions} selectedMethod={paymentMethod} onMethodSelect={setPaymentMethod} paymentScreenshot={paymentScreenshot} onScreenshotChange={setPaymentScreenshot} paymentDetails={paymentDetails} onPaymentDetailsChange={setPaymentDetails} />;
+        return <PaymentUpload selectedPackage={selectedPackage} companions={companions} selectedMethod={paymentMethod} onMethodSelect={setPaymentMethod} paymentScreenshot={paymentScreenshot} onScreenshotChange={setPaymentScreenshot} paymentDetails={paymentDetails} onPaymentDetailsChange={setPaymentDetails} isGrad={isGrad} />;
       case 5:
         return <OrderConfirmation orderDetails={{
           selectedPackage,
           companions,
           customerInfo,
           paymentMethod,
-          orderNumber
+          orderNumber,
+          isGrad
         }} />;
       default:
         return null;
@@ -236,9 +251,22 @@ const Index = () => {
         {/* Header Card - Only show on first step */}
         {currentStep === 1 && (
           <div className="gform-card p-3 sm:p-4 md:p-5 mb-3" dir="rtl">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary mb-2 md:mb-3">
-              رحلة القاهرة
-            </h1>
+            <div className="flex items-center justify-between mb-2 md:mb-3">
+              <div>
+                <p className="text-xs text-primary font-medium mb-1">
+                  {isGrad ? "للمعيدين والخريجين" : "للطلبة"}
+                </p>
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary">
+                  رحلة القاهرة
+                </h1>
+              </div>
+              <Link 
+                to={isGrad ? "/" : "/grads"} 
+                className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+              >
+                {isGrad ? "طالب؟" : "معيد أو خريج؟"}
+              </Link>
+            </div>
             <ul className="space-y-1 md:space-y-2 text-foreground text-xs sm:text-sm md:text-base">
               <li className="flex items-start gap-1.5 md:gap-2">
                 <span className="text-foreground">•</span>
@@ -246,7 +274,7 @@ const Index = () => {
               </li>
               <li className="flex items-start gap-1.5 md:gap-2">
                 <span className="text-foreground">•</span>
-                <span>سعر تيكت الرحلة للطلاب من كل المراحل العمرية = 310 ج</span>
+                <span>سعر تيكت الرحلة {isGrad ? "للمعيدين والخريجين" : "للطلاب من كل المراحل العمرية"} = {isGrad ? "410" : "310"} ج</span>
               </li>
            
               <li className="flex items-start gap-1.5 md:gap-2">
@@ -306,7 +334,7 @@ const Index = () => {
               senderPhone: "",
               senderName: ""
             });
-            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(storageKey);
           }} className="text-sm text-primary bg-gray-100 border-0 hover:bg-primary hover:text-white">
                 حجز آخر
               </Button>

@@ -11,11 +11,13 @@ interface CustomerInfoProps {
     nationalId: string;
     year: string;
   }) => void;
+  isGrad?: boolean;
 }
 
 const CustomerInfo = ({
   customerInfo,
   onCustomerInfoChange,
+  isGrad = false,
 }: CustomerInfoProps) => {
   const years = ["أولى", "تانية", "تالتة", "رابعة"];
 
@@ -81,27 +83,29 @@ const CustomerInfo = ({
           </p>
         </div>
 
-        <div>
-          <label className="block text-sm md:text-base font-medium text-foreground mb-1.5 md:mb-2 text-right">
-            السنة الدراسية <span className="text-destructive">*</span>
-          </label>
-          <div className="grid grid-cols-4 gap-2 md:gap-3">
-            {years.map((year) => (
-              <button
-                key={year}
-                type="button"
-                onClick={() => onCustomerInfoChange({ ...customerInfo, year })}
-                className={`py-2 md:py-3 px-3 md:px-4 rounded-lg border text-sm md:text-base font-medium transition-all ${
-                  customerInfo.year === year
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-gray-100 border-border hover:border-primary/50"
-                }`}
-              >
-                {year}
-              </button>
-            ))}
+        {!isGrad && (
+          <div>
+            <label className="block text-sm md:text-base font-medium text-foreground mb-1.5 md:mb-2 text-right">
+              السنة الدراسية <span className="text-destructive">*</span>
+            </label>
+            <div className="grid grid-cols-4 gap-2 md:gap-3">
+              {years.map((year) => (
+                <button
+                  key={year}
+                  type="button"
+                  onClick={() => onCustomerInfoChange({ ...customerInfo, year })}
+                  className={`py-2 md:py-3 px-3 md:px-4 rounded-lg border text-sm md:text-base font-medium transition-all ${
+                    customerInfo.year === year
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-gray-100 border-border hover:border-primary/50"
+                  }`}
+                >
+                  {year}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
