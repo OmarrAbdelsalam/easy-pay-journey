@@ -2,12 +2,20 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Lock, Search, Download, Eye, X, CreditCard, Package, Users, CheckCircle, XCircle, Clock, AlertTriangle, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
+import { Lock, Search, Download, Eye, X, CreditCard, Package, Users, CheckCircle, XCircle, Clock, AlertTriangle, ChevronDown, ChevronUp, Trash2, ListOrdered, Settings, ToggleLeft, ToggleRight } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
 const DASHBOARD_PASSWORD = "cairo2024";
+
+interface WaitingListEntry {
+  id: string;
+  name: string;
+  phone: string;
+  selected_package: string;
+  created_at: string;
+}
 
 interface CompanionDetail {
   index: number;
@@ -50,6 +58,11 @@ const Dashboard = () => {
   const [bookingTypeFilter, setBookingTypeFilter] = useState<string>("all");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [warningsExpanded, setWarningsExpanded] = useState(false);
+  const [showWaitingList, setShowWaitingList] = useState(false);
+  const [waitingList, setWaitingList] = useState<WaitingListEntry[]>([]);
+  const [waitingListLoading, setWaitingListLoading] = useState(false);
+  const [homepageMode, setHomepageMode] = useState<"booking" | "waiting">("booking");
+  const [savingMode, setSavingMode] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,6 +85,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (isAuthenticated) {
       fetchBookings();
+      fetchHomepageMode();
     }
   }, [isAuthenticated]);
 
@@ -142,6 +156,85 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error deleting booking:", error);
       toast.error("فشل في حذف الحجز");
+    }
+  };
+
+  const fetchWaitingList = async () => {
+    setWaitingListLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("waiting_list")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setWaitingList(data || []);
+    } catch (error) {
+      console.error("Error fetching waiting list:", error);
+      toast.error("فشل في تحميل قائمة الانتظار");
+    } finally {
+      setWaitingListLoading(false);
+    }
+  };
+
+  const deleteWaitingListEntry = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from("waiting_list")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setWaitingList(prev => prev.filter(w => w.id !== id));
+      toast.success("تم الحذف بنجاح");
+    } catch (error) {
+      console.error("Error deleting:", error);
+      toast.error("فشل في الحذف");
+    }
+  };
+
+  const toggleWaitingList = () => {
+    if (!showWaitingList && waitingList.length === 0) {
+      fetchWaitingList();
+    }
+    setShowWaitingList(!showWaitingList);
+  };
+
+  const fetchHomepageMode = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("app_settings")
+        .select("homepage_mode")
+        .eq("id", "main")
+        .single();
+
+      if (error) throw error;
+      if (data) {
+        setHomepageMode(data.homepage_mode as "booking" | "waiting");
+      }
+    } catch (error) {
+      console.error("Error fetching homepage mode:", error);
+    }
+  };
+
+  const toggleHomepageMode = async () => {
+    const newMode = homepageMode === "booking" ? "waiting" : "booking";
+    setSavingMode(true);
+    try {
+      const { error } = await supabase
+        .from("app_settings")
+        .upsert({ id: "main", homepage_mode: newMode, updated_at: new Date().toISOString() });
+
+      if (error) throw error;
+      
+      setHomepageMode(newMode);
+      toast.success(newMode === "booking" ? "الصفحة الرئيسية: الحجز" : "الصفحة الرئيسية: قائمة الانتظار");
+    } catch (error) {
+      console.error("Error updating homepage mode:", error);
+      toast.error("فشل في تحديث الإعدادات");
+    } finally {
+      setSavingMode(false);
     }
   };
 
@@ -330,10 +423,115 @@ const Dashboard = () => {
             <h1 className="text-2xl font-bold text-gray-900">لوحة التحكم</h1>
             <p className="text-sm text-gray-500">إدارة حجوزات رحلة القاهرة</p>
           </div>
-          <Button variant="outline" size="sm" className="bg-gray-100 hover:bg-gray-200" onClick={handleLogout}>
-            تسجيل خروج
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className={`${showWaitingList ? 'bg-primary text-white hover:bg-primary/90' : 'bg-gray-100 hover:bg-gray-200'}`}
+              onClick={toggleWaitingList}
+            >
+              <ListOrdered className="w-4 h-4 ml-1" />
+              قائمة الانتظار
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              disabled={savingMode}
+              className={`${homepageMode === "waiting" ? 'bg-amber-500 text-white hover:bg-amber-600' : 'bg-green-500 text-white hover:bg-green-600'}`}
+              onClick={toggleHomepageMode}
+            >
+              {homepageMode === "booking" ? (
+                <>
+                  <ToggleLeft className="w-4 h-4 ml-1" />
+                  الحجز مفتوح
+                </>
+              ) : (
+                <>
+                  <ToggleRight className="w-4 h-4 ml-1" />
+                  قائمة انتظار
+                </>
+              )}
+            </Button>
+            <Button variant="outline" size="sm" className="bg-gray-100 hover:bg-gray-200" onClick={handleLogout}>
+              تسجيل خروج
+            </Button>
+          </div>
         </div>
+
+        {/* Waiting List Section */}
+        {showWaitingList && (
+          <div className="mb-6">
+            <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+              <div className="px-4 py-3 bg-primary/10 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <ListOrdered className="w-5 h-5 text-primary" />
+                    <h3 className="font-bold text-gray-800">قائمة الانتظار ({waitingList.length})</h3>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowWaitingList(false)}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+              
+              {waitingListLoading ? (
+                <div className="p-8 text-center text-gray-500">جاري التحميل...</div>
+              ) : waitingList.length === 0 ? (
+                <div className="p-8 text-center text-gray-500">لا يوجد أحد في قائمة الانتظار</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                      <tr>
+                        <th className="px-4 py-3 text-right font-medium text-gray-600">#</th>
+                        <th className="px-4 py-3 text-right font-medium text-gray-600">الاسم</th>
+                        <th className="px-4 py-3 text-right font-medium text-gray-600">الهاتف</th>
+                        <th className="px-4 py-3 text-right font-medium text-gray-600">الباكدج</th>
+                        <th className="px-4 py-3 text-right font-medium text-gray-600">التاريخ</th>
+                        <th className="px-4 py-3 text-center font-medium text-gray-600">حذف</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {waitingList.map((entry, index) => (
+                        <tr key={entry.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 text-gray-500">{index + 1}</td>
+                          <td className="px-4 py-3 font-semibold text-gray-900">{entry.name}</td>
+                          <td className="px-4 py-3 text-gray-700" dir="ltr">{entry.phone}</td>
+                          <td className="px-4 py-3">
+                            <span className={`px-2 py-1 rounded text-xs font-medium ${
+                              entry.selected_package === "with-ski" 
+                                ? "bg-blue-100 text-blue-700" 
+                                : "bg-gray-100 text-gray-600"
+                            }`}>
+                              {entry.selected_package === "with-ski" ? "مع سكي" : "بدون سكي"}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-gray-500 text-xs">
+                            {new Date(entry.created_at).toLocaleDateString("ar-EG")}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8 bg-white text-red-600 border-red-200 hover:bg-red-50"
+                              onClick={() => deleteWaitingListEntry(entry.id)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Duplicates Warning Section - Collapsible */}
         {(() => {
