@@ -195,7 +195,8 @@ const Index = ({ isGrad = false }: IndexProps) => {
           sender_name: paymentDetails.senderName || null,
           payment_screenshot_url: urlData.publicUrl,
           total_price: totalPrice,
-          booking_type: isGrad ? 'grad' : 'student'
+          booking_type: isGrad ? 'grad' : 'student',
+          batch: 2 // الفوج التاني - 15 فبراير
         });
       
       if (insertError) {
@@ -254,10 +255,10 @@ const Index = ({ isGrad = false }: IndexProps) => {
             <div className="flex items-center justify-between mb-2 md:mb-3">
               <div>
                 <p className="text-xs text-primary font-medium mb-1">
-                  {isGrad ? "للمعيدين والخريجين" : "للطلبة"}
+                  {isGrad ? "للمعيدين والخريجين" : "للطلبة"} - 📅 السبت 15 فبراير 2025
                 </p>
                 <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary">
-                  رحلة القاهرة
+                  رحلة القاهرة - الفوج التاني
                 </h1>
               </div>
               <Link 

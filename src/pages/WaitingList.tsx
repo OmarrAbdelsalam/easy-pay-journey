@@ -51,6 +51,7 @@ const WaitingList = () => {
         name: name.trim(),
         phone: phone.trim(),
         selected_package: selectedPackage,
+        batch: 2 // الفوج التاني - 15 فبراير
       });
 
       if (error) throw error;
@@ -94,8 +95,8 @@ const WaitingList = () => {
         {/* Header */}
         <div className="gform-card p-3 sm:p-4 md:p-5 mb-3" dir="rtl">
           <div className="mb-3">
-            <h1 className="text-xl sm:text-2xl font-bold text-primary">رحلة القاهرة</h1>
-            <p className="text-sm text-muted-foreground">قائمة الانتظار</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-primary">رحلة القاهرة - الفوج التاني</h1>
+            <p className="text-sm text-muted-foreground">📅 السبت 15 فبراير 2025 - قائمة الانتظار</p>
           </div>
 
           <div className="bg-gray-100 border border-gray-200 rounded-lg p-3 mb-3">

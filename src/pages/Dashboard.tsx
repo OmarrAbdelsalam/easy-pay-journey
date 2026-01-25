@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Lock, Search, Download, Eye, X, CreditCard, Package, Users, CheckCircle, XCircle, Clock, AlertTriangle, ChevronDown, ChevronUp, Trash2, ListOrdered, Settings, ToggleLeft, ToggleRight } from "lucide-react";
+import { Lock, Search, Download, Eye, X, CreditCard, Package, Users, CheckCircle, XCircle, Clock, AlertTriangle, ChevronDown, ChevronUp, Trash2, ListOrdered, Settings, ToggleLeft, ToggleRight, Calendar } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
@@ -63,6 +64,7 @@ const Dashboard = () => {
   const [waitingListLoading, setWaitingListLoading] = useState(false);
   const [homepageMode, setHomepageMode] = useState<"booking" | "waiting">("booking");
   const [savingMode, setSavingMode] = useState(false);
+  const [currentBatch, setCurrentBatch] = useState<number>(2); // Default to batch 2 (الفوج التاني)
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,6 +89,82 @@ const Dashboard = () => {
       fetchBookings();
       fetchHomepageMode();
     }
+  }, [isAuthenticated]);
+
+  // Real-time subscription for bookings
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const bookingsChannel = supabase
+      .channel('bookings-realtime')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'bookings' },
+        (payload) => {
+          const newBooking = {
+            ...payload.new,
+            companions_details: Array.isArray(payload.new.companions_details) 
+              ? (payload.new.companions_details as unknown as CompanionDetail[]) 
+              : []
+          } as Booking;
+          setBookings(prev => [newBooking, ...prev]);
+          toast.success(`حجز جديد من ${newBooking.customer_name}`, { duration: 5000 });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'bookings' },
+        (payload) => {
+          const updatedBooking = {
+            ...payload.new,
+            companions_details: Array.isArray(payload.new.companions_details) 
+              ? (payload.new.companions_details as unknown as CompanionDetail[]) 
+              : []
+          } as Booking;
+          setBookings(prev => prev.map(b => b.id === updatedBooking.id ? updatedBooking : b));
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'bookings' },
+        (payload) => {
+          setBookings(prev => prev.filter(b => b.id !== payload.old.id));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(bookingsChannel);
+    };
+  }, [isAuthenticated]);
+
+  // Real-time subscription for waiting_list
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const waitingListChannel = supabase
+      .channel('waiting-list-realtime')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'waiting_list' },
+        (payload) => {
+          const newEntry = payload.new as WaitingListEntry;
+          setWaitingList(prev => [newEntry, ...prev]);
+          toast.info(`تسجيل جديد في قائمة الانتظار: ${newEntry.name}`, { duration: 5000 });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'waiting_list' },
+        (payload) => {
+          setWaitingList(prev => prev.filter(w => w.id !== payload.old.id));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(waitingListChannel);
+    };
   }, [isAuthenticated]);
 
   const fetchBookings = async () => {
@@ -270,6 +348,10 @@ const Dashboard = () => {
   };
 
   const filteredBookings = bookings.filter((booking) => {
+    // Filter by batch first
+    const bookingBatch = (booking as any).batch || 1;
+    if (bookingBatch !== currentBatch) return false;
+
     const matchesSearch =
       booking.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       booking.customer_phone.includes(searchTerm) ||
@@ -297,26 +379,32 @@ const Dashboard = () => {
     return matchesSearch && matchesPackage && matchesPayment && matchesStatus && matchesYear && matchesBookingType;
   });
 
+  // Filter waiting list by batch too
+  const filteredWaitingList = waitingList.filter((entry) => {
+    const entryBatch = (entry as any).batch || 1;
+    return entryBatch === currentBatch;
+  });
+
   const totalRevenue = filteredBookings
     .filter(b => b.status !== "rejected")
     .reduce((sum, b) => sum + Number(b.total_price), 0);
   const totalTickets = filteredBookings
     .filter(b => b.status !== "rejected")
     .reduce((sum, b) => sum + b.student_tickets + b.companion_tickets, 0);
-  const pendingCount = bookings.filter(b => b.status === "pending").length;
+  const pendingCount = filteredBookings.filter(b => b.status === "pending").length;
 
   const getDuplicateCount = (booking: Booking, field: 'sender' | 'transaction') => {
     if (field === 'sender') {
       const senderValue = booking.sender_name || booking.sender_phone;
       if (!senderValue) return 0;
-      return bookings.filter(b => 
+      return filteredBookings.filter(b => 
         b.id !== booking.id && 
         ((b.sender_name && b.sender_name === booking.sender_name) || 
          (b.sender_phone && b.sender_phone === booking.sender_phone))
       ).length;
     } else {
       if (!booking.transaction_number) return 0;
-      return bookings.filter(b => 
+      return filteredBookings.filter(b => 
         b.id !== booking.id && 
         b.transaction_number === booking.transaction_number
       ).length;
@@ -418,7 +506,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-4 sm:py-8" dir="rtl">
       <div className="container max-w-7xl mx-auto px-3 sm:px-4">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">لوحة التحكم</h1>
             <p className="text-sm text-gray-500">إدارة حجوزات رحلة القاهرة</p>
@@ -458,6 +546,30 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Batch Tabs */}
+        <div className="mb-6">
+          <Tabs value={String(currentBatch)} onValueChange={(v) => setCurrentBatch(Number(v))} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 max-w-md bg-gray-100 p-1 rounded-lg">
+              <TabsTrigger 
+                value="1" 
+                className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md py-2"
+              >
+                <Calendar className="w-4 h-4" />
+                <span>فوج أول</span>
+                <span className="text-xs text-gray-500">(8 فبراير)</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="2" 
+                className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md py-2"
+              >
+                <Calendar className="w-4 h-4" />
+                <span>فوج تاني</span>
+                <span className="text-xs text-gray-500">(15 فبراير)</span>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+
         {/* Waiting List Section */}
         {showWaitingList && (
           <div className="mb-6">
@@ -466,7 +578,7 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <ListOrdered className="w-5 h-5 text-primary" />
-                    <h3 className="font-bold text-gray-800">قائمة الانتظار ({waitingList.length})</h3>
+                    <h3 className="font-bold text-gray-800">قائمة الانتظار ({filteredWaitingList.length})</h3>
                   </div>
                   <Button
                     variant="ghost"
@@ -480,7 +592,7 @@ const Dashboard = () => {
               
               {waitingListLoading ? (
                 <div className="p-8 text-center text-gray-500">جاري التحميل...</div>
-              ) : waitingList.length === 0 ? (
+              ) : filteredWaitingList.length === 0 ? (
                 <div className="p-8 text-center text-gray-500">لا يوجد أحد في قائمة الانتظار</div>
               ) : (
                 <div className="overflow-x-auto">
@@ -496,7 +608,7 @@ const Dashboard = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                      {waitingList.map((entry, index) => (
+                      {filteredWaitingList.map((entry, index) => (
                         <tr key={entry.id} className="hover:bg-gray-50">
                           <td className="px-4 py-3 text-gray-500">{index + 1}</td>
                           <td className="px-4 py-3 font-semibold text-gray-900">{entry.name}</td>
@@ -535,7 +647,7 @@ const Dashboard = () => {
 
         {/* Duplicates Warning Section - Collapsible */}
         {(() => {
-          const warningBookings = bookings
+          const warningBookings = filteredBookings
             .filter(b => getDuplicateCount(b, 'sender') > 0 || getDuplicateCount(b, 'transaction') > 0)
             .sort((a, b) => {
               // Pending first, then approved, then rejected

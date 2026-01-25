@@ -35,6 +35,8 @@ export type Database = {
           total_price: number
           transaction_number: string
           updated_at: string
+          booking_type: string
+          batch: number
         }
         Insert: {
           companion_tickets?: number
@@ -56,6 +58,8 @@ export type Database = {
           total_price: number
           transaction_number: string
           updated_at?: string
+          booking_type?: string
+          batch?: number
         }
         Update: {
           companion_tickets?: number
@@ -77,6 +81,62 @@ export type Database = {
           total_price?: number
           transaction_number?: string
           updated_at?: string
+          booking_type?: string
+          batch?: number
+        }
+        Relationships: []
+      }
+      waiting_list: {
+        Row: {
+          id: string
+          name: string
+          phone: string
+          selected_package: string
+          created_at: string
+          batch: number
+        }
+        Insert: {
+          id?: string
+          name: string
+          phone: string
+          selected_package: string
+          created_at?: string
+          batch?: number
+        }
+        Update: {
+          id?: string
+          name?: string
+          phone?: string
+          selected_package?: string
+          created_at?: string
+          batch?: number
+        }
+        Relationships: []
+      }
+      app_settings: {
+        Row: {
+          id: string
+          homepage_mode: string
+          updated_at: string
+          active_batch: number
+          batch_1_mode: string
+          batch_2_mode: string
+        }
+        Insert: {
+          id: string
+          homepage_mode?: string
+          updated_at?: string
+          active_batch?: number
+          batch_1_mode?: string
+          batch_2_mode?: string
+        }
+        Update: {
+          id?: string
+          homepage_mode?: string
+          updated_at?: string
+          active_batch?: number
+          batch_1_mode?: string
+          batch_2_mode?: string
         }
         Relationships: []
       }
