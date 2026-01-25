@@ -146,7 +146,7 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
           <Calendar className="w-5 h-5 text-primary" />
           <div className="text-right">
             <p className="text-xs text-muted-foreground">التاريخ</p>
-            <p className="font-medium text-sm">12 فبراير</p>
+            <p className="font-medium text-sm">15 فبراير</p>
           </div>
         </div>
         <div className="flex items-center gap-3 bg-card rounded-lg p-4 border border-border">

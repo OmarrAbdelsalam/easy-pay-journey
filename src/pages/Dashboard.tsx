@@ -556,7 +556,7 @@ const Dashboard = () => {
               >
                 <Calendar className="w-4 h-4" />
                 <span>فوج أول</span>
-                <span className="text-xs text-gray-500">(8 فبراير)</span>
+                <span className="text-xs text-gray-500">(12 فبراير)</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="2" 
