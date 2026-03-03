@@ -6,52 +6,23 @@ import whatsappIcon from "@/assets/whatsapp-icon.png";
 
 interface OrderConfirmationProps {
   orderDetails: {
-    selectedPackage: PackageType;
-    companions: Companion[];
+    selectedPackage: string;
+    companions: any[];
     customerInfo: {
       name: string;
       phone: string;
-      nationalId: string;
+      year: string;
+      companionsCount: number;
     };
     paymentMethod: PaymentMethod;
     orderNumber?: string | null;
-    isGrad?: boolean;
   };
 }
 
 const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
-  const pkg = packages.find((p) => p.id === orderDetails.selectedPackage);
-  const isGrad = orderDetails.isGrad || false;
-  const mainTicketPrice = isGrad ? (pkg?.nonStudentPrice || 0) : (pkg?.studentPrice || 0);
-  const companionsTotal = orderDetails.companions.reduce((total, comp) => {
-    const compPkg = packages.find((p) => p.id === comp.packageType);
-    
-    if (comp.type === "student" || comp.type === "child" || comp.type === "senior") {
-      return total + (compPkg?.studentPrice || 0);
-    } else {
-      // خريجين فقط
-      return total + (compPkg?.nonStudentPrice || 0);
-    }
-  }, 0);
+  const mainTicketPrice = 270;
+  const companionsTotal = (Number(orderDetails.customerInfo.companionsCount) || 0) * 270;
   const total = mainTicketPrice + companionsTotal;
-
-  const companionTypeLabels: Record<string, string> = {
-    student: "طالب",
-    graduate: "خريج",
-    senior: "كبار سن",
-    child: "طفل",
-  };
-
-  const getCompanionPrice = (comp: Companion) => {
-    if (comp.type === "student" || comp.type === "child" || comp.type === "senior") {
-      const compPkg = packages.find((p) => p.id === comp.packageType);
-      return compPkg?.studentPrice || 0;
-    } else {
-      // خريجين فقط
-      const compPkg = packages.find((p) => p.id === comp.packageType);
-      return compPkg?.nonStudentPrice || 0;
-    }
-  };
 
   const paymentMethodNames = {
     instapay: "InstaPay",
@@ -59,7 +30,7 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
     orange: "Orange Cash",
   };
 
-  const orderNumber = orderDetails.orderNumber || `CAI-${Date.now().toString().slice(-8)}`;
+  const orderNumber = orderDetails.orderNumber || `FCI-${Date.now().toString().slice(-8)}`;
 
   return (
     <div className="animate-fade-in text-center" dir="rtl">
@@ -92,35 +63,26 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">تذكرتك ({isGrad ? "خريج/معيد" : "طالب"})</span>
-            <div className="text-left">
-              <p className="font-medium">
-                {orderDetails.selectedPackage === "with-ski" ? "رحلة القاهرة + Ski Egypt" : "رحلة القاهرة"}
-              </p>
-              <p className="text-foreground font-bold">{mainTicketPrice} جنيه</p>
+            <span className="text-muted-foreground">السنة الدراسية</span>
+            <span className="font-medium">{orderDetails.customerInfo.year}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">تذكرتك الأساسية</span>
+            <div className="text-left text-primary">
+              <p className="font-bold text-lg">{mainTicketPrice} جنيه</p>
             </div>
           </div>
           
-          {orderDetails.companions.length > 0 && (
+          {(orderDetails.customerInfo.companionsCount || 0) > 0 && (
             <div className="border-t border-border pt-3 mt-3 space-y-2">
               <p className="text-muted-foreground flex items-center gap-1 mb-2">
                 <Ticket className="w-4 h-4" />
-                المرافقين ({orderDetails.companions.length})
+                المرافقين ({orderDetails.customerInfo.companionsCount})
               </p>
-              {orderDetails.companions.map((comp, index) => {
-                const price = getCompanionPrice(comp);
-                return (
-                  <div key={index} className="flex justify-between text-xs">
-                    <span>
-                      {companionTypeLabels[comp.type] || comp.type} - {comp.packageType === "with-ski" ? "مع Ski" : "بدون Ski"}
-                    </span>
-                    <span>{price} جنيه</span>
-                  </div>
-                );
-              })}
-              <div className="flex justify-between pt-1">
-                <span className="text-muted-foreground">إجمالي المرافقين</span>
-                <span className="font-medium">{companionsTotal} جنيه</span>
+              
+              <div className="flex justify-between text-xs">
+                <span>تذاكر مرافقين ({orderDetails.customerInfo.companionsCount}x)</span>
+                <span>{companionsTotal} جنيه</span>
               </div>
             </div>
           )}
@@ -134,38 +96,31 @@ const OrderConfirmation = ({ orderDetails }: OrderConfirmationProps) => {
 
           <div className="border-t border-border pt-3 mt-3">
             <div className="flex justify-between items-center">
-              <span className="font-bold">الإجمالي</span>
-              <span className="font-bold text-lg text-primary">{total} جنيه</span>
+              <span className="font-bold text-base">الإجمالي</span>
+              <span className="font-bold text-2xl text-primary">{total} جنيه</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
-        <div className="flex items-center gap-3 bg-card rounded-lg p-4 border border-border">
-          <Calendar className="w-5 h-5 text-primary" />
-          <div className="text-right">
-            <p className="text-xs text-muted-foreground">التاريخ</p>
-            <p className="font-medium text-sm">15 فبراير</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3 bg-card rounded-lg p-4 border border-border">
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+        <div className="flex items-center gap-3 bg-card rounded-lg p-4 border border-border shadow-sm">
           <MapPin className="w-5 h-5 text-primary" />
           <div className="text-right">
             <p className="text-xs text-muted-foreground">الوجهة</p>
-            <p className="font-medium text-xs">المتحف المصري الكبير - مول مصر - سكي ايجيبت - شارع المعز</p>
+            <p className="font-bold text-xs">كلية الحاسبات والمعلومات - جامعة طنطا</p>
           </div>
         </div>
         <a 
           href="https://wa.me/201205992002" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="flex items-center gap-3 bg-card rounded-lg p-4 border border-border hover:bg-muted/30 transition-colors"
+          className="flex items-center gap-3 bg-card rounded-lg p-4 border border-border hover:bg-muted/30 transition-all shadow-sm group"
         >
-          <img src={whatsappIcon} alt="WhatsApp" className="w-6 h-6" />
+          <img src={whatsappIcon} alt="WhatsApp" className="w-6 h-6 transition-transform group-hover:scale-110" />
           <div className="text-right">
             <p className="text-xs text-muted-foreground">للاستفسار</p>
-            <p className="font-medium text-sm" dir="ltr">01205992002</p>
+            <p className="font-bold text-sm" dir="ltr">01205992002</p>
           </div>
         </a>
       </div>

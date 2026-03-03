@@ -24,6 +24,7 @@ interface PaymentUploadProps {
   paymentDetails: PaymentDetails;
   onPaymentDetailsChange: (details: PaymentDetails) => void;
   isGrad?: boolean;
+  companionsCount: number;
 }
 
 const paymentMethods = [
@@ -31,16 +32,15 @@ const paymentMethods = [
     id: "instapay" as const,
     name: "InstaPay",
     logo: instapayLogo,
-    number: "mahmoud66297@instapay",
-    holderName: "Mahmoud",
-    link: "https://ipn.eg/S/mahmoud66297/instapay/6vAtfO",
+    number: "habibakhattab2005@instapay",
+    link: "https://ipn.eg/S/habibakhattab2005/instapay/1CoFNi",
   },
   {
     id: "vodafone" as const,
     name: "Vodafone Cash",
     logo: vodafoneLogo,
-    number: "01011429433",
-    holderName: "محمد السيد",
+    number: "01016828081",
+    holderName: "امل شكري",
   },
   {
     id: "orange" as const,
@@ -61,25 +61,14 @@ const PaymentUpload = ({
   paymentDetails,
   onPaymentDetailsChange,
   isGrad = false,
+  companionsCount = 0,
 }: PaymentUploadProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const pkg = packages.find((p) => p.id === selectedPackage);
-  // لو خريج/معيد يدفع سعر nonStudentPrice
-  const mainTicketPrice = isGrad 
-    ? (pkg?.nonStudentPrice || 0) 
-    : (pkg?.studentPrice || 0);
-  const companionsTotal = companions.reduce((total, comp) => {
-    const compPkg = packages.find((p) => p.id === comp.packageType);
-    
-    if (comp.type === "student" || comp.type === "child" || comp.type === "senior") {
-      return total + (compPkg?.studentPrice || 0);
-    } else {
-      // خريجين فقط
-      return total + (compPkg?.nonStudentPrice || 0);
-    }
-  }, 0);
+  const mainTicketPrice = 270;
+  const companionsTotal = (Number(companionsCount) || 0) * 270;
   const total = mainTicketPrice + companionsTotal;
 
   const selectedPayment = paymentMethods.find((p) => p.id === selectedMethod);

@@ -64,7 +64,7 @@ const Dashboard = () => {
   const [waitingListLoading, setWaitingListLoading] = useState(false);
   const [homepageMode, setHomepageMode] = useState<"booking" | "waiting">("booking");
   const [savingMode, setSavingMode] = useState(false);
-  const [currentBatch, setCurrentBatch] = useState<number>(2); // Default to batch 2 (الفوج التاني)
+  const [currentBatch, setCurrentBatch] = useState<number>(3); // إفطار رمضان 2026
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -425,7 +425,7 @@ const Dashboard = () => {
       b.customer_phone,
       b.customer_national_id,
       b.customer_year,
-      b.selected_package === "with-ski" ? "مع سكي" : "بدون سكي",
+      "إفطار",
       b.student_tickets,
       b.companion_tickets,
       paymentMethodLabels[b.payment_method] || b.payment_method,
@@ -509,7 +509,7 @@ const Dashboard = () => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">لوحة التحكم</h1>
-            <p className="text-sm text-gray-500">إدارة حجوزات رحلة القاهرة</p>
+            <p className="text-sm text-gray-500">إدارة حجوزات إفطار حاسبات طنطا - رمضان 2026</p>
           </div>
           <div className="flex gap-2">
             <Button 
@@ -546,29 +546,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Batch Tabs */}
-        <div className="mb-6">
-          <Tabs value={String(currentBatch)} onValueChange={(v) => setCurrentBatch(Number(v))} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 max-w-md bg-gray-100 p-1 rounded-lg">
-              <TabsTrigger 
-                value="1" 
-                className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md py-2"
-              >
-                <Calendar className="w-4 h-4" />
-                <span>فوج أول</span>
-                <span className="text-xs text-gray-500">(12 فبراير)</span>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="2" 
-                className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md py-2"
-              >
-                <Calendar className="w-4 h-4" />
-                <span>فوج تاني</span>
-                <span className="text-xs text-gray-500">(15 فبراير)</span>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+
 
         {/* Waiting List Section */}
         {showWaitingList && (
@@ -937,7 +915,7 @@ const Dashboard = () => {
                     <th className="px-4 py-3 text-right font-medium text-gray-600">رقم المعاملة</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-600">المحول منه</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-600">الدفع</th>
-                    <th className="px-4 py-3 text-right font-medium text-gray-600">الباكدج</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-600">النوع</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-600">المرافقين</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-600">المبلغ</th>
                     <th className="px-4 py-3 text-center font-medium text-gray-600">الإجراءات</th>
@@ -1000,50 +978,17 @@ const Dashboard = () => {
                       
                       {/* Package */}
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${
-                          booking.selected_package === "with-ski" 
-                            ? "bg-blue-100 text-blue-700" 
-                            : "bg-gray-100 text-gray-600"
-                        }`}>
-                          {booking.selected_package === "with-ski" ? "سكي" : "بدون"}
+                        <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                          إفطار
                         </span>
                       </td>
                       
                       {/* Companions */}
                       <td className="px-4 py-3">
                         {booking.companion_tickets > 0 ? (
-                          <div className="text-xs text-gray-600 space-y-1">
-                            {booking.companions_details && booking.companions_details.length > 0 ? (
-                              booking.companions_details.map((comp, idx) => {
-                                const typeLabels: Record<string, string> = {
-                                  student: "طالب",
-                                  graduate: "خريج",
-                                  senior: "كبير سن",
-                                  child: "طفل"
-                                };
-                                return (
-                                  <div key={idx} className="flex items-center gap-1">
-                                    <span className="text-gray-500">م{idx + 1}:</span>
-                                    <span className={`px-1.5 py-0.5 rounded text-[10px] ${
-                                      comp.type === "graduate" ? "bg-purple-100 text-purple-700" :
-                                      comp.type === "senior" ? "bg-amber-100 text-amber-700" :
-                                      comp.type === "child" ? "bg-pink-100 text-pink-700" :
-                                      "bg-green-100 text-green-700"
-                                    }`}>
-                                      {typeLabels[comp.type] || comp.type}
-                                    </span>
-                                    <span className={`px-1.5 py-0.5 rounded text-[10px] ${
-                                      comp.packageType === "with-ski" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"
-                                    }`}>
-                                      {comp.packageType === "with-ski" ? "سكي" : "رحلة"}
-                                    </span>
-                                  </div>
-                                );
-                              })
-                            ) : (
-                              <span className="text-gray-400">غير محدد</span>
-                            )}
-                          </div>
+                          <span className="px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700">
+                            {booking.companion_tickets} مرافق
+                          </span>
                         ) : (
                           <span className="text-gray-400 text-xs">-</span>
                         )}

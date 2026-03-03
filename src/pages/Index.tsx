@@ -3,8 +3,6 @@ import { ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/cairo-trip-hero.webp";
 import StepIndicator from "@/components/StepIndicator";
-import PackageSelection, { PackageType, packages } from "@/components/PackageSelection";
-import TicketQuantity, { Companion } from "@/components/TicketQuantity";
 import CustomerInfo from "@/components/CustomerInfo";
 import PaymentUpload, { PaymentMethod, PaymentDetails } from "@/components/PaymentUpload";
 import OrderConfirmation from "@/components/OrderConfirmation";
@@ -39,11 +37,11 @@ const Index = ({ isGrad = false }: IndexProps) => {
     return 1;
   });
   
-  const [selectedPackage, setSelectedPackage] = useState<PackageType>(() => {
-    return savedData?.selectedPackage || "with-ski";
+  const [selectedPackage, setSelectedPackage] = useState(() => {
+    return savedData?.selectedPackage || "iftar";
   });
   
-  const [companions, setCompanions] = useState<Companion[]>(() => {
+  const [companions, setCompanions] = useState(() => {
     return savedData?.companions || [];
   });
   
@@ -51,8 +49,8 @@ const Index = ({ isGrad = false }: IndexProps) => {
     return savedData?.customerInfo || {
       name: "",
       phone: "",
-      nationalId: "",
-      year: ""
+      year: "",
+      companionsCount: 0
     };
   });
   
@@ -92,20 +90,14 @@ const Index = ({ isGrad = false }: IndexProps) => {
     };
     localStorage.setItem(storageKey, JSON.stringify(dataToSave));
   }, [currentStep, selectedPackage, companions, customerInfo, paymentMethod, paymentDetails, orderNumber, storageKey]);
-  const totalSteps = 4;
-  const stepLabels = ["الباكدج", "التذاكر", "البيانات", "الدفع"];
-  const showConfirmation = currentStep === 5;
+  const totalSteps = 2;
+  const stepLabels = ["البيانات والتذاكر", "الدفع"];
+  const showConfirmation = currentStep === 3;
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return selectedPackage !== null;
+        return customerInfo.name.trim() !== "" && customerInfo.phone.trim().length === 11 && customerInfo.year !== "";
       case 2:
-        return !hasCompanionPending; // مينفعش يكمل لو في مرافق لسه بيتضاف
-      case 3:
-        const baseValidation = customerInfo.name.trim() !== "" && customerInfo.phone.trim().length === 11 && customerInfo.nationalId.trim().length === 14;
-        // الخريجين مش محتاجين السنة الدراسية
-        return isGrad ? baseValidation : (baseValidation && customerInfo.year !== "");
-      case 4:
         const hasRequiredDetails = paymentMethod === "instapay" ? paymentDetails.senderName.trim() !== "" : paymentDetails.senderPhone.trim().length === 11;
         return paymentMethod !== null && paymentScreenshot !== null && paymentDetails.transactionNumber.trim() !== "" && hasRequiredDetails;
       default:
@@ -128,8 +120,8 @@ const Index = ({ isGrad = false }: IndexProps) => {
     
     setIsSubmitting(true);
     try {
-      // Generate order number
-      const generatedOrderNumber = `CT-${Date.now().toString(36).toUpperCase()}`;
+       // Generate order number
+      const generatedOrderNumber = `IFT-${Date.now().toString(36).toUpperCase()}`;
       
       // Upload screenshot
       const fileExt = paymentScreenshot.name.split('.').pop();
@@ -149,45 +141,29 @@ const Index = ({ isGrad = false }: IndexProps) => {
         .getPublicUrl(fileName);
       
       // Calculate total price
-      const studentPkg = packages.find(p => p.id === selectedPackage);
-      // لو خريج/معيد يدفع سعر nonStudentPrice
-      const mainTicketPrice = isGrad 
-        ? (studentPkg?.nonStudentPrice || 0) 
-        : (studentPkg?.studentPrice || 0);
-      const companionsTotal = companions.reduce((sum, c) => {
-        const pkg = packages.find(p => p.id === c.packageType);
-        
-        if (c.type === "student" || c.type === "child" || c.type === "senior") {
-          return sum + (pkg?.studentPrice || 0);
-        } else {
-          // خريجين فقط
-          return sum + (pkg?.nonStudentPrice || 0);
-        }
-      }, 0);
+      const mainTicketPrice = 270;
+      const companionsTotal = customerInfo.companionsCount * 270;
       const totalPrice = mainTicketPrice + companionsTotal;
       
       // Prepare companions details
-      const companionsDetails = companions.map((c, index) => ({
+      const companionsDetails = new Array(customerInfo.companionsCount).fill(null).map((_, index) => ({
         index: index + 1,
-        type: c.type,
-        packageType: c.packageType
+        type: "standard",
+        packageType: "iftar"
       }));
-      
-      console.log('Companions:', companions);
-      console.log('Companions Details to save:', companionsDetails);
       
       // Insert booking
       const { error: insertError } = await supabase
         .from('bookings')
         .insert({
           order_number: generatedOrderNumber,
-          selected_package: selectedPackage,
+          selected_package: "iftar",
           student_tickets: 1,
-          companion_tickets: companions.length,
+          companion_tickets: customerInfo.companionsCount,
           companions_details: companionsDetails.length > 0 ? companionsDetails : null,
           customer_name: customerInfo.name,
           customer_phone: customerInfo.phone,
-          customer_national_id: customerInfo.nationalId,
+          customer_national_id: "-",
           customer_year: customerInfo.year,
           payment_method: paymentMethod || '',
           transaction_number: paymentDetails.transactionNumber,
@@ -195,8 +171,8 @@ const Index = ({ isGrad = false }: IndexProps) => {
           sender_name: paymentDetails.senderName || null,
           payment_screenshot_url: urlData.publicUrl,
           total_price: totalPrice,
-          booking_type: isGrad ? 'grad' : 'student',
-          batch: 2 // الفوج التاني - 15 فبراير
+          booking_type: 'student',
+          batch: 3 // إفطار رمضان 2026 - 11 مارس
         });
       
       if (insertError) {
@@ -222,21 +198,26 @@ const Index = ({ isGrad = false }: IndexProps) => {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <PackageSelection selectedPackage={selectedPackage} onSelect={setSelectedPackage} isGrad={isGrad} />;
+        return <CustomerInfo customerInfo={customerInfo} onCustomerInfoChange={setCustomerInfo} />;
       case 2:
-        return <TicketQuantity selectedPackage={selectedPackage} companions={companions} onCompanionsChange={setCompanions} onPendingChange={setHasCompanionPending} isGrad={isGrad} />;
+        return <PaymentUpload 
+          selectedPackage="iftar" 
+          companions={[]} 
+          companionsCount={customerInfo.companionsCount}
+          selectedMethod={paymentMethod} 
+          onMethodSelect={setPaymentMethod} 
+          paymentScreenshot={paymentScreenshot} 
+          onScreenshotChange={setPaymentScreenshot} 
+          paymentDetails={paymentDetails} 
+          onPaymentDetailsChange={setPaymentDetails} 
+        />;
       case 3:
-        return <CustomerInfo customerInfo={customerInfo} onCustomerInfoChange={setCustomerInfo} isGrad={isGrad} />;
-      case 4:
-        return <PaymentUpload selectedPackage={selectedPackage} companions={companions} selectedMethod={paymentMethod} onMethodSelect={setPaymentMethod} paymentScreenshot={paymentScreenshot} onScreenshotChange={setPaymentScreenshot} paymentDetails={paymentDetails} onPaymentDetailsChange={setPaymentDetails} isGrad={isGrad} />;
-      case 5:
         return <OrderConfirmation orderDetails={{
-          selectedPackage,
-          companions,
+          selectedPackage: "iftar",
+          companions: [],
           customerInfo,
           paymentMethod,
           orderNumber,
-          isGrad
         }} />;
       default:
         return null;
@@ -251,38 +232,42 @@ const Index = ({ isGrad = false }: IndexProps) => {
 
         {/* Header Card - Only show on first step */}
         {currentStep === 1 && (
-          <div className="gform-card p-3 sm:p-4 md:p-5 mb-3" dir="rtl">
-            <div className="flex items-center justify-between mb-2 md:mb-3">
-              <div>
-                <p className="text-xs text-primary font-medium mb-1">
-                  {isGrad ? "للمعيدين والخريجين" : "للطلبة"} - 📅 السبت 15 فبراير 2025
-                </p>
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary">
-                  رحلة القاهرة - الفوج التاني
-                </h1>
-              </div>
-              <Link 
-                to={isGrad ? "/" : "/grads"} 
-                className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
-              >
-                {isGrad ? "طالب؟" : "معيد أو خريج؟"}
-              </Link>
+          <div className="gform-card p-4 sm:p-5 mb-4" dir="rtl">
+            <div className="flex items-center justify-between mb-3">
+              <h1 className="text-lg sm:text-xl font-black text-primary tracking-tight">
+                إفطار حاسبات طنطا
+              </h1>
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground">Ramadan 2026</span>
             </div>
-            <ul className="space-y-1 md:space-y-2 text-foreground text-xs sm:text-sm md:text-base">
-              <li className="flex items-start gap-1.5 md:gap-2">
-                <span className="text-foreground">•</span>
-                <span>(المتحف المصري الكبير - مول مصر - سكي ايجيبت "اختياري" - شارع المعز)</span>
-              </li>
-              <li className="flex items-start gap-1.5 md:gap-2">
-                <span className="text-foreground">•</span>
-                <span>سعر تيكت الرحلة {isGrad ? "للمعيدين والخريجين" : "للطلاب من كل المراحل العمرية"} = {isGrad ? "410" : "310"} ج</span>
-              </li>
-           
-              <li className="flex items-start gap-1.5 md:gap-2">
-                <span className="text-foreground">•</span>
-                <span>سعر تيكت سكي ايجيبت + 350ج بدل 700 </span>
-              </li>
-            </ul>
+            <p className="text-muted-foreground text-xs mb-3">
+              📅 الأربعاء 11 مارس
+            </p>
+            
+            <div className="space-y-2 bg-white/[0.03] p-3 rounded-lg border border-white/5 text-[13px] leading-relaxed">
+              <div className="flex items-start gap-1.5">
+                <span className="text-primary font-bold text-xs shrink-0 mt-0.5">الوجبة:</span>
+                <span className="text-foreground/70">
+                  أرز بسمتي - ربع دجاجة - 2 كفتة - 2 سمبوسة - 4 محشي ورق عنب - علبة حلويات (5 قطع) - مشروب غازي - مياه
+                </span>
+              </div>
+              <div className="h-px bg-white/5" />
+              <div className="flex items-start gap-1.5">
+                <span className="text-primary font-bold text-xs shrink-0 mt-0.5">الفعاليات:</span>
+                <span className="text-foreground/70">
+                  ألعاب لوحية - E-Sports - تنورة - بلايستيشن - تصوير - جوائز - شخصيات - مسابقات
+                </span>
+              </div>
+            </div>
+            
+            <div className="mt-3 flex items-center justify-between bg-primary/90 px-4 py-3 rounded-xl text-white">
+              <div className="flex items-baseline gap-2">
+                <span className="text-xl sm:text-2xl font-black">270</span>
+                <span className="text-sm font-medium text-white/80">جنيه / فرد</span>
+              </div>
+              <span className="text-[11px] sm:text-xs bg-white/15 px-3 py-1 rounded-full font-medium">
+                شامل الوجبة والأنشطة
+              </span>
+            </div>
           </div>
         )}
 
@@ -325,8 +310,8 @@ const Index = ({ isGrad = false }: IndexProps) => {
             setCustomerInfo({
               name: "",
               phone: "",
-              nationalId: "",
-              year: ""
+              year: "",
+              companionsCount: 0
             });
             setPaymentMethod(null);
             setPaymentScreenshot(null);
