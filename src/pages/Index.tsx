@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import heroImage from "@/assets/cairo-trip-hero.webp";
+import heroImage from "@/assets/hero.jpeg";
 import StepIndicator from "@/components/StepIndicator";
 import CustomerInfo from "@/components/CustomerInfo";
 import PaymentUpload, { PaymentMethod, PaymentDetails } from "@/components/PaymentUpload";
@@ -226,15 +226,15 @@ const Index = ({ isGrad = false }: IndexProps) => {
   return <div className="min-h-screen bg-background py-4 sm:py-8">
       <div className="container max-w-2xl mx-auto px-3 sm:px-4">
         {/* Hero Image */}
-        <div className="mb-4 rounded-lg overflow-hidden shadow-sm h-32 sm:h-40 md:h-48">
-          <img src={heroImage} alt="رحلة القاهرة - Cairo Trip" className="w-full h-[166%] object-[center_100%] object-cover" />
+        <div className="mb-4 rounded-lg overflow-hidden shadow-sm h-56 sm:h-72 md:h-80">
+          <img src={heroImage} alt="إفطار حاسبات طنطا" className="w-full h-full object-cover object-top" />
         </div>
 
         {/* Header Card - Only show on first step */}
         {currentStep === 1 && (
           <div className="gform-card p-4 sm:p-5 mb-4" dir="rtl">
             <div className="flex items-center justify-between mb-3">
-              <h1 className="text-lg sm:text-xl font-black text-primary tracking-tight">
+              <h1 className="text-lg sm:text-xl font-black text-white tracking-tight">
                 إفطار حاسبات طنطا
               </h1>
               <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground">Ramadan 2026</span>
