@@ -8,7 +8,7 @@ const CapacityReached = () => {
     <div className="min-h-screen bg-background py-4 sm:py-8">
       <div className="container max-w-2xl mx-auto px-3 sm:px-4">
         <div className="mb-4 rounded-lg overflow-hidden shadow-sm h-32 sm:h-40 md:h-48">
-          <img src={heroImage} alt="رحلة القاهرة" className="w-full h-[166%] object-[center_100%] object-cover" />
+          <img src={heroImage} alt="افطار حاسبات طنطا" className="w-full h-[166%] object-[center_100%] object-cover" />
         </div>
 
         <div className="gform-card p-6 sm:p-8 text-center" dir="rtl">
