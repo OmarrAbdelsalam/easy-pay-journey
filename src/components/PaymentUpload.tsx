@@ -32,8 +32,8 @@ const paymentMethods = [
     id: "instapay" as const,
     name: "InstaPay",
     logo: instapayLogo,
-    number: "habibakhattab2005@instapay",
-    link: "https://ipn.eg/S/habibakhattab2005/instapay/1CoFNi",
+    number: "mahmoud66297@instapay",
+    link: "https://ipn.eg/S/mahmoud66297/instapay/6vAtfO",
   },
   {
     id: "vodafone" as const,
