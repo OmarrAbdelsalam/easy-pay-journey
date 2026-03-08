@@ -419,14 +419,13 @@ const Dashboard = () => {
   };
 
   const exportToCSV = () => {
-    const headers = ["رقم الطلب", "الاسم", "الهاتف", "الرقم القومي", "السنة", "الباكدج", "تذاكر طلاب", "تذاكر مرافقين", "وسيلة الدفع", "رقم المعاملة", "المحول منه", "الإجمالي", "الحالة", "التاريخ"];
+    const headers = ["رقم الطلب", "الاسم", "الهاتف", "الرقم القومي", "السنة", "تذاكر طلاب", "تذاكر مرافقين", "وسيلة الدفع", "رقم المعاملة", "المحول منه", "الإجمالي", "الحالة", "التاريخ"];
     const rows = filteredBookings.map((b) => [
       b.order_number,
       b.customer_name,
       b.customer_phone,
       b.customer_national_id,
       b.customer_year,
-      "إفطار",
       b.student_tickets,
       b.companion_tickets,
       paymentMethodLabels[b.payment_method] || b.payment_method,
@@ -892,7 +891,6 @@ const Dashboard = () => {
                     <th className="px-4 py-3 text-right font-medium text-gray-400">رقم المعاملة</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-400">المحول منه</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-400">الدفع</th>
-                    <th className="px-4 py-3 text-right font-medium text-gray-400">النوع</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-400">المرافقين</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-400">المبلغ</th>
                     <th className="px-4 py-3 text-center font-medium text-gray-400">الإجراءات</th>
@@ -953,12 +951,6 @@ const Dashboard = () => {
                         </span>
                       </td>
                       
-                      {/* Package */}
-                      <td className="px-4 py-3">
-                        <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700">
-                          إفطار
-                        </span>
-                      </td>
                       
                       {/* Companions */}
                       <td className="px-4 py-3">
