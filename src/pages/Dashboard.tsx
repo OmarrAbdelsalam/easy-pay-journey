@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -52,11 +52,9 @@ const Dashboard = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [packageFilter, setPackageFilter] = useState<string>("all");
   const [paymentFilter, setPaymentFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [yearFilter, setYearFilter] = useState<string>("all");
-  const [bookingTypeFilter, setBookingTypeFilter] = useState<string>("all");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [warningsExpanded, setWarningsExpanded] = useState(false);
   const [showWaitingList, setShowWaitingList] = useState(false);
@@ -183,14 +181,6 @@ const Dashboard = () => {
           : []
       }));
       setBookings(bookingsData);
-      
-      // Preload all payment screenshots
-      bookingsData.forEach(booking => {
-        if (booking.payment_screenshot_url) {
-          const img = new Image();
-          img.src = booking.payment_screenshot_url;
-        }
-      });
     } catch (error) {
       console.error("Error fetching bookings:", error);
       toast.error("فشل في تحميل الحجوزات");
@@ -347,7 +337,7 @@ const Dashboard = () => {
     localStorage.removeItem("dashboard_auth");
   };
 
-  const filteredBookings = bookings.filter((booking) => {
+  const filteredBookings = useMemo(() => bookings.filter((booking) => {
     // Filter by batch first
     const bookingBatch = (booking as any).batch || 1;
     if (bookingBatch !== currentBatch) return false;
@@ -360,9 +350,6 @@ const Dashboard = () => {
       (booking.sender_name?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
       (booking.sender_phone?.includes(searchTerm) ?? false);
 
-    const matchesPackage =
-      packageFilter === "all" || booking.selected_package === packageFilter;
-
     const matchesPayment =
       paymentFilter === "all" || booking.payment_method === paymentFilter;
 
@@ -371,43 +358,57 @@ const Dashboard = () => {
 
     const matchesYear =
       yearFilter === "all" || 
-      (yearFilter === "خريج" ? (booking.booking_type === "grad" || !booking.customer_year) : booking.customer_year === yearFilter);
+      (yearFilter === "خريج" ? (booking.booking_type === "grad" || booking.customer_year === "خريج") : booking.customer_year === yearFilter);
 
-    const matchesBookingType =
-      bookingTypeFilter === "all" || booking.booking_type === bookingTypeFilter;
-
-    return matchesSearch && matchesPackage && matchesPayment && matchesStatus && matchesYear && matchesBookingType;
-  });
+    return matchesSearch && matchesPayment && matchesStatus && matchesYear;
+  }), [bookings, currentBatch, searchTerm, paymentFilter, statusFilter, yearFilter]);
 
   // Filter waiting list by batch too
-  const filteredWaitingList = waitingList.filter((entry) => {
+  const filteredWaitingList = useMemo(() => waitingList.filter((entry) => {
     const entryBatch = (entry as any).batch || 1;
     return entryBatch === currentBatch;
-  });
+  }), [waitingList, currentBatch]);
 
-  const totalRevenue = filteredBookings
+  const totalRevenue = useMemo(() => filteredBookings
     .filter(b => b.status !== "rejected")
-    .reduce((sum, b) => sum + Number(b.total_price), 0);
-  const totalTickets = filteredBookings
+    .reduce((sum, b) => sum + Number(b.total_price), 0), [filteredBookings]);
+
+  const totalTickets = useMemo(() => filteredBookings
     .filter(b => b.status !== "rejected")
-    .reduce((sum, b) => sum + b.student_tickets + b.companion_tickets, 0);
-  const pendingCount = filteredBookings.filter(b => b.status === "pending").length;
+    .reduce((sum, b) => sum + b.student_tickets + b.companion_tickets, 0), [filteredBookings]);
+
+  const pendingCount = useMemo(() => filteredBookings.filter(b => b.status === "pending").length, [filteredBookings]);
+
+  const duplicateCounts = useMemo(() => {
+    const senderCounts: Record<string, number> = {};
+    const transactionCounts: Record<string, number> = {};
+
+    filteredBookings.forEach(b => {
+      // transaction
+      if (b.transaction_number) {
+         const t = b.transaction_number.trim();
+         if (t) transactionCounts[t] = (transactionCounts[t] || 0) + 1;
+      }
+      
+      // sender
+      const s = (b.sender_name || b.sender_phone || "").trim();
+      if (s) {
+        senderCounts[s] = (senderCounts[s] || 0) + 1;
+      }
+    });
+
+    return { senderCounts, transactionCounts };
+  }, [filteredBookings]);
 
   const getDuplicateCount = (booking: Booking, field: 'sender' | 'transaction') => {
     if (field === 'sender') {
-      const senderValue = booking.sender_name || booking.sender_phone;
-      if (!senderValue) return 0;
-      return filteredBookings.filter(b => 
-        b.id !== booking.id && 
-        ((b.sender_name && b.sender_name === booking.sender_name) || 
-         (b.sender_phone && b.sender_phone === booking.sender_phone))
-      ).length;
+      const s = (booking.sender_name || booking.sender_phone || "").trim();
+      if (!s) return 0;
+      return Math.max(0, (duplicateCounts.senderCounts[s] || 0) - 1);
     } else {
-      if (!booking.transaction_number) return 0;
-      return filteredBookings.filter(b => 
-        b.id !== booking.id && 
-        b.transaction_number === booking.transaction_number
-      ).length;
+      const t = (booking.transaction_number || "").trim();
+      if (!t) return 0;
+      return Math.max(0, (duplicateCounts.transactionCounts[t] || 0) - 1);
     }
   };
 
@@ -833,16 +834,6 @@ const Dashboard = () => {
                 <SelectItem value="rejected">مرفوض</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={packageFilter} onValueChange={setPackageFilter}>
-              <SelectTrigger className="w-full sm:w-40 bg-white/5 border-white/10 text-gray-300">
-                <SelectValue placeholder="الباكدج" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">كل الباكدجات</SelectItem>
-                <SelectItem value="with-ski">مع سكي</SelectItem>
-                <SelectItem value="without-ski">بدون سكي</SelectItem>
-              </SelectContent>
-            </Select>
             <Select value={paymentFilter} onValueChange={setPaymentFilter}>
               <SelectTrigger className="w-full sm:w-40 bg-white/5 border-white/10 text-gray-300">
                 <SelectValue placeholder="طريقة الدفع" />
@@ -867,22 +858,12 @@ const Dashboard = () => {
                 <SelectItem value="خريج">خريج/معيد</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={bookingTypeFilter} onValueChange={setBookingTypeFilter}>
-              <SelectTrigger className="w-full sm:w-32 bg-white/5 border-white/10 text-gray-300">
-                <SelectValue placeholder="النوع" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">الكل</SelectItem>
-                <SelectItem value="student">طالب</SelectItem>
-                <SelectItem value="grad">خريج/معيد</SelectItem>
-              </SelectContent>
-            </Select>
             <Button variant="outline" size="icon" className="bg-white/5 border-white/10 text-gray-300 hover:bg-white/10" onClick={exportToCSV} title="تصدير CSV">
               <Download className="w-4 h-4" />
             </Button>
           </div>
           {/* Approve All Button - shows when filter is not "all" */}
-          {(paymentFilter !== "all" || packageFilter !== "all" || statusFilter !== "all" || yearFilter !== "all") && (
+          {(paymentFilter !== "all" || statusFilter !== "all" || yearFilter !== "all") && (
             <div className="mt-3 flex justify-end">
               <Button
                 size="sm"
