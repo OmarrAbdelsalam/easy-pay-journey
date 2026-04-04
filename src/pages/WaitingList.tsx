@@ -1,38 +1,33 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { ArrowLeft, Loader2, CheckCircle } from "lucide-react";
-import heroImage from "@/assets/hero.jpeg";
+import dawryImage from "/dawry.jpeg";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const WaitingList = () => {
-  const [name, setName] = useState("");
+  const [teamName, setTeamName] = useState("");
+  const [captainName, setCaptainName] = useState("");
   const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const canSubmit = name.trim() !== "" && phone.trim().length === 11;
+  const canSubmit = teamName.trim() !== "" && captainName.trim() !== "" && phone.trim().length === 11;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
-
     setIsSubmitting(true);
     try {
       const { error } = await supabase.from("waiting_list").insert({
-        name: name.trim(),
+        name: teamName.trim() + " - " + captainName.trim(),
         phone: phone.trim(),
-        selected_package: "iftar",
-        batch: 3 // إفطار رمضان 2026 - 11 مارس
+        selected_package: "tournament",
+        batch: 4,
       });
-
       if (error) throw error;
-
       setIsSubmitted(true);
-      toast.success("تم تسجيلك في قائمة الانتظار بنجاح!");
-    } catch (error: any) {
-      console.error("Error:", error);
+      toast.success("تم تسجيل فريقك في قائمة الانتظار!");
+    } catch {
       toast.error("حدث خطأ، حاول مرة أخرى");
     } finally {
       setIsSubmitting(false);
@@ -43,15 +38,14 @@ const WaitingList = () => {
     return (
       <div className="min-h-screen bg-background py-4 sm:py-8">
         <div className="container max-w-2xl mx-auto px-3 sm:px-4">
-          <div className="mb-4 rounded-lg overflow-hidden shadow-sm h-56 sm:h-72 md:h-80">
-            <img src={heroImage} alt="إفطار حاسبات طنطا" className="w-full h-full object-cover object-top" />
+          <div className="mb-4 rounded-lg overflow-hidden shadow-sm h-72 sm:h-96 md:h-[420px]">
+            <img src={dawryImage} alt="دوري مين فينا" className="w-full h-full object-cover object-top" />
           </div>
-
-          <div className="gform-card p-6 sm:p-8 text-center" dir="rtl">
-            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-primary mb-3">تم التسجيل بنجاح!</h2>
-            <p className="text-muted-foreground mb-2">تم إضافتك لقائمة الانتظار</p>
-            <p className="text-sm text-muted-foreground">هنتواصل معاك لو في مكان فاضي 🙏</p>
+          <div className="gform-card p-6 sm:p-8 text-center" dir="rtl"
+            style={{ background: "linear-gradient(135deg, #a55fa1 0%, #7a3d76 100%)" }}>
+            <CheckCircle className="w-16 h-16 text-white mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-white mb-3">تم تسجيل فريقك!</h2>
+            <p className="text-white/80">هنتواصل مع الكابتن لو في مكان فاضي</p>
           </div>
         </div>
       </div>
@@ -61,78 +55,81 @@ const WaitingList = () => {
   return (
     <div className="min-h-screen bg-background py-4 sm:py-8">
       <div className="container max-w-2xl mx-auto px-3 sm:px-4">
-        <div className="mb-4 rounded-lg overflow-hidden shadow-sm h-32 sm:h-40 md:h-48">
-          <img src={heroImage} alt="إفطار حاسبات طنطا" className="w-full h-full object-cover" />
+        <div className="mb-4 rounded-lg overflow-hidden shadow-sm h-72 sm:h-96 md:h-[420px]">
+          <img src={dawryImage} alt="دوري مين فينا" className="w-full h-full object-cover object-top" />
         </div>
 
-        {/* Header */}
-        <div className="gform-card p-3 sm:p-4 md:p-5 mb-3" dir="rtl">
+        <div className="gform-card p-4 sm:p-5 mb-4" dir="rtl"
+          style={{ background: "linear-gradient(135deg, #a55fa1 0%, #7a3d76 100%)" }}>
           <div className="flex items-center justify-between mb-2">
-            <h1 className="text-lg sm:text-xl font-bold text-white">إفطار حاسبات طنطا</h1>
-            <span className="text-xs sm:text-sm text-muted-foreground font-medium">Ramadan 2026</span>
+            <h1 className="text-lg sm:text-xl font-bold text-white">دوري مين فينا</h1>
+            <span className="text-xs text-white/60 font-bold uppercase tracking-widest">FCI Tanta</span>
           </div>
-
-          <p className="text-xs sm:text-sm text-muted-foreground mb-3">📅 الأربعاء 11 مارس</p>
-
-          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 mb-3">
-            <p className="text-red-300 text-sm">
-              ⚠️ للأسف الأماكن اكتملت حالياً، لكن سجل في قائمة الانتظار وهنتواصل معاك لو حد لغى
+          <p className="text-white/70 text-xs mb-3">الاربعاء 8 ابريل</p>
+          <div className="bg-white/10 border border-white/15 rounded-lg p-3">
+            <p className="text-white/90 text-sm">
+              الاماكن اكتملت — سجل فريقك في قائمة الانتظار وهنتواصل معاك لو في مكان فاضي
             </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2 text-foreground text-xs">
-            <span className="bg-card px-2 py-1 rounded border border-border">🍖 2 كفتة</span>
-            <span className="bg-card px-2 py-1 rounded border border-border">🥟 2 سمبوسة</span>
-            <span className="bg-card px-2 py-1 rounded border border-border">🫔 4 محشي ورق عنب</span>
-            <span className="bg-card px-2 py-1 rounded border border-border">🍬 علبة حلويات (5 قطع)</span>
           </div>
         </div>
 
         <div className="gform-section p-4 sm:p-6" dir="rtl">
-          <div className="space-y-5">
-            {/* الاسم */}
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-sm font-medium">
-                الاسم بالكامل <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="اكتب اسمك هنا"
-                className="text-right"
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5 text-right">
+                اسم الفريق <span className="text-destructive">*</span>
+              </label>
+              <input
+                type="text"
+                value={teamName}
+                onChange={(e) => setTeamName(e.target.value)}
+                placeholder="اسم الفريق"
+                className="gform-input text-right text-sm"
               />
             </div>
 
-            {/* رقم الموبايل */}
-            <div className="space-y-2">
-              <Label htmlFor="phone" className="text-sm font-medium">
-                رقم الموبايل <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="phone"
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5 text-right">
+                اسم الكابتن (رباعي) <span className="text-destructive">*</span>
+              </label>
+              <input
+                type="text"
+                value={captainName}
+                onChange={(e) => setCaptainName(e.target.value)}
+                placeholder="الاسم رباعي باللغة العربية"
+                className="gform-input text-right text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5 text-right">
+                رقم واتساب الكابتن <span className="text-destructive">*</span>
+              </label>
+              <input
+                type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 11))}
                 placeholder="01xxxxxxxxx"
-                className="text-right"
+                maxLength={11}
+                className={`gform-input text-sm ${phone.length > 0 && phone.length < 11 ? "border-destructive" : ""}`}
                 dir="ltr"
               />
-              {phone && phone.length !== 11 && <p className="text-xs text-red-500">رقم الموبايل لازم يكون 11 رقم</p>}
+              {phone.length > 0 && phone.length < 11 && (
+                <p className="text-xs text-destructive mt-1">الرقم لازم يكون 11 رقم ({phone.length}/11)</p>
+              )}
             </div>
           </div>
 
           <div className="mt-6 pt-4 border-t border-border">
-            <Button onClick={handleSubmit} disabled={!canSubmit || isSubmitting} className="w-full bg-primary hover:bg-primary/90">
+            <Button
+              onClick={handleSubmit}
+              disabled={!canSubmit || isSubmitting}
+              className="w-full bg-primary hover:bg-primary/90"
+            >
               {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin ml-2" />
-                  جاري التسجيل...
-                </>
+                <><Loader2 className="w-4 h-4 animate-spin ml-2" />جاري التسجيل...</>
               ) : (
-                <>
-                  سجل في قائمة الانتظار
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                </>
+                <>سجل في قائمة الانتظار<ArrowLeft className="w-4 h-4 mr-2" /></>
               )}
             </Button>
           </div>

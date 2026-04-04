@@ -25,6 +25,7 @@ interface PaymentUploadProps {
   onPaymentDetailsChange: (details: PaymentDetails) => void;
   isGrad?: boolean;
   companionsCount: number;
+  totalOverride?: number;
 }
 
 const paymentMethods = [
@@ -62,6 +63,7 @@ const PaymentUpload = ({
   onPaymentDetailsChange,
   isGrad = false,
   companionsCount = 0,
+  totalOverride,
 }: PaymentUploadProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -69,7 +71,7 @@ const PaymentUpload = ({
   const pkg = packages.find((p) => p.id === selectedPackage);
   const mainTicketPrice = 270;
   const companionsTotal = (Number(companionsCount) || 0) * 270;
-  const total = mainTicketPrice + companionsTotal;
+  const total = totalOverride !== undefined ? totalOverride : mainTicketPrice + companionsTotal;
 
   const selectedPayment = paymentMethods.find((p) => p.id === selectedMethod);
 

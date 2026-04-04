@@ -3,25 +3,42 @@ import { supabase } from "@/integrations/supabase/client";
 import Index from "./Index";
 import WaitingList from "./WaitingList";
 
+const MAX_TEAMS = 40;
+
 const Home = () => {
   const [mode, setMode] = useState<"booking" | "waiting" | null>(null);
 
   useEffect(() => {
     const fetchMode = async () => {
       try {
-        const { data, error } = await supabase
+        // Check manual mode setting
+        const { data: settings } = await supabase
           .from("app_settings")
           .select("homepage_mode")
           .eq("id", "main")
           .single();
 
-        if (error) {
-          // Default to booking if error
-          setMode("booking");
+        const manualMode = settings?.homepage_mode as "booking" | "waiting" || "booking";
+
+        // If already set to waiting manually, respect that
+        if (manualMode === "waiting") {
+          setMode("waiting");
           return;
         }
-        
-        setMode(data?.homepage_mode as "booking" | "waiting" || "booking");
+
+        // Count approved + pending tournament registrations (batch 4)
+        const { count } = await supabase
+          .from("bookings")
+          .select("*", { count: "exact", head: true })
+          .eq("booking_type", "tournament")
+          .eq("batch", 4)
+          .neq("status", "rejected");
+
+        if ((count ?? 0) >= MAX_TEAMS) {
+          setMode("waiting");
+        } else {
+          setMode("booking");
+        }
       } catch {
         setMode("booking");
       }

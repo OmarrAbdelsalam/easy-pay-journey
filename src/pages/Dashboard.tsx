@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -62,7 +62,7 @@ const Dashboard = () => {
   const [waitingListLoading, setWaitingListLoading] = useState(false);
   const [homepageMode, setHomepageMode] = useState<"booking" | "waiting">("booking");
   const [savingMode, setSavingMode] = useState(false);
-  const [currentBatch, setCurrentBatch] = useState<number>(3); // إفطار رمضان 2026
+  const [currentBatch, setCurrentBatch] = useState<number>(4); // دوري مين فينا - أبريل 2026
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -473,15 +473,15 @@ const Dashboard = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#0a0e1a] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="w-full max-w-sm">
-          <div className="bg-[#111827] rounded-xl p-6 border border-white/10 shadow-lg" dir="rtl">
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-lg" dir="rtl">
             <div className="flex flex-col items-center mb-6">
               <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mb-4">
                 <Lock className="w-8 h-8 text-blue-400" />
               </div>
-              <h1 className="text-xl font-bold text-white">لوحة التحكم</h1>
-              <p className="text-sm text-gray-400">أدخل كلمة المرور للدخول</p>
+              <h1 className="text-xl font-bold text-gray-900">لوحة التحكم</h1>
+              <p className="text-sm text-gray-500">أدخل كلمة المرور للدخول</p>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-4">
@@ -490,7 +490,7 @@ const Dashboard = () => {
                 placeholder="كلمة المرور"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="text-center bg-white/5 border-white/10 text-white"
+                className="text-center bg-gray-50 border-gray-200 text-gray-900"
               />
               <Button type="submit" className="w-full">
                 دخول
@@ -503,19 +503,19 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0e1a] py-4 sm:py-8" dir="rtl">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-8" dir="rtl">
       <div className="container max-w-7xl mx-auto px-3 sm:px-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-white">لوحة التحكم</h1>
-            <p className="text-sm text-gray-400">إدارة حجوزات إفطار حاسبات طنطا - رمضان 2026</p>
+            <h1 className="text-2xl font-bold text-gray-900">لوحة التحكم</h1>
+            <p className="text-sm text-gray-500">إدارة تسجيلات دوري مين فينا - كلية حاسبات طنطا</p>
           </div>
           <div className="flex gap-2">
             <Button 
               variant="outline" 
               size="sm" 
-              className={`border-white/10 ${showWaitingList ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white/5 text-gray-300 hover:bg-white/10'}`}
+              className={`border-gray-200 ${showWaitingList ? 'bg-blue-600 text-gray-900 hover:bg-blue-700' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
               onClick={toggleWaitingList}
             >
               <ListOrdered className="w-4 h-4 ml-1" />
@@ -525,7 +525,7 @@ const Dashboard = () => {
               variant="outline" 
               size="sm" 
               disabled={savingMode}
-              className={`border-white/10 ${homepageMode === "waiting" ? 'bg-amber-600 text-white hover:bg-amber-700' : 'bg-green-600 text-white hover:bg-green-700'}`}
+              className={`border-gray-200 ${homepageMode === "waiting" ? 'bg-amber-600 text-gray-900 hover:bg-amber-700' : 'bg-green-600 text-gray-900 hover:bg-green-700'}`}
               onClick={toggleHomepageMode}
             >
               {homepageMode === "booking" ? (
@@ -540,7 +540,7 @@ const Dashboard = () => {
                 </>
               )}
             </Button>
-            <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-gray-300 hover:bg-white/10" onClick={handleLogout}>
+            <Button variant="outline" size="sm" className="bg-white border-gray-200 text-gray-700 hover:bg-gray-100" onClick={handleLogout}>
               تسجيل خروج
             </Button>
           </div>
@@ -551,12 +551,12 @@ const Dashboard = () => {
         {/* Waiting List Section */}
         {showWaitingList && (
           <div className="mb-6">
-            <div className="bg-[#111827] border border-white/10 rounded-xl overflow-hidden">
-              <div className="px-4 py-3 bg-blue-500/10 border-b border-white/10">
+            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+              <div className="px-4 py-3 bg-blue-500/10 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <ListOrdered className="w-5 h-5 text-blue-400" />
-                    <h3 className="font-bold text-white">قائمة الانتظار ({filteredWaitingList.length})</h3>
+                    <h3 className="font-bold text-gray-900">قائمة الانتظار ({filteredWaitingList.length})</h3>
                   </div>
                   <Button
                     variant="ghost"
@@ -569,41 +569,41 @@ const Dashboard = () => {
               </div>
               
               {waitingListLoading ? (
-                <div className="p-8 text-center text-gray-400">جاري التحميل...</div>
+                <div className="p-8 text-center text-gray-500">جاري التحميل...</div>
               ) : filteredWaitingList.length === 0 ? (
-                <div className="p-8 text-center text-gray-400">لا يوجد أحد في قائمة الانتظار</div>
+                <div className="p-8 text-center text-gray-500">لا يوجد أحد في قائمة الانتظار</div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
-                    <thead className="bg-white/5 border-b border-white/10">
+                    <thead className="bg-gray-50 border-b border-gray-200">
                       <tr>
-                        <th className="px-4 py-3 text-right font-medium text-gray-400">#</th>
-                        <th className="px-4 py-3 text-right font-medium text-gray-400">الاسم</th>
-                        <th className="px-4 py-3 text-right font-medium text-gray-400">الهاتف</th>
-                        <th className="px-4 py-3 text-right font-medium text-gray-400">الباكدج</th>
-                        <th className="px-4 py-3 text-right font-medium text-gray-400">التاريخ</th>
-                        <th className="px-4 py-3 text-center font-medium text-gray-400">حذف</th>
+                        <th className="px-4 py-3 text-right font-medium text-gray-500">#</th>
+                        <th className="px-4 py-3 text-right font-medium text-gray-500">الاسم</th>
+                        <th className="px-4 py-3 text-right font-medium text-gray-500">الهاتف</th>
+                        <th className="px-4 py-3 text-right font-medium text-gray-500">الباكدج</th>
+                        <th className="px-4 py-3 text-right font-medium text-gray-500">التاريخ</th>
+                        <th className="px-4 py-3 text-center font-medium text-gray-500">حذف</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5">
+                    <tbody className="divide-y divide-gray-100">
                       {filteredWaitingList.map((entry, index) => (
-                        <tr key={entry.id} className="hover:bg-white/5">
-                          <td className="px-4 py-3 text-gray-400">{index + 1}</td>
-                          <td className="px-4 py-3 font-semibold text-white">{entry.name}</td>
-                          <td className="px-4 py-3 text-gray-300" dir="ltr">{entry.phone}</td>
+                        <tr key={entry.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 text-gray-500">{index + 1}</td>
+                          <td className="px-4 py-3 font-semibold text-gray-900">{entry.name}</td>
+                          <td className="px-4 py-3 text-gray-600" dir="ltr">{entry.phone}</td>
                           <td className="px-4 py-3">
                             <span className="px-2 py-1 rounded text-xs font-medium bg-blue-500/20 text-blue-300">
                               إفطار
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-gray-400 text-xs">
+                          <td className="px-4 py-3 text-gray-500 text-xs">
                             {new Date(entry.created_at).toLocaleDateString("ar-EG")}
                           </td>
                           <td className="px-4 py-3 text-center">
                             <Button
                               variant="outline"
                               size="icon"
-                              className="h-8 w-8 bg-white/5 text-red-400 border-red-500/20 hover:bg-red-500/10"
+                              className="h-8 w-8 bg-gray-50 text-red-400 border-red-500/20 hover:bg-red-500/10"
                               onClick={() => deleteWaitingListEntry(entry.id)}
                             >
                               <Trash2 className="w-4 h-4" />
@@ -635,7 +635,7 @@ const Dashboard = () => {
           
           return (
             <div className="mb-6">
-              <div className="bg-[#111827] border border-white/10 rounded-xl overflow-hidden">
+              <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
                 {/* Header - Clickable */}
                 <button
                   onClick={() => setWarningsExpanded(!warningsExpanded)}
@@ -643,15 +643,15 @@ const Dashboard = () => {
                 >
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5 text-red-400" />
-                    <h3 className="font-bold text-white">⚠️ حجوزات تحتاج مراجعة ({pendingWarnings})</h3>
+                    <h3 className="font-bold text-gray-900">⚠️ حجوزات تحتاج مراجعة ({pendingWarnings})</h3>
                     {pendingWarnings !== warningBookings.length && (
-                      <span className="text-xs text-gray-400">({warningBookings.length} إجمالي)</span>
+                      <span className="text-xs text-gray-500">({warningBookings.length} إجمالي)</span>
                     )}
                   </div>
                   {warningsExpanded ? (
-                    <ChevronUp className="w-5 h-5 text-gray-400" />
+                    <ChevronUp className="w-5 h-5 text-gray-500" />
                   ) : (
-                    <ChevronDown className="w-5 h-5 text-gray-400" />
+                    <ChevronDown className="w-5 h-5 text-gray-500" />
                   )}
                 </button>
                 
@@ -659,23 +659,23 @@ const Dashboard = () => {
                 {warningsExpanded && (
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                      <thead className="bg-white/5 border-b border-white/10">
+                      <thead className="bg-gray-50 border-b border-gray-200">
                         <tr>
-                          <th className="px-3 py-2 text-right font-medium text-gray-400">التحذير</th>
-                          <th className="px-3 py-2 text-right font-medium text-gray-400">العميل</th>
-                          <th className="px-3 py-2 text-right font-medium text-gray-400">رقم المعاملة</th>
-                          <th className="px-3 py-2 text-right font-medium text-gray-400">المحول منه</th>
-                          <th className="px-3 py-2 text-right font-medium text-gray-400">المبلغ</th>
-                          <th className="px-3 py-2 text-center font-medium text-gray-400">الإجراءات</th>
+                          <th className="px-3 py-2 text-right font-medium text-gray-500">التحذير</th>
+                          <th className="px-3 py-2 text-right font-medium text-gray-500">العميل</th>
+                          <th className="px-3 py-2 text-right font-medium text-gray-500">رقم المعاملة</th>
+                          <th className="px-3 py-2 text-right font-medium text-gray-500">المحول منه</th>
+                          <th className="px-3 py-2 text-right font-medium text-gray-500">المبلغ</th>
+                          <th className="px-3 py-2 text-center font-medium text-gray-500">الإجراءات</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-white/5">
+                      <tbody className="divide-y divide-gray-100">
                         {warningBookings.map((booking) => {
                           const senderDupes = getDuplicateCount(booking, 'sender');
                           const transactionDupes = getDuplicateCount(booking, 'transaction');
                           
                           return (
-                            <tr key={booking.id} className="hover:bg-white/5">
+                            <tr key={booking.id} className="hover:bg-gray-50">
                               {/* Warning Tags */}
                               <td className="px-3 py-2">
                                 <div className="flex flex-col gap-1">
@@ -698,19 +698,19 @@ const Dashboard = () => {
                               <td className="px-3 py-2">
                                 <div className="flex items-center gap-2">
                                   {getStatusBadge(booking.status)}
-                                  <span className="font-mono text-[10px] text-gray-400">{booking.order_number}</span>
+                                  <span className="font-mono text-[10px] text-gray-500">{booking.order_number}</span>
                                 </div>
-                                <div className="font-semibold text-white">{booking.customer_name}</div>
-                                <div className="text-xs text-gray-400" dir="ltr">{booking.customer_phone}</div>
+                                <div className="font-semibold text-gray-900">{booking.customer_name}</div>
+                                <div className="text-xs text-gray-500" dir="ltr">{booking.customer_phone}</div>
                               </td>
                               
                               {/* Transaction */}
                               <td className="px-3 py-2">
-                                <span className="font-mono text-gray-300">{booking.transaction_number}</span>
+                                <span className="font-mono text-gray-600">{booking.transaction_number}</span>
                               </td>
                               
                               {/* Sender */}
-                              <td className="px-3 py-2 text-gray-300">
+                              <td className="px-3 py-2 text-gray-600">
                                 {booking.sender_name || booking.sender_phone || "-"}
                               </td>
                               
@@ -726,7 +726,7 @@ const Dashboard = () => {
                                     <Button
                                       variant="outline"
                                       size="icon"
-                                      className="h-7 w-7 bg-white/5 border-white/10"
+                                      className="h-7 w-7 bg-gray-50 border-gray-200"
                                       onClick={() => setSelectedImage(booking.payment_screenshot_url)}
                                     >
                                       <Eye className="w-3 h-3" />
@@ -736,14 +736,14 @@ const Dashboard = () => {
                                     <>
                                       <Button
                                         size="sm"
-                                        className="h-7 bg-green-600 hover:bg-green-700 text-white text-xs"
+                                        className="h-7 bg-green-600 hover:bg-green-700 text-gray-900 text-xs"
                                         onClick={() => updateBookingStatus(booking.id, "approved")}
                                       >
                                         موافقة
                                       </Button>
                                       <Button
                                         size="sm"
-                                        className="h-7 bg-red-600 hover:bg-red-700 text-white text-xs"
+                                        className="h-7 bg-red-600 hover:bg-red-700 text-gray-900 text-xs"
                                         onClick={() => updateBookingStatus(booking.id, "rejected")}
                                       >
                                         رفض
@@ -754,7 +754,7 @@ const Dashboard = () => {
                                       value={booking.status}
                                       onValueChange={(value) => updateBookingStatus(booking.id, value)}
                                     >
-                                      <SelectTrigger className="h-7 w-[100px] text-xs bg-white/10 border-white/10 text-gray-300">
+                                      <SelectTrigger className="h-7 w-[100px] text-xs bg-gray-100 border-gray-200 text-gray-600">
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent>
@@ -780,29 +780,29 @@ const Dashboard = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-          <div className="bg-[#111827] rounded-xl p-4 border border-white/10">
-            <div className="flex items-center gap-2 text-gray-400 mb-1">
+          <div className="bg-white rounded-xl p-4 border border-gray-200">
+            <div className="flex items-center gap-2 text-gray-500 mb-1">
               <Package className="w-4 h-4" />
-              <span className="text-xs">إجمالي الحجوزات</span>
+              <span className="text-xs">إجمالي الفرق</span>
             </div>
-            <p className="text-2xl font-bold text-white">{filteredBookings.length}</p>
+            <p className="text-2xl font-bold text-gray-900">{filteredBookings.length}</p>
           </div>
-          <div className="bg-[#111827] rounded-xl p-4 border border-white/10">
-            <div className="flex items-center gap-2 text-gray-400 mb-1">
+          <div className="bg-white rounded-xl p-4 border border-gray-200">
+            <div className="flex items-center gap-2 text-gray-500 mb-1">
               <Clock className="w-4 h-4" />
               <span className="text-xs">قيد الانتظار</span>
             </div>
             <p className="text-2xl font-bold text-amber-400">{pendingCount}</p>
           </div>
-          <div className="bg-[#111827] rounded-xl p-4 border border-white/10">
-            <div className="flex items-center gap-2 text-gray-400 mb-1">
+          <div className="bg-white rounded-xl p-4 border border-gray-200">
+            <div className="flex items-center gap-2 text-gray-500 mb-1">
               <Users className="w-4 h-4" />
-              <span className="text-xs">إجمالي التذاكر</span>
+              <span className="text-xs">إجمالي اللاعبين</span>
             </div>
-            <p className="text-2xl font-bold text-white">{totalTickets}</p>
+            <p className="text-2xl font-bold text-gray-900">{totalTickets}</p>
           </div>
-          <div className="bg-[#111827] rounded-xl p-4 border border-white/10">
-            <div className="flex items-center gap-2 text-gray-400 mb-1">
+          <div className="bg-white rounded-xl p-4 border border-gray-200">
+            <div className="flex items-center gap-2 text-gray-500 mb-1">
               <CreditCard className="w-4 h-4" />
               <span className="text-xs">إجمالي الإيرادات</span>
             </div>
@@ -811,19 +811,19 @@ const Dashboard = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-[#111827] rounded-xl p-4 border border-white/10 mb-6">
+        <div className="bg-white rounded-xl p-4 border border-gray-200 mb-6">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 relative">
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <Input
                 placeholder="بحث بالاسم، الهاتف، رقم الطلب، المحول منه..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pr-10 bg-white/5 border-white/10 text-white"
+                className="pr-10 bg-gray-50 border-gray-200 text-gray-900"
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-40 bg-white/5 border-white/10 text-gray-300">
+              <SelectTrigger className="w-full sm:w-40 bg-white border-gray-200 text-gray-700">
                 <SelectValue placeholder="الحالة" />
               </SelectTrigger>
               <SelectContent>
@@ -834,7 +834,7 @@ const Dashboard = () => {
               </SelectContent>
             </Select>
             <Select value={paymentFilter} onValueChange={setPaymentFilter}>
-              <SelectTrigger className="w-full sm:w-40 bg-white/5 border-white/10 text-gray-300">
+              <SelectTrigger className="w-full sm:w-40 bg-white border-gray-200 text-gray-700">
                 <SelectValue placeholder="طريقة الدفع" />
               </SelectTrigger>
               <SelectContent>
@@ -845,7 +845,7 @@ const Dashboard = () => {
               </SelectContent>
             </Select>
             <Select value={yearFilter} onValueChange={setYearFilter}>
-              <SelectTrigger className="w-full sm:w-40 bg-white/5 border-white/10 text-gray-300">
+              <SelectTrigger className="w-full sm:w-40 bg-white border-gray-200 text-gray-700">
                 <SelectValue placeholder="السنة الدراسية" />
               </SelectTrigger>
               <SelectContent>
@@ -857,7 +857,7 @@ const Dashboard = () => {
                 <SelectItem value="خريج">خريج/معيد</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="icon" className="bg-white/5 border-white/10 text-gray-300 hover:bg-white/10" onClick={exportToCSV} title="تصدير CSV">
+            <Button variant="outline" size="icon" className="bg-white border-gray-200 text-gray-700 hover:bg-gray-100" onClick={exportToCSV} title="تصدير CSV">
               <Download className="w-4 h-4" />
             </Button>
           </div>
@@ -866,7 +866,7 @@ const Dashboard = () => {
             <div className="mt-3 flex justify-end">
               <Button
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-green-600 hover:bg-green-700 text-gray-900"
                 onClick={approveAllPending}
               >
                 <CheckCircle className="w-4 h-4 ml-1" />
@@ -877,45 +877,52 @@ const Dashboard = () => {
         </div>
 
         {/* Bookings Table */}
-        <div className="bg-[#111827] rounded-xl border border-white/10 overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           {loading ? (
-            <div className="p-8 text-center text-gray-400">جاري التحميل...</div>
+            <div className="p-8 text-center text-gray-500">جاري التحميل...</div>
           ) : filteredBookings.length === 0 ? (
-            <div className="p-8 text-center text-gray-400">لا توجد حجوزات</div>
+            <div className="p-8 text-center text-gray-500">لا توجد حجوزات</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-white/5 border-b border-white/10">
+                <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-4 py-3 text-right font-medium text-gray-400">العميل</th>
-                    <th className="px-4 py-3 text-right font-medium text-gray-400">رقم المعاملة</th>
-                    <th className="px-4 py-3 text-right font-medium text-gray-400">المحول منه</th>
-                    <th className="px-4 py-3 text-right font-medium text-gray-400">الدفع</th>
-                    <th className="px-4 py-3 text-right font-medium text-gray-400">المرافقين</th>
-                    <th className="px-4 py-3 text-right font-medium text-gray-400">المبلغ</th>
-                    <th className="px-4 py-3 text-center font-medium text-gray-400">الإجراءات</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-500">العميل</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-500">رقم المعاملة</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-500">المحول منه</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-500">الدفع</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-500">اللاعبين / المرافقين</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-500">المبلغ</th>
+                    <th className="px-4 py-3 text-center font-medium text-gray-500">الإجراءات</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-gray-100">
                   {filteredBookings.map((booking) => (
-                    <tr key={booking.id} className="hover:bg-white/5">
+                    <tr key={booking.id} className="hover:bg-gray-50">
                       {/* Customer */}
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           {getStatusBadge(booking.status)}
-                          <span className="font-mono text-[10px] text-gray-400">{booking.order_number}</span>
+                          <span className="font-mono text-[10px] text-gray-500">{booking.order_number}</span>
+                          {booking.booking_type === 'tournament' && (
+                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 font-medium">
+                              دوري
+                            </span>
+                          )}
                           {booking.booking_type === 'grad' && (
                             <span className="px-1.5 py-0.5 rounded text-[10px] bg-purple-100 text-purple-700 font-medium">
                               خريج
                             </span>
                           )}
                         </div>
-                        <div className="font-semibold text-white">{booking.customer_name}</div>
-                        <div className="text-xs text-gray-400" dir="ltr">{booking.customer_phone}</div>
+                        <div className="font-semibold text-gray-900">{booking.customer_name}</div>
+                        {booking.booking_type === 'tournament' && booking.customer_national_id && (
+                          <div className="text-xs text-blue-300 font-medium">فريق: {booking.customer_national_id}</div>
+                        )}
+                        <div className="text-xs text-gray-500" dir="ltr">{booking.customer_phone}</div>
                         {booking.booking_type !== 'grad' && booking.customer_year && (
                           <div className="text-xs text-gray-500">{booking.customer_year}</div>
                         )}
-                        <div className="text-[10px] text-gray-500 font-mono">{booking.customer_national_id}</div>
                       </td>
                       
                       {/* Transaction Number */}
@@ -934,7 +941,7 @@ const Dashboard = () => {
                       {/* Sender */}
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1">
-                          <span className="text-gray-300">{booking.sender_name || booking.sender_phone || "-"}</span>
+                          <span className="text-gray-600">{booking.sender_name || booking.sender_phone || "-"}</span>
                           {getDuplicateCount(booking, 'sender') > 0 && (
                             <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded bg-orange-100 text-orange-600 text-[10px]">
                               <AlertTriangle className="w-3 h-3" />
@@ -946,20 +953,29 @@ const Dashboard = () => {
                       
                       {/* Payment Method */}
                       <td className="px-4 py-3">
-                        <span className="px-2 py-1 rounded bg-white/10 text-gray-300 text-xs">
+                        <span className="px-2 py-1 rounded bg-gray-100 text-gray-600 text-xs">
                           {paymentMethodLabels[booking.payment_method] || booking.payment_method}
                         </span>
                       </td>
                       
-                      
-                      {/* Companions */}
+                      {/* Companions / Players */}
                       <td className="px-4 py-3">
-                        {booking.companion_tickets > 0 ? (
+                        {booking.booking_type === 'tournament' ? (
+                          <div className="text-xs text-gray-600 space-y-0.5">
+                            {Array.isArray(booking.companions_details) && booking.companions_details.length > 0 ? (
+                              (booking.companions_details as any[]).map((p: any, i: number) => (
+                                <div key={i}>{i + 1}. {p.name}</div>
+                              ))
+                            ) : (
+                              <span className="text-gray-500">{booking.student_tickets} لاعب</span>
+                            )}
+                          </div>
+                        ) : booking.companion_tickets > 0 ? (
                           <span className="px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700">
                             {booking.companion_tickets} مرافق
                           </span>
                         ) : (
-                          <span className="text-gray-400 text-xs">-</span>
+                          <span className="text-gray-500 text-xs">-</span>
                         )}
                       </td>
                       
@@ -985,7 +1001,7 @@ const Dashboard = () => {
                             <>
                               <Button
                                 size="sm"
-                                className="h-8 bg-green-600 hover:bg-green-700 text-white"
+                                className="h-8 bg-green-600 hover:bg-green-700 text-gray-900"
                                 onClick={() => updateBookingStatus(booking.id, "approved")}
                               >
                                 <CheckCircle className="w-4 h-4 ml-1" />
@@ -993,7 +1009,7 @@ const Dashboard = () => {
                               </Button>
                               <Button
                                 size="sm"
-                                className="h-8 bg-red-600 hover:bg-red-700 text-white"
+                                className="h-8 bg-red-600 hover:bg-red-700 text-gray-900"
                                 onClick={() => updateBookingStatus(booking.id, "rejected")}
                               >
                                 <XCircle className="w-4 h-4 ml-1" />
@@ -1005,7 +1021,7 @@ const Dashboard = () => {
                               value={booking.status}
                               onValueChange={(value) => updateBookingStatus(booking.id, value)}
                             >
-                              <SelectTrigger className="h-8 w-[120px] bg-white/10 border-white/10 text-gray-300">
+                              <SelectTrigger className="h-8 w-[120px] bg-gray-100 border-gray-200 text-gray-600">
                                 <SelectValue placeholder="تغيير الحالة" />
                               </SelectTrigger>
                               <SelectContent>
@@ -1020,7 +1036,7 @@ const Dashboard = () => {
                               <Button
                                 variant="outline"
                                 size="icon"
-                                className="h-8 w-8 bg-white/5 text-red-400 border-red-500/20 hover:bg-red-500/10"
+                                className="h-8 w-8 bg-gray-50 text-red-400 border-red-500/20 hover:bg-red-500/10"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
@@ -1035,7 +1051,7 @@ const Dashboard = () => {
                               <AlertDialogFooter className="flex gap-2">
                                 <AlertDialogCancel className="bg-white">إلغاء</AlertDialogCancel>
                                 <AlertDialogAction
-                                  className="bg-red-600 hover:bg-red-700 text-white"
+                                  className="bg-red-600 hover:bg-red-700 text-gray-900"
                                   onClick={() => deleteBooking(booking.id)}
                                 >
                                   حذف
@@ -1083,3 +1099,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

@@ -6,26 +6,29 @@
 
 @layer base {
   :root {
-    --background: 222 25% 4%;
-    --foreground: 220 15% 90%;
+    /* Light theme — dawry colors: purple/mauve + golden yellow + white */
+    --background: 300 20% 97%;
+    --foreground: 280 30% 15%;
 
-    --card: 222 30% 7%;
-    --card-foreground: 220 15% 90%;
+    --card: 0 0% 100%;
+    --card-foreground: 280 30% 15%;
 
-    --popover: 222 30% 7%;
-    --popover-foreground: 220 15% 90%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 280 30% 15%;
 
-    --primary: 220 70% 45%;
-    --primary-foreground: 220 15% 95%;
+    /* Primary: #a55fa1 */
+    --primary: 304 27% 51%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 222 25% 12%;
-    --secondary-foreground: 220 15% 85%;
+    --secondary: 304 15% 93%;
+    --secondary-foreground: 304 25% 20%;
 
-    --muted: 222 20% 14%;
-    --muted-foreground: 220 15% 55%;
+    --muted: 304 10% 93%;
+    --muted-foreground: 304 10% 45%;
 
-    --accent: 220 60% 40%;
-    --accent-foreground: 220 15% 95%;
+    /* Accent: golden yellow from the poster */
+    --accent: 44 90% 50%;
+    --accent-foreground: 280 30% 15%;
 
     --destructive: 0 65% 50%;
     --destructive-foreground: 0 0% 98%;
@@ -33,22 +36,22 @@
     --success: 160 50% 40%;
     --success-foreground: 0 0% 100%;
 
-    --border: 222 20% 14%;
-    --input: 222 20% 14%;
-    --ring: 220 70% 45%;
+    --border: 304 15% 85%;
+    --input: 304 15% 88%;
+    --ring: 304 27% 51%;
 
     --radius: 0.75rem;
 
-    --header-accent: 220 70% 45%;
+    --header-accent: 304 27% 51%;
 
-    --sidebar-background: 222 25% 4%;
-    --sidebar-foreground: 220 15% 90%;
-    --sidebar-primary: 220 70% 45%;
-    --sidebar-primary-foreground: 220 15% 95%;
-    --sidebar-accent: 222 25% 12%;
-    --sidebar-accent-foreground: 220 15% 85%;
-    --sidebar-border: 222 20% 14%;
-    --sidebar-ring: 220 70% 45%;
+    --sidebar-background: 304 15% 97%;
+    --sidebar-foreground: 304 25% 15%;
+    --sidebar-primary: 304 27% 51%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 304 15% 93%;
+    --sidebar-accent-foreground: 304 25% 20%;
+    --sidebar-border: 304 15% 85%;
+    --sidebar-ring: 304 27% 51%;
   }
 }
 
@@ -60,7 +63,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Tajawal', sans-serif;
-    background-image: radial-gradient(ellipse at 50% 0%, hsl(220 70% 45% / 0.06) 0%, transparent 60%);
+    background-image: radial-gradient(ellipse at 50% 0%, hsl(304 27% 51% / 0.07) 0%, transparent 60%);
   }
 
   html {
@@ -70,15 +73,15 @@
 
 @layer components {
   .gform-card {
-    @apply bg-card rounded-2xl shadow-xl border border-white/[0.08] relative overflow-hidden;
+    @apply bg-card rounded-2xl shadow-xl border border-primary/15 relative overflow-hidden;
   }
 
   .gform-section {
-    @apply bg-card/80 backdrop-blur-md rounded-2xl shadow-2xl border border-white/5;
+    @apply bg-card rounded-2xl shadow-md border border-border;
   }
 
   .gform-input {
-    @apply w-full border-0 border-b-2 border-primary/20 bg-transparent py-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-all focus:shadow-[0_10px_20px_-10px_rgba(0,100,255,0.4)] font-medium;
+    @apply w-full border-0 border-b-2 border-primary/25 bg-transparent py-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-all focus:shadow-[0_10px_20px_-10px_hsl(290_45%_45%_/_0.25)] font-medium;
   }
 
   .gform-label {
