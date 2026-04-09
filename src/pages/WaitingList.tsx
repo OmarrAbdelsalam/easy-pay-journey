@@ -65,7 +65,7 @@ const WaitingList = () => {
             <h1 className="text-lg sm:text-xl font-bold text-white">دوري مين فينا</h1>
             <span className="text-xs text-white/60 font-bold uppercase tracking-widest">FCI Tanta</span>
           </div>
-          <p className="text-white/70 text-xs mb-3">الاربعاء 8 ابريل</p>
+          <p className="text-white/70 text-xs mb-3">الاربعاء 15 ابريل</p>
           <div className="bg-white/10 border border-white/15 rounded-lg p-3">
             <p className="text-white/90 text-sm">
               الاماكن اكتملت — سجل فريقك في قائمة الانتظار وهنتواصل معاك لو في مكان فاضي

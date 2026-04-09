@@ -227,7 +227,7 @@ const Index = () => {
               </span>
             </div>
             <p className="text-white/70 text-xs mb-3">
-              الأربعاء 8 أبريل
+              الأربعاء 15 أبريل
             </p>
 
             <div className="space-y-2 bg-white/10 p-3 rounded-lg border border-white/15 text-[13px] leading-relaxed">
