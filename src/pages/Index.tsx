@@ -11,7 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const STORAGE_KEY = "dawry-tournament-booking";
-const TEAM_PRICE = 700;
+const TEAM_PRICE = 600;
 
 const Index = () => {
   const getSavedData = () => {
@@ -244,7 +244,7 @@ const Index = () => {
 
             <div className="mt-3 flex items-center justify-between bg-white/15 px-4 py-3 rounded-xl">
               <div className="flex items-baseline gap-2">
-                <span className="text-xl sm:text-2xl font-black text-white">700</span>
+                <span className="text-xl sm:text-2xl font-black text-white">600</span>
                 <span className="text-sm font-medium text-white/70">جنيه / فريق</span>
               </div>
               <span className="text-[11px] sm:text-xs bg-white/20 text-white px-3 py-1 rounded-full font-medium">

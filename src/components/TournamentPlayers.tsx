@@ -75,7 +75,7 @@ const TournamentPlayers = ({ players, onPlayersChange }: TournamentPlayersProps)
       <div className="pt-4 border-t border-border">
         <div className="flex items-center justify-between text-lg font-bold text-primary">
           <span>الإجمالي المطلوب:</span>
-          <span>700 جنيه</span>
+          <span>600 جنيه</span>
         </div>
         <p className="text-xs text-muted-foreground mt-1">سعر الاشتراك للفريق كامل</p>
       </div>

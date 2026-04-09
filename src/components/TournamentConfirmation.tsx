@@ -78,7 +78,7 @@ const TournamentConfirmation = ({ teamInfo, paymentMethod, orderNumber }: Tourna
           <div className="border-t border-border pt-3 mt-3">
             <div className="flex justify-between items-center">
               <span className="font-bold text-base">الإجمالي</span>
-              <span className="font-bold text-2xl text-primary">700 جنيه</span>
+              <span className="font-bold text-2xl text-primary">600 جنيه</span>
             </div>
           </div>
         </div>
