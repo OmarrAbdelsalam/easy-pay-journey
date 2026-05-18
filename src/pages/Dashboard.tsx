@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -891,7 +891,7 @@ const Dashboard = () => {
                     <th className="px-4 py-3 text-right font-medium text-gray-500">رقم المعاملة</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-500">المحول منه</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-500">الدفع</th>
-                    <th className="px-4 py-3 text-right font-medium text-gray-500">اللاعبين / المرافقين</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-500">تفاصيل الطلب / اللاعبين</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-500">المبلغ</th>
                     <th className="px-4 py-3 text-center font-medium text-gray-500">الإجراءات</th>
                   </tr>
@@ -912,6 +912,11 @@ const Dashboard = () => {
                           {booking.booking_type === 'grad' && (
                             <span className="px-1.5 py-0.5 rounded text-[10px] bg-purple-100 text-purple-700 font-medium">
                               خريج
+                            </span>
+                          )}
+                          {booking.booking_type === 'tshirt' && (
+                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-indigo-100 text-indigo-700 font-medium">
+                              تيشرت
                             </span>
                           )}
                         </div>
@@ -958,7 +963,7 @@ const Dashboard = () => {
                         </span>
                       </td>
                       
-                      {/* Companions / Players */}
+                      {/* Companions / Players / Tshirt Details */}
                       <td className="px-4 py-3">
                         {booking.booking_type === 'tournament' ? (
                           <div className="text-xs text-gray-600 space-y-0.5">
@@ -968,6 +973,28 @@ const Dashboard = () => {
                               ))
                             ) : (
                               <span className="text-gray-500">{booking.student_tickets} لاعب</span>
+                            )}
+                          </div>
+                        ) : booking.booking_type === 'tshirt' ? (
+                          <div className="text-xs text-gray-600 space-y-1">
+                            {Array.isArray(booking.companions_details) ? (
+                              (() => {
+                                const details = booking.companions_details as any[];
+                                const size = details.find(d => d.type === 'size')?.value || '-';
+                                const sleeve = details.find(d => d.type === 'sleeve')?.value || '-';
+                                const addonName = details.find(d => d.type === 'addon_name')?.value || 'None';
+                                return (
+                                  <>
+                                    <div>👕 <strong>المقاس:</strong> {size}</div>
+                                    <div>🧵 <strong>الكم:</strong> {sleeve}</div>
+                                    {addonName && addonName !== 'None' && (
+                                      <div className="text-indigo-600 font-semibold">🏷️ <strong>الاسم:</strong> {addonName}</div>
+                                    )}
+                                  </>
+                                );
+                              })()
+                            ) : (
+                              <span className="text-gray-400">لا توجد تفاصيل</span>
                             )}
                           </div>
                         ) : booking.companion_tickets > 0 ? (

@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
-import dawryImage from "/dawry.jpeg";
 import StepIndicator from "@/components/StepIndicator";
-import TournamentTeamInfo from "@/components/TournamentTeamInfo";
-import TournamentPlayers from "@/components/TournamentPlayers";
+import TshirtInfo from "@/components/TshirtInfo";
+import TshirtCustomer from "@/components/TshirtCustomer";
 import PaymentUpload, { PaymentMethod, PaymentDetails } from "@/components/PaymentUpload";
-import TournamentConfirmation from "@/components/TournamentConfirmation";
+import TshirtConfirmation from "@/components/TshirtConfirmation";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const STORAGE_KEY = "dawry-tournament-booking";
-const TEAM_PRICE = 600;
+const STORAGE_KEY = "tshirt-semi-senior-booking";
+
+const images = ["/image (64).webp", "/image (65).webp"];
 
 const Index = () => {
   const getSavedData = () => {
@@ -26,13 +26,14 @@ const Index = () => {
     return 1;
   });
 
-  const [teamInfo, setTeamInfo] = useState(() =>
-    savedData?.teamInfo || {
-      teamName: "",
-      captainName: "",
-      captainPhone: "",
-      year: "",
-      players: ["", "", "", "", ""],
+  const [orderInfo, setOrderInfo] = useState(() =>
+    savedData?.orderInfo || {
+      name: "",
+      phone: "",
+      size: "",
+      sleeveType: "",
+      addonName: false,
+      customName: "",
     }
   );
 
@@ -44,35 +45,79 @@ const Index = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderNumber, setOrderNumber] = useState<string | null>(() => savedData?.orderNumber || null);
 
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+
   const totalSteps = 3;
-  const stepLabels = ["بيانات الفريق", "أسماء اللاعبين", "الدفع"];
+  const stepLabels = ["التيشرت", "البيانات", "الدفع"];
   const showConfirmation = currentStep === 4;
+
+  // Calculate dynamic price
+  const totalPrice = useMemo(() => {
+    if (!orderInfo.sleeveType) return 0;
+    let price = orderInfo.sleeveType === "كم طويل" ? 295 : 275;
+    if (orderInfo.addonName) price += 25;
+    return price;
+  }, [orderInfo.sleeveType, orderInfo.addonName]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50; // Swipe left (next)
+    const isRightSwipe = distance < -50; // Swipe right (prev)
+    
+    if (isLeftSwipe || isRightSwipe) {
+      if (isLeftSwipe) {
+        setCurrentImageIndex((prev) => (prev + 1) % images.length);
+      } else {
+        setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+      }
+    }
+    setTouchStart(0);
+    setTouchEnd(0);
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const dataToSave = {
       currentStep,
-      teamInfo,
+      orderInfo,
       paymentMethod,
       paymentDetails,
       orderNumber,
       isCompleted: currentStep === 4 && orderNumber !== null,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-  }, [currentStep, teamInfo, paymentMethod, paymentDetails, orderNumber]);
+  }, [currentStep, orderInfo, paymentMethod, paymentDetails, orderNumber]);
 
   const canProceed = () => {
     switch (currentStep) {
       case 1:
+        const isAddonValid = orderInfo.addonName ? (orderInfo.customName || "").trim() !== "" : true;
         return (
-          teamInfo.teamName.trim() !== "" &&
-          teamInfo.captainName.trim() !== "" &&
-          teamInfo.captainPhone.trim().length === 11 &&
-          teamInfo.year !== ""
+          orderInfo.size !== "" &&
+          orderInfo.sleeveType !== "" &&
+          isAddonValid
         );
       case 2:
         return (
-          teamInfo.players.length >= 5 &&
-          teamInfo.players.every((p: string) => p.trim() !== "")
+          orderInfo.name.trim() !== "" &&
+          orderInfo.phone.trim().length === 11
         );
       case 3:
         const hasRequiredDetails =
@@ -104,7 +149,7 @@ const Index = () => {
     if (!paymentScreenshot) return;
     setIsSubmitting(true);
     try {
-      const generatedOrderNumber = `DWR-${Date.now().toString(36).toUpperCase()}`;
+      const generatedOrderNumber = `TSH-${Date.now().toString(36).toUpperCase()}`;
 
       const fileExt = paymentScreenshot.name.split(".").pop();
       const fileName = `${generatedOrderNumber}-${Date.now()}.${fileExt}`;
@@ -119,30 +164,30 @@ const Index = () => {
         .from("payment-screenshots")
         .getPublicUrl(fileName);
 
-      // Store players list in companions_details
-      const companionsDetails = teamInfo.players.map((name: string, index: number) => ({
-        index: index + 1,
-        name,
-        type: "player",
-      }));
+      // We'll store size, sleeve, and custom name in companions_details as meta info
+      const productDetails = [
+        { type: "size", value: orderInfo.size },
+        { type: "sleeve", value: orderInfo.sleeveType },
+        { type: "addon_name", value: orderInfo.addonName ? orderInfo.customName : "None" }
+      ];
 
       const { error: insertError } = await supabase.from("bookings").insert({
         order_number: generatedOrderNumber,
-        selected_package: "tournament",
-        student_tickets: teamInfo.players.length,
-        companion_tickets: 0,
-        companions_details: companionsDetails,
-        customer_name: teamInfo.captainName,
-        customer_phone: teamInfo.captainPhone,
-        customer_national_id: teamInfo.teamName,
-        customer_year: teamInfo.year,
+        selected_package: "tshirt",
+        student_tickets: 1, // Quantity
+        companion_tickets: orderInfo.addonName ? 1 : 0, // Using this to indicate if addon is selected
+        companions_details: productDetails,
+        customer_name: orderInfo.name,
+        customer_phone: orderInfo.phone,
+        customer_national_id: `${orderInfo.sleeveType} | ${orderInfo.size}`, // Fallback for easier viewing in dashboard
+        customer_year: "Semi-Senior",
         payment_method: paymentMethod || "",
         transaction_number: paymentDetails.transactionNumber,
         sender_phone: paymentDetails.senderPhone || null,
         sender_name: paymentDetails.senderName || null,
         payment_screenshot_url: urlData.publicUrl,
-        total_price: TEAM_PRICE,
-        booking_type: "tournament",
+        total_price: totalPrice,
+        booking_type: "tshirt",
         batch: 4,
       });
 
@@ -150,7 +195,7 @@ const Index = () => {
 
       setOrderNumber(generatedOrderNumber);
       setCurrentStep(4);
-      toast.success("تم تأكيد تسجيل فريقك بنجاح!");
+      toast.success("تم تأكيد طلبك بنجاح!");
     } catch (error: any) {
       console.error("Booking error:", error);
       toast.error(error.message || "حدث خطأ، حاول مرة أخرى");
@@ -166,18 +211,13 @@ const Index = () => {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <TournamentTeamInfo teamInfo={teamInfo} onTeamInfoChange={setTeamInfo} />;
+        return <TshirtInfo orderInfo={orderInfo} onOrderInfoChange={setOrderInfo} />;
       case 2:
-        return (
-          <TournamentPlayers
-            players={teamInfo.players}
-            onPlayersChange={(players) => setTeamInfo({ ...teamInfo, players })}
-          />
-        );
+        return <TshirtCustomer orderInfo={orderInfo} onOrderInfoChange={setOrderInfo} />;
       case 3:
         return (
           <PaymentUpload
-            selectedPackage="iftar"
+            selectedPackage="tshirt"
             companions={[]}
             companionsCount={0}
             selectedMethod={paymentMethod}
@@ -186,13 +226,13 @@ const Index = () => {
             onScreenshotChange={setPaymentScreenshot}
             paymentDetails={paymentDetails}
             onPaymentDetailsChange={setPaymentDetails}
-            totalOverride={TEAM_PRICE}
+            totalOverride={totalPrice}
           />
         );
       case 4:
         return (
-          <TournamentConfirmation
-            teamInfo={teamInfo}
+          <TshirtConfirmation
+            orderInfo={orderInfo}
             paymentMethod={paymentMethod}
             orderNumber={orderNumber}
           />
@@ -205,71 +245,89 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background py-4 sm:py-8">
       <div className="container max-w-2xl mx-auto px-3 sm:px-4">
-        {/* Hero Image */}
-        <div className="mb-4 rounded-lg overflow-hidden shadow-sm h-72 sm:h-96 md:h-[420px]">
-          <img
-            src={dawryImage}
-            alt="دوري مين فينا - كلية حاسبات ومعلومات طنطا"
-            className="w-full h-full object-cover object-top"
-          />
+        {/* Brand Header Logos */}
+        <div className="flex items-center justify-between mb-6 px-1">
+          <img src="/logo.webp" alt="Logo" className="h-10 sm:h-12 w-auto object-contain" />
+          <img src="/logo2.webp" alt="Logo 2" className="h-10 sm:h-12 w-auto object-contain" />
         </div>
+
+        {/* Hero Image Slider */}
+        {!showConfirmation && (
+          <div 
+            className="relative mb-6 rounded-2xl overflow-hidden bg-muted/30 border border-border aspect-[2/1] flex items-center justify-center cursor-pointer touch-pan-y"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onClick={() => setCurrentImageIndex((prev) => (prev + 1) % images.length)}
+          >
+            {images.map((img, idx) => (
+              <img
+                key={img}
+                src={img}
+                alt={`T-shirt Preview ${idx + 1}`}
+                className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${
+                  idx === currentImageIndex ? "opacity-100 scale-100" : "opacity-0 scale-105"
+                }`}
+              />
+            ))}
+            {/* Slider Dots */}
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
+              {images.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex(idx);
+                  }}
+                  className={`h-1.5 rounded-full transition-all ${
+                    idx === currentImageIndex ? "bg-white w-6 shadow-sm" : "bg-white/50 hover:bg-white/80 w-2 shadow-sm"
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Header Card */}
         {currentStep === 1 && (
-          <div className="gform-card p-4 sm:p-5 mb-4" dir="rtl"
-            style={{ background: "linear-gradient(135deg, #a55fa1 0%, #7a3d76 100%)" }}>
-            <div className="flex items-center justify-between mb-3">
-              <h1 className="text-lg sm:text-xl font-black text-white tracking-tight">
-                دوري مين فينا
-              </h1>
-              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/60">
+          <div className="py-2 mb-6 flex flex-col items-start text-left" dir="ltr">
+            <div className="flex flex-col mb-1.5 w-full">
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground/80 mb-0.5">
                 FCI Tanta
               </span>
-            </div>
-            <p className="text-white/70 text-xs mb-3">
-              الأربعاء 15 أبريل
-            </p>
-
-            <div className="space-y-2 bg-white/10 p-3 rounded-lg border border-white/15 text-[13px] leading-relaxed">
-              <div className="flex items-start gap-1.5">
-                <span className="text-white font-bold text-xs shrink-0 mt-0.5">الفريق:</span>
-                <span className="text-white/80">من 5 إلى 7 لاعبين</span>
-              </div>
-              <div className="h-px bg-white/10" />
-              <div className="flex items-start gap-1.5">
-                <span className="text-white font-bold text-xs shrink-0 mt-0.5">المكان:</span>
-                <span className="text-white/80">كلية الحاسبات والمعلومات — جامعة طنطا</span>
-              </div>
+              <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
+                Semi-Senior T-Shirts
+              </h1>
             </div>
 
-            <div className="mt-3 flex items-center justify-between bg-white/15 px-4 py-3 rounded-xl">
-              <div className="flex items-baseline gap-2">
-                <span className="text-xl sm:text-2xl font-black text-white">600</span>
-                <span className="text-sm font-medium text-white/70">جنيه / فريق</span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-baseline gap-1.5 font-sans">
+                <span className="text-2xl sm:text-3xl font-black text-primary">
+                  {totalPrice > 0 ? totalPrice : "275"}
+                </span>
+                <span className="text-sm font-medium text-muted-foreground/80 uppercase tracking-wider">EGP</span>
               </div>
-              <span className="text-[11px] sm:text-xs bg-white/20 text-white px-3 py-1 rounded-full font-medium">
-                اشتراك الفريق كامل
-              </span>
             </div>
           </div>
         )}
 
         {/* Step Indicator */}
         {!showConfirmation && (
-          <div className="gform-section p-4 mb-3">
+          <div className="mb-8 px-1">
             <StepIndicator currentStep={currentStep} totalSteps={totalSteps} labels={stepLabels} />
           </div>
         )}
 
         {/* Form Content */}
-        <div className="gform-section p-4 sm:p-6 md:p-8 mb-3">
-          <div className="min-h-[300px] sm:min-h-[350px] md:min-h-[400px] md:text-base">
+        <div className="mb-8">
+          <div>
             {renderStep()}
           </div>
 
           {/* Navigation */}
           {currentStep <= totalSteps && (
-            <div className="flex justify-between mt-4 pt-3 border-t border-border" dir="rtl">
+            <div className="flex justify-between mt-8 pt-6 border-t border-border/50" dir="rtl">
               <Button
                 variant="ghost"
                 size="sm"
@@ -309,7 +367,7 @@ const Index = () => {
                 size="sm"
                 onClick={() => {
                   setCurrentStep(1);
-                  setTeamInfo({ teamName: "", captainName: "", captainPhone: "", year: "", players: ["", "", "", "", ""] });
+                  setOrderInfo({ name: "", phone: "", size: "", sleeveType: "", addonName: false, customName: "" });
                   setPaymentMethod(null);
                   setPaymentScreenshot(null);
                   setPaymentDetails({ transactionNumber: "", senderPhone: "", senderName: "" });
@@ -317,7 +375,7 @@ const Index = () => {
                 }}
                 className="text-sm text-primary bg-gray-100 border-0 hover:bg-primary hover:text-white"
               >
-                تسجيل فريق آخر
+                طلب تيشرت آخر
               </Button>
             </div>
           )}
