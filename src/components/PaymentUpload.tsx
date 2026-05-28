@@ -48,7 +48,7 @@ const paymentMethods = [
     name: "Orange Cash",
     logo: orangeLogo,
     number: "01205992002",
-    holderName: "امل علي",
+    holderName: " علي محمد",
   },
 ];
 
