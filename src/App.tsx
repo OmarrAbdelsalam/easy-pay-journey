@@ -22,6 +22,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/booking" element={<Index />} />
+          <Route path="/senior" element={<Index defaultBatchType="Senior" />} />
+          <Route path="/semi-senior" element={<Index defaultBatchType="Semi-Senior" />} />
           <Route path="/waiting-list" element={<WaitingList />} />
           <Route path="/grads" element={<Grads />} />
           <Route path="/dashboard" element={<Dashboard />} />

@@ -54,7 +54,7 @@ const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [paymentFilter, setPaymentFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [yearFilter, setYearFilter] = useState<string>("all");
+  const [tierFilter, setTierFilter] = useState<string>("all");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [warningsExpanded, setWarningsExpanded] = useState(false);
   const [showWaitingList, setShowWaitingList] = useState(false);
@@ -62,7 +62,7 @@ const Dashboard = () => {
   const [waitingListLoading, setWaitingListLoading] = useState(false);
   const [homepageMode, setHomepageMode] = useState<"booking" | "waiting">("booking");
   const [savingMode, setSavingMode] = useState(false);
-  const [currentBatch, setCurrentBatch] = useState<number>(4); // دوري مين فينا - أبريل 2026
+  const [currentBatch, setCurrentBatch] = useState<number>(4);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -375,7 +375,7 @@ const Dashboard = () => {
 
   const totalTickets = useMemo(() => filteredBookings
     .filter(b => b.status !== "rejected")
-    .reduce((sum, b) => sum + b.student_tickets + b.companion_tickets, 0), [filteredBookings]);
+    .reduce((sum, b) => sum + (b.booking_type === 'tshirt' ? b.student_tickets : b.student_tickets + b.companion_tickets), 0), [filteredBookings]);
 
   const pendingCount = useMemo(() => filteredBookings.filter(b => b.status === "pending").length, [filteredBookings]);
 
@@ -509,7 +509,7 @@ const Dashboard = () => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">لوحة التحكم</h1>
-            <p className="text-sm text-gray-500">إدارة تسجيلات دوري مين فينا - كلية حاسبات طنطا</p>
+            <p className="text-sm text-gray-500">إدارة حجوزات تيشرتات حاسبات طنطا</p>
           </div>
           <div className="flex gap-2">
             <Button 
@@ -783,7 +783,7 @@ const Dashboard = () => {
           <div className="bg-white rounded-xl p-4 border border-gray-200">
             <div className="flex items-center gap-2 text-gray-500 mb-1">
               <Package className="w-4 h-4" />
-              <span className="text-xs">إجمالي الفرق</span>
+              <span className="text-xs">إجمالي الطلبات</span>
             </div>
             <p className="text-2xl font-bold text-gray-900">{filteredBookings.length}</p>
           </div>
@@ -797,7 +797,7 @@ const Dashboard = () => {
           <div className="bg-white rounded-xl p-4 border border-gray-200">
             <div className="flex items-center gap-2 text-gray-500 mb-1">
               <Users className="w-4 h-4" />
-              <span className="text-xs">إجمالي اللاعبين</span>
+              <span className="text-xs">إجمالي التيشرتات</span>
             </div>
             <p className="text-2xl font-bold text-gray-900">{totalTickets}</p>
           </div>
@@ -891,7 +891,7 @@ const Dashboard = () => {
                     <th className="px-4 py-3 text-right font-medium text-gray-500">رقم المعاملة</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-500">المحول منه</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-500">الدفع</th>
-                    <th className="px-4 py-3 text-right font-medium text-gray-500">تفاصيل الطلب / اللاعبين</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-500">تفاصيل الطلب</th>
                     <th className="px-4 py-3 text-right font-medium text-gray-500">المبلغ</th>
                     <th className="px-4 py-3 text-center font-medium text-gray-500">الإجراءات</th>
                   </tr>
