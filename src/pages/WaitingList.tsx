@@ -1,32 +1,32 @@
-﻿import { useState } from "react";
-import { ArrowLeft, Loader2, CheckCircle } from "lucide-react";
-import dawryImage from "/dawry.jpeg";
+import { useState } from "react";
+import { ArrowLeft, Loader2, CheckCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const WaitingList = () => {
-  const [teamName, setTeamName] = useState("");
-  const [captainName, setCaptainName] = useState("");
+  const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const canSubmit = teamName.trim() !== "" && captainName.trim() !== "" && phone.trim().length === 11;
+  const canSubmit = name.trim() !== "" && phone.trim().length === 11;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
     setIsSubmitting(true);
     try {
       const { error } = await supabase.from("waiting_list").insert({
-        name: teamName.trim() + " - " + captainName.trim(),
+        name: name.trim(),
         phone: phone.trim(),
-        selected_package: "tournament",
+        selected_package: "tshirt",
         batch: 4,
       });
       if (error) throw error;
       setIsSubmitted(true);
-      toast.success("تم تسجيل فريقك في قائمة الانتظار!");
+      toast.success("تم تسجيلك في قائمة الانتظار بنجاح!");
     } catch {
       toast.error("حدث خطأ، حاول مرة أخرى");
     } finally {
@@ -36,16 +36,27 @@ const WaitingList = () => {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-background py-4 sm:py-8">
-        <div className="container max-w-2xl mx-auto px-3 sm:px-4">
-          <div className="mb-4 rounded-lg overflow-hidden shadow-sm h-72 sm:h-96 md:h-[420px]">
-            <img src={dawryImage} alt="دوري مين فينا" className="w-full h-full object-cover object-top" />
-          </div>
-          <div className="gform-card p-6 sm:p-8 text-center" dir="rtl"
-            style={{ background: "linear-gradient(135deg, #a55fa1 0%, #7a3d76 100%)" }}>
-            <CheckCircle className="w-16 h-16 text-white mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-3">تم تسجيل فريقك!</h2>
-            <p className="text-white/80">هنتواصل مع الكابتن لو في مكان فاضي</p>
+      <div className="min-h-screen bg-background py-8 sm:py-12 flex items-center justify-center">
+        <div className="container max-w-md mx-auto px-4">
+          <div className="bg-white rounded-3xl p-8 text-center shadow-lg border border-border/50 animate-in zoom-in-95 duration-300" dir="rtl">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="w-10 h-10 text-green-600" />
+            </div>
+            <h2 className="text-2xl font-black text-gray-900 mb-3 tracking-tight">تم تسجيلك بنجاح!</h2>
+            <p className="text-gray-500 mb-8 leading-relaxed text-sm sm:text-base">
+              تم إضافتك لقائمة الانتظار، هنتواصل معاك في أقرب وقت لو توفرت كمية إضافية من التيشرتات.
+            </p>
+            <Button 
+              variant="outline" 
+              className="w-full h-12 rounded-xl border-border/60 hover:bg-gray-50 font-medium"
+              onClick={() => {
+                setIsSubmitted(false);
+                setName("");
+                setPhone("");
+              }}
+            >
+              تسجيل شخص آخر
+            </Button>
           </div>
         </div>
       </div>
@@ -53,87 +64,68 @@ const WaitingList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background py-4 sm:py-8">
-      <div className="container max-w-2xl mx-auto px-3 sm:px-4">
-        <div className="mb-4 rounded-lg overflow-hidden shadow-sm h-72 sm:h-96 md:h-[420px]">
-          <img src={dawryImage} alt="دوري مين فينا" className="w-full h-full object-cover object-top" />
+    <div className="min-h-screen bg-background py-6 sm:py-12 flex flex-col items-center justify-center">
+      <div className="container max-w-md mx-auto px-4 w-full">
+        <div className="text-center mb-8">
+          <img src="/logo.webp" alt="Logo" className="h-14 w-auto mx-auto mb-6 drop-shadow-sm" />
+          <div className="inline-flex items-center justify-center gap-2 bg-amber-100/50 text-amber-700 px-3 py-1.5 rounded-full text-sm font-semibold mb-4 border border-amber-200/50">
+            <Clock className="w-4 h-4" />
+            <span>قائمة الانتظار</span>
+          </div>
+          <h1 className="text-3xl font-black text-gray-900 mb-3 tracking-tight">الكمية الحالية خلصت!</h1>
+          <p className="text-gray-500 text-sm sm:text-base px-4">
+            سجل بياناتك دلوقتي وهنكون أول حد نكلمه لما نفتح الحجز للدفعة الجديدة.
+          </p>
         </div>
 
-        <div className="gform-card p-4 sm:p-5 mb-4" dir="rtl"
-          style={{ background: "linear-gradient(135deg, #a55fa1 0%, #7a3d76 100%)" }}>
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-lg sm:text-xl font-bold text-white">دوري مين فينا</h1>
-            <span className="text-xs text-white/60 font-bold uppercase tracking-widest">FCI Tanta</span>
-          </div>
-          <p className="text-white/70 text-xs mb-3">الاربعاء 15 ابريل</p>
-          <div className="bg-white/10 border border-white/15 rounded-lg p-3">
-            <p className="text-white/90 text-sm">
-              الاماكن اكتملت — سجل فريقك في قائمة الانتظار وهنتواصل معاك لو في مكان فاضي
-            </p>
-          </div>
-        </div>
-
-        <div className="gform-section p-4 sm:p-6" dir="rtl">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5 text-right">
-                اسم الفريق <span className="text-destructive">*</span>
-              </label>
-              <input
+        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-border/50 shadow-black/5" dir="rtl">
+          <div className="space-y-5">
+            <div className="space-y-2 text-right">
+              <Label className="text-sm font-semibold text-gray-700">الاسم رباعي <span className="text-red-500">*</span></Label>
+              <Input
                 type="text"
-                value={teamName}
-                onChange={(e) => setTeamName(e.target.value)}
-                placeholder="اسم الفريق"
-                className="gform-input text-right text-sm"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="اكتب اسمك رباعي"
+                className="h-12 rounded-xl bg-gray-50/50 border-border/60 focus:bg-white transition-colors text-right"
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5 text-right">
-                اسم الكابتن (رباعي) <span className="text-destructive">*</span>
-              </label>
-              <input
-                type="text"
-                value={captainName}
-                onChange={(e) => setCaptainName(e.target.value)}
-                placeholder="الاسم رباعي باللغة العربية"
-                className="gform-input text-right text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5 text-right">
-                رقم واتساب الكابتن <span className="text-destructive">*</span>
-              </label>
-              <input
+            <div className="space-y-2 text-right">
+              <Label className="text-sm font-semibold text-gray-700">رقم الواتساب <span className="text-red-500">*</span></Label>
+              <Input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 11))}
                 placeholder="01xxxxxxxxx"
                 maxLength={11}
-                className={`gform-input text-sm ${phone.length > 0 && phone.length < 11 ? "border-destructive" : ""}`}
                 dir="ltr"
+                className={`h-12 rounded-xl bg-gray-50/50 border-border/60 focus:bg-white transition-colors text-left font-mono text-lg ${phone.length > 0 && phone.length < 11 ? "border-red-500/50 focus-visible:ring-red-500/20" : ""}`}
               />
               {phone.length > 0 && phone.length < 11 && (
-                <p className="text-xs text-destructive mt-1">الرقم لازم يكون 11 رقم ({phone.length}/11)</p>
+                <p className="text-xs text-red-500 font-medium">الرقم لازم يكون 11 رقم ({phone.length}/11)</p>
               )}
             </div>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-border">
+          <div className="mt-8">
             <Button
               onClick={handleSubmit}
               disabled={!canSubmit || isSubmitting}
-              className="w-full bg-primary hover:bg-primary/90"
+              className="w-full h-14 rounded-xl text-base font-bold bg-gray-900 hover:bg-gray-800 text-white shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
             >
               {isSubmitting ? (
-                <><Loader2 className="w-4 h-4 animate-spin ml-2" />جاري التسجيل...</>
+                <><Loader2 className="w-5 h-5 animate-spin ml-2" />جاري التسجيل...</>
               ) : (
-                <>سجل في قائمة الانتظار<ArrowLeft className="w-4 h-4 mr-2" /></>
+                <>سجل في قائمة الانتظار <ArrowLeft className="w-5 h-5 mr-2" /></>
               )}
             </Button>
           </div>
         </div>
+        
+        <p className="text-center text-xs text-gray-400 mt-6 font-medium tracking-wide uppercase">
+          FCI Tanta T-Shirts • Batch 4
+        </p>
       </div>
     </div>
   );

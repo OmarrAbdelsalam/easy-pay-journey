@@ -292,7 +292,8 @@ const Dashboard = () => {
     try {
       const { error } = await supabase
         .from("app_settings")
-        .upsert({ id: "main", homepage_mode: newMode, updated_at: new Date().toISOString() });
+        .update({ homepage_mode: newMode, updated_at: new Date().toISOString() })
+        .eq("id", "main");
 
       if (error) throw error;
       
