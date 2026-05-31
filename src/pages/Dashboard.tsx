@@ -54,7 +54,9 @@ const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [paymentFilter, setPaymentFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [yearFilter, setYearFilter] = useState<string>("all");
+  const [sleeveFilter, setSleeveFilter] = useState<string>("all");
+  const [sizeFilter, setSizeFilter] = useState<string>("all");
+  const [addonFilter, setAddonFilter] = useState<string>("all");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [warningsExpanded, setWarningsExpanded] = useState(false);
   const [showWaitingList, setShowWaitingList] = useState(false);
@@ -357,12 +359,17 @@ const Dashboard = () => {
     const matchesStatus =
       statusFilter === "all" || booking.status === statusFilter;
 
-    const matchesYear =
-      yearFilter === "all" || 
-      (yearFilter === "خريج" ? (booking.booking_type === "grad" || booking.customer_year === "خريج") : booking.customer_year === yearFilter);
+    const matchesSleeve = sleeveFilter === "all" || 
+      (booking.companions_details?.some(d => d.type === "sleeve" && d.value === sleeveFilter) ?? false);
 
-    return matchesSearch && matchesPayment && matchesStatus && matchesYear;
-  }), [bookings, currentBatch, searchTerm, paymentFilter, statusFilter, yearFilter]);
+    const matchesSize = sizeFilter === "all" || 
+      (booking.companions_details?.some(d => d.type === "size" && d.value === sizeFilter) ?? false);
+
+    const matchesAddon = addonFilter === "all" || 
+      (addonFilter === "ice" && (booking.companions_details?.some(d => d.type === "addon_ice" && d.value === "Yes") ?? false));
+
+    return matchesSearch && matchesPayment && matchesStatus && matchesSleeve && matchesSize && matchesAddon;
+  }), [bookings, currentBatch, searchTerm, paymentFilter, statusFilter, sleeveFilter, sizeFilter, addonFilter]);
 
   // Filter waiting list by batch too
   const filteredWaitingList = useMemo(() => waitingList.filter((entry) => {
@@ -813,8 +820,8 @@ const Dashboard = () => {
 
         {/* Filters */}
         <div className="bg-white rounded-xl p-4 border border-gray-200 mb-6">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1 relative">
+          <div className="flex flex-wrap gap-3">
+            <div className="flex-1 min-w-[200px] relative">
               <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <Input
                 placeholder="بحث بالاسم، الهاتف، رقم الطلب، المحول منه..."
@@ -845,17 +852,37 @@ const Dashboard = () => {
                 <SelectItem value="orange">Orange Cash</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={yearFilter} onValueChange={setYearFilter}>
-              <SelectTrigger className="w-full sm:w-40 bg-white border-gray-200 text-gray-700">
-                <SelectValue placeholder="السنة الدراسية" />
+
+            <Select value={sleeveFilter} onValueChange={setSleeveFilter}>
+              <SelectTrigger className="w-full sm:w-28 bg-white border-gray-200 text-gray-700">
+                <SelectValue placeholder="الكم" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">كل السنين</SelectItem>
-                <SelectItem value="أولى">أولى</SelectItem>
-                <SelectItem value="تانية">تانية</SelectItem>
-                <SelectItem value="تالتة">تالتة</SelectItem>
-                <SelectItem value="رابعة">رابعة</SelectItem>
-                <SelectItem value="خريج">خريج/معيد</SelectItem>
+                <SelectItem value="all">كل الأكمام</SelectItem>
+                <SelectItem value="نص كم">نص كم</SelectItem>
+                <SelectItem value="كم طويل">كم طويل</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={sizeFilter} onValueChange={setSizeFilter}>
+              <SelectTrigger className="w-full sm:w-28 bg-white border-gray-200 text-gray-700">
+                <SelectValue placeholder="المقاس" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">كل المقاسات</SelectItem>
+                <SelectItem value="M">M</SelectItem>
+                <SelectItem value="L">L</SelectItem>
+                <SelectItem value="XL">XL</SelectItem>
+                <SelectItem value="2XL">2XL</SelectItem>
+                <SelectItem value="3XL">3XL</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={addonFilter} onValueChange={setAddonFilter}>
+              <SelectTrigger className="w-full sm:w-28 bg-white border-gray-200 text-gray-700">
+                <SelectValue placeholder="الإضافات" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">كل الإضافات</SelectItem>
+                <SelectItem value="ice">بثلج</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline" size="icon" className="bg-white border-gray-200 text-gray-700 hover:bg-gray-100" onClick={exportToCSV} title="تصدير CSV">
@@ -863,7 +890,7 @@ const Dashboard = () => {
             </Button>
           </div>
           {/* Approve All Button - shows when filter is not "all" */}
-          {(paymentFilter !== "all" || statusFilter !== "all" || yearFilter !== "all") && (
+          {(paymentFilter !== "all" || statusFilter !== "all" || sleeveFilter !== "all" || sizeFilter !== "all" || addonFilter !== "all") && (
             <div className="mt-3 flex justify-end">
               <Button
                 size="sm"
