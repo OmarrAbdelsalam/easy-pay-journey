@@ -89,7 +89,7 @@
   }
 
   .gform-label {
-    @apply block text-base font-bold text-foreground mb-3 text-right;
+    @apply block text-xs sm:text-sm font-bold text-foreground mb-2 text-right;
   }
   
   .gform-radio-item {
