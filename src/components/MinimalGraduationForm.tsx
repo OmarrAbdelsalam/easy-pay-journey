@@ -443,7 +443,7 @@ export const MinimalGraduationForm: React.FC = () => {
             </ol>
             <p className="pt-1 text-foreground">مع العلم: الإضافات والمرافقين سيتم فتح فورم خاصة بها</p>
             <p className="text-foreground">قم بإرفاق صوره واضح بها الرقم الذي تم التحويل اليه و المبلغ الذي تم تحويله</p>
-            <p className="font-bold text-primary text-sm pt-1">رقم انستاباي فقط : 01015868707</p>
+            <p className="font-bold text-primary text-sm pt-1">رقم انستاباي وفودافون كاش: 01098505924</p>
           </div>
 
           {/* Payment Method Selector */}
