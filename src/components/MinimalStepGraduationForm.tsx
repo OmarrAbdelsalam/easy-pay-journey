@@ -354,8 +354,8 @@ export const MinimalStepGraduationForm: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-4 text-right" dir="rtl">
-      {/* Full-Bleed Banner Image Header (No side container margins or padding) */}
-      <div className="-mx-3 sm:-mx-6 -mt-6 sm:-mt-10 relative h-40 sm:h-56 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden bg-muted rounded-b-3xl shadow-sm mb-4">
+      {/* Full-Bleed Banner Image Header (No side container margins/padding and straight edges) */}
+      <div className="-mx-3 sm:-mx-6 -mt-6 sm:-mt-10 relative h-40 sm:h-56 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden bg-muted rounded-none shadow-sm mb-4">
         <img
           src="/faculty-header.jpg"
           alt="كلية الحاسبات والمعلومات"
@@ -387,8 +387,8 @@ export const MinimalStepGraduationForm: React.FC = () => {
         </div>
       </div>
 
-      {/* Step Progress Bar */}
-      <div className="bg-card rounded-2xl p-4 border border-border shadow-sm">
+      {/* Step Progress Bar (Clean without card background) */}
+      <div className="py-2 px-1">
         <StepIndicator currentStep={currentStep} totalSteps={totalSteps} labels={stepLabels} />
       </div>
 
