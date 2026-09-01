@@ -751,7 +751,6 @@ export const MinimalStepGraduationForm: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 
