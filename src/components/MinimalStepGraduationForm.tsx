@@ -354,17 +354,26 @@ export const MinimalStepGraduationForm: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-4 text-right" dir="rtl">
-      {/* Logos Header */}
-      <div className="flex items-center justify-between px-1 mb-2">
-        <img src={logo} alt="Logo" className="h-10 w-auto object-contain" />
-        <img src={logo2} alt="Logo 2" className="h-10 w-auto object-contain" />
-      </div>
-
-      {/* Main Header Form Card */}
+      {/* Main Header Form Card with Faculty Banner */}
       <div className="bg-card rounded-2xl border border-border shadow-sm relative overflow-hidden">
-        <div className="h-3.5 bg-primary w-full" />
+        {/* Banner Image Container */}
+        <div className="relative h-36 sm:h-48 w-full overflow-hidden bg-muted">
+          <img
+            src="/faculty-header.jpg"
+            alt="كلية الحاسبات والمعلومات"
+            className="w-full h-full object-cover object-center"
+          />
+          {/* Dark Overlay for Logos & Contrast */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/60" />
+
+          {/* Logos Floating on Top of Image */}
+          <div className="absolute top-0 inset-x-0 p-3 sm:p-4 flex items-center justify-between z-10">
+            <img src={logo} alt="Logo" className="h-9 sm:h-12 w-auto object-contain drop-shadow-md bg-white/90 rounded-lg p-1.5 backdrop-blur-xs" />
+            <img src={logo2} alt="Logo 2" className="h-9 sm:h-12 w-auto object-contain drop-shadow-md bg-white/90 rounded-lg p-1.5 backdrop-blur-xs" />
+          </div>
+        </div>
         
-        <div className="p-6 sm:p-7 space-y-3">
+        <div className="p-5 sm:p-6 space-y-3">
           <h1 className="text-base sm:text-2xl font-bold text-foreground leading-snug sm:leading-relaxed">
             حفل تخرج كلية الحاسبات والمعلومات - جامعة طنطا (دفعة 2026)
           </h1>
