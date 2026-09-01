@@ -17,9 +17,9 @@ const StepIndicator = ({ currentStep, totalSteps, labels }: StepIndicatorProps) 
             <span
               className={`text-xs font-bold transition-colors ${
                 isActive
-                  ? "text-primary"
+                  ? "text-primary font-black"
                   : isCompleted
-                  ? "text-primary/60"
+                  ? "text-primary/70"
                   : "text-muted-foreground/40"
               }`}
             >
@@ -27,11 +27,11 @@ const StepIndicator = ({ currentStep, totalSteps, labels }: StepIndicatorProps) 
               {labels[index]}
             </span>
             <div
-              className={`h-0.5 w-full rounded-full transition-all duration-500 ${
+              className={`h-1 w-full transition-all duration-500 ${
                 isActive
                   ? "bg-primary"
                   : isCompleted
-                  ? "bg-primary/20"
+                  ? "bg-primary/40"
                   : "bg-border/60"
               }`}
             />

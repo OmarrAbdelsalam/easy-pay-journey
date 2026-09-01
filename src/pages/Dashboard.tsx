@@ -19,9 +19,9 @@ interface WaitingListEntry {
 }
 
 interface CompanionDetail {
-  index: number;
   type: string;
-  packageType: string;
+  value: string;
+  [key: string]: any;
 }
 
 interface Booking {
@@ -54,9 +54,9 @@ const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [paymentFilter, setPaymentFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [sleeveFilter, setSleeveFilter] = useState<string>("all");
-  const [sizeFilter, setSizeFilter] = useState<string>("all");
-  const [addonFilter, setAddonFilter] = useState<string>("all");
+  const [departmentFilter, setDepartmentFilter] = useState<string>("all");
+  const [trophyFilter, setTrophyFilter] = useState<string>("all");
+  const [sashColorFilter, setSashColorFilter] = useState<string>("all");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [warningsExpanded, setWarningsExpanded] = useState(false);
   const [showWaitingList, setShowWaitingList] = useState(false);
@@ -64,7 +64,7 @@ const Dashboard = () => {
   const [waitingListLoading, setWaitingListLoading] = useState(false);
   const [homepageMode, setHomepageMode] = useState<"booking" | "waiting">("booking");
   const [savingMode, setSavingMode] = useState(false);
-  const [currentBatch, setCurrentBatch] = useState<number>(4);
+  const [currentBatch, setCurrentBatch] = useState<number>(2026);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -359,17 +359,17 @@ const Dashboard = () => {
     const matchesStatus =
       statusFilter === "all" || booking.status === statusFilter;
 
-    const matchesSleeve = sleeveFilter === "all" || 
-      (booking.companions_details?.some(d => d.type === "sleeve" && d.value === sleeveFilter) ?? false);
+    const matchesDepartment = departmentFilter === "all" || 
+      (booking.companions_details?.some((d: any) => d.type === "department" && d.value === departmentFilter) ?? false);
 
-    const matchesSize = sizeFilter === "all" || 
-      (booking.companions_details?.some(d => d.type === "size" && d.value === sizeFilter) ?? false);
+    const matchesTrophy = trophyFilter === "all" || 
+      (booking.companions_details?.some((d: any) => d.type === "trophy_type" && d.value?.includes(trophyFilter)) ?? false);
 
-    const matchesAddon = addonFilter === "all" || 
-      (addonFilter === "ice" && (booking.companions_details?.some(d => d.type === "addon_ice" && d.value === "Yes") ?? false));
+    const matchesSashColor = sashColorFilter === "all" || 
+      (booking.companions_details?.some((d: any) => d.type === "sash_color" && d.value?.includes(sashColorFilter)) ?? false);
 
-    return matchesSearch && matchesPayment && matchesStatus && matchesSleeve && matchesSize && matchesAddon;
-  }), [bookings, currentBatch, searchTerm, paymentFilter, statusFilter, sleeveFilter, sizeFilter, addonFilter]);
+    return matchesSearch && matchesPayment && matchesStatus && matchesDepartment && matchesTrophy && matchesSashColor;
+  }), [bookings, currentBatch, searchTerm, paymentFilter, statusFilter, departmentFilter, trophyFilter, sashColorFilter]);
 
   // Filter waiting list by batch too
   const filteredWaitingList = useMemo(() => waitingList.filter((entry) => {
@@ -419,6 +419,50 @@ const Dashboard = () => {
       return Math.max(0, (duplicateCounts.transactionCounts[t] || 0) - 1);
     }
   };
+
+  const sashColorStats = useMemo(() => {
+    const stats: Record<string, { choice1: number; choice2: number; choice3: number; totalPoints: number; colorHex: string }> = {
+      "أبيض": { choice1: 0, choice2: 0, choice3: 0, totalPoints: 0, colorHex: "#FFFFFF" },
+      "نبيتي": { choice1: 0, choice2: 0, choice3: 0, totalPoints: 0, colorHex: "#7A0C2E" },
+      "أسود": { choice1: 0, choice2: 0, choice3: 0, totalPoints: 0, colorHex: "#18181B" },
+      "بترولي": { choice1: 0, choice2: 0, choice3: 0, totalPoints: 0, colorHex: "#00729A" },
+      "ازرق": { choice1: 0, choice2: 0, choice3: 0, totalPoints: 0, colorHex: "#1D4ED8" },
+      "بيج": { choice1: 0, choice2: 0, choice3: 0, totalPoints: 0, colorHex: "#F5E6D3" },
+    };
+
+    filteredBookings.forEach((booking) => {
+      const sashDetail = booking.companions_details?.find((d: any) => d.type === "sash_color")?.value;
+      if (!sashDetail) return;
+      
+      const colors = sashDetail.split(/\s*-\s*|\s*,\s*/).map((c: string) => c.trim());
+      
+      if (colors[0] && stats[colors[0]]) {
+        stats[colors[0]].choice1 += 1;
+        stats[colors[0]].totalPoints += 3;
+      }
+      if (colors[1] && stats[colors[1]]) {
+        stats[colors[1]].choice2 += 1;
+        stats[colors[1]].totalPoints += 2;
+      }
+      if (colors[2] && stats[colors[2]]) {
+        stats[colors[2]].choice3 += 1;
+        stats[colors[2]].totalPoints += 1;
+      }
+    });
+
+    const totalVoters = filteredBookings.filter(b => b.companions_details?.some((d: any) => d.type === "sash_color")).length;
+
+    const list = Object.entries(stats).map(([colorName, data]) => ({
+      colorName,
+      ...data,
+      percentage: totalVoters > 0 ? Math.round((data.choice1 / totalVoters) * 100) : 0,
+    })).sort((a, b) => {
+      if (b.choice1 !== a.choice1) return b.choice1 - a.choice1;
+      return b.totalPoints - a.totalPoints;
+    });
+
+    return { list, totalVoters, winner: list[0] };
+  }, [filteredBookings]);
 
   const paymentMethodLabels: Record<string, string> = {
     instapay: "InstaPay",
@@ -517,7 +561,7 @@ const Dashboard = () => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">لوحة التحكم</h1>
-            <p className="text-sm text-gray-500">إدارة حجوزات تيشرتات حاسبات طنطا</p>
+            <p className="text-sm text-gray-500">إدارة حجوزات حفلة التخرج 2026</p>
           </div>
           <div className="flex gap-2">
             <Button 
@@ -651,7 +695,7 @@ const Dashboard = () => {
                 >
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5 text-red-400" />
-                    <h3 className="font-bold text-gray-900">⚠️ حجوزات تحتاج مراجعة ({pendingWarnings})</h3>
+                    <h3 className="font-bold text-gray-900">حجوزات تحتاج مراجعة ({pendingWarnings})</h3>
                     {pendingWarnings !== warningBookings.length && (
                       <span className="text-xs text-gray-500">({warningBookings.length} إجمالي)</span>
                     )}
@@ -805,7 +849,7 @@ const Dashboard = () => {
           <div className="bg-white rounded-xl p-4 border border-gray-200">
             <div className="flex items-center gap-2 text-gray-500 mb-1">
               <Users className="w-4 h-4" />
-              <span className="text-xs">إجمالي التيشرتات</span>
+              <span className="text-xs">إجمالي التذاكر</span>
             </div>
             <p className="text-2xl font-bold text-gray-900">{totalTickets}</p>
           </div>
@@ -815,6 +859,42 @@ const Dashboard = () => {
               <span className="text-xs">إجمالي الإيرادات</span>
             </div>
             <p className="text-2xl font-bold text-green-400">{totalRevenue.toLocaleString()} ج</p>
+          </div>
+        </div>
+
+        {/* إحصائيات تصويت الوشاح */}
+        <div className="bg-white rounded-xl border border-gray-200 mb-6 overflow-hidden">
+          <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+            <h3 className="font-bold text-sm text-gray-900">إحصائيات تصويت ألوان الوشاح</h3>
+            <span className="text-xs text-gray-500">إجمالي المصوتين: {sashColorStats.totalVoters} خريج</span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs">
+              <thead className="bg-gray-50 text-gray-500 border-b border-gray-200 font-medium">
+                <tr>
+                  <th className="px-4 py-2.5">اللون</th>
+                  <th className="px-4 py-2.5">الرغبة الأولى</th>
+                  <th className="px-4 py-2.5">الرغبة الثانية</th>
+                  <th className="px-4 py-2.5">الرغبة الثالثة</th>
+                  <th className="px-4 py-2.5">نسبة الترجيح (رغبة أولى)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 text-gray-700">
+                {sashColorStats.list.map((item) => (
+                  <tr key={item.colorName} className="hover:bg-gray-50/50">
+                    <td className="px-4 py-2.5 font-bold text-gray-900 flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-full border border-gray-300" style={{ backgroundColor: item.colorHex }} />
+                      {item.colorName}
+                    </td>
+                    <td className="px-4 py-2.5 font-semibold text-gray-900">{item.choice1}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{item.choice2}</td>
+                    <td className="px-4 py-2.5 text-gray-600">{item.choice3}</td>
+                    <td className="px-4 py-2.5 font-medium text-gray-900">{item.percentage}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -853,36 +933,39 @@ const Dashboard = () => {
               </SelectContent>
             </Select>
 
-            <Select value={sleeveFilter} onValueChange={setSleeveFilter}>
+            <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
               <SelectTrigger className="w-full sm:w-28 bg-white border-gray-200 text-gray-700">
-                <SelectValue placeholder="الكم" />
+                <SelectValue placeholder="القسم" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">كل الأكمام</SelectItem>
-                <SelectItem value="نص كم">نص كم</SelectItem>
-                <SelectItem value="كم طويل">كم طويل</SelectItem>
+                <SelectItem value="all">كل الأقسام</SelectItem>
+                <SelectItem value="CS">CS</SelectItem>
+                <SelectItem value="IT">IT</SelectItem>
+                <SelectItem value="IS">IS</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={sizeFilter} onValueChange={setSizeFilter}>
+            <Select value={trophyFilter} onValueChange={setTrophyFilter}>
               <SelectTrigger className="w-full sm:w-28 bg-white border-gray-200 text-gray-700">
-                <SelectValue placeholder="المقاس" />
+                <SelectValue placeholder="الدرع" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">كل المقاسات</SelectItem>
-                <SelectItem value="M">M</SelectItem>
-                <SelectItem value="L">L</SelectItem>
-                <SelectItem value="XL">XL</SelectItem>
-                <SelectItem value="2XL">2XL</SelectItem>
-                <SelectItem value="3XL">3XL</SelectItem>
+                <SelectItem value="all">كل الدروع</SelectItem>
+                <SelectItem value="نحاسي">نحاسي</SelectItem>
+                <SelectItem value="كريستال">كريستال</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={addonFilter} onValueChange={setAddonFilter}>
-              <SelectTrigger className="w-full sm:w-28 bg-white border-gray-200 text-gray-700">
-                <SelectValue placeholder="الإضافات" />
+            <Select value={sashColorFilter} onValueChange={setSashColorFilter}>
+              <SelectTrigger className="w-full sm:w-32 bg-white border-gray-200 text-gray-700">
+                <SelectValue placeholder="لون الوشاح" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">كل الإضافات</SelectItem>
-                <SelectItem value="ice">بثلج</SelectItem>
+                <SelectItem value="all">كل الألوان</SelectItem>
+                <SelectItem value="أبيض">أبيض</SelectItem>
+                <SelectItem value="نبيتي">نبيتي</SelectItem>
+                <SelectItem value="أسود">أسود</SelectItem>
+                <SelectItem value="بترولي">بترولي</SelectItem>
+                <SelectItem value="ازرق">ازرق</SelectItem>
+                <SelectItem value="بيج">بيج</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline" size="icon" className="bg-white border-gray-200 text-gray-700 hover:bg-gray-100" onClick={exportToCSV} title="تصدير CSV">
@@ -890,7 +973,7 @@ const Dashboard = () => {
             </Button>
           </div>
           {/* Approve All Button - shows when filter is not "all" */}
-          {(paymentFilter !== "all" || statusFilter !== "all" || sleeveFilter !== "all" || sizeFilter !== "all" || addonFilter !== "all") && (
+          {(paymentFilter !== "all" || statusFilter !== "all" || departmentFilter !== "all" || trophyFilter !== "all" || sashColorFilter !== "all") && (
             <div className="mt-3 flex justify-end">
               <Button
                 size="sm"
@@ -932,29 +1015,14 @@ const Dashboard = () => {
                         <div className="flex items-center gap-2">
                           {getStatusBadge(booking.status)}
                           <span className="font-mono text-[10px] text-gray-500">{booking.order_number}</span>
-                          {booking.booking_type === 'tournament' && (
-                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 font-medium">
-                              دوري
-                            </span>
-                          )}
-                          {booking.booking_type === 'grad' && (
-                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-purple-100 text-purple-700 font-medium">
-                              خريج
-                            </span>
-                          )}
-                          {booking.booking_type === 'tshirt' && (
-                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-indigo-100 text-indigo-700 font-medium">
-                              تيشرت
-                            </span>
-                          )}
+                          <span className="px-1.5 py-0.5 rounded text-[10px] bg-purple-100 text-purple-700 font-medium">
+                            تخرج
+                          </span>
                         </div>
                         <div className="font-semibold text-gray-900">{booking.customer_name}</div>
-                        {booking.booking_type === 'tournament' && booking.customer_national_id && (
-                          <div className="text-xs text-blue-300 font-medium">فريق: {booking.customer_national_id}</div>
-                        )}
                         <div className="text-xs text-gray-500" dir="ltr">{booking.customer_phone}</div>
-                        {booking.booking_type !== 'grad' && booking.customer_year && (
-                          <div className="text-xs text-gray-500">{booking.customer_year}</div>
+                        {booking.customer_national_id && (
+                          <div className="text-xs text-purple-500 font-medium truncate max-w-[200px]">{booking.customer_national_id}</div>
                         )}
                       </td>
                       
@@ -991,39 +1059,32 @@ const Dashboard = () => {
                         </span>
                       </td>
                       
-                      {/* Companions / Players / Tshirt Details */}
+                      {/* تفاصيل التخرج */}
                       <td className="px-4 py-3">
-                        {booking.booking_type === 'tournament' ? (
-                          <div className="text-xs text-gray-600 space-y-0.5">
-                            {Array.isArray(booking.companions_details) && booking.companions_details.length > 0 ? (
-                              (booking.companions_details as any[]).map((p: any, i: number) => (
-                                <div key={i}>{i + 1}. {p.name}</div>
-                              ))
-                            ) : (
-                              <span className="text-gray-500">{booking.student_tickets} لاعب</span>
-                            )}
-                          </div>
-                        ) : booking.booking_type === 'tshirt' ? (
+                        {Array.isArray(booking.companions_details) && booking.companions_details.length > 0 ? (
                           <div className="text-xs text-gray-600 space-y-1">
-                            {Array.isArray(booking.companions_details) ? (
-                              (() => {
-                                const details = booking.companions_details as any[];
-                                const size = details.find(d => d.type === 'size')?.value || '-';
-                                const sleeve = details.find(d => d.type === 'sleeve')?.value || '-';
-                                const addonName = details.find(d => d.type === 'addon_name')?.value || 'None';
-                                return (
-                                  <>
-                                    <div>👕 <strong>المقاس:</strong> {size}</div>
-                                    <div>🧵 <strong>الكم:</strong> {sleeve}</div>
-                                    {addonName && addonName !== 'None' && (
-                                      <div className="text-indigo-600 font-semibold">🏷️ <strong>الاسم:</strong> {addonName}</div>
-                                    )}
-                                  </>
-                                );
-                              })()
-                            ) : (
-                              <span className="text-gray-400">لا توجد تفاصيل</span>
-                            )}
+                            {(() => {
+                              const details = booking.companions_details as any[];
+                              const department = details.find((d: any) => d.type === 'department')?.value;
+                              const sashColor = details.find((d: any) => d.type === 'sash_color')?.value;
+                              const sashSize = details.find((d: any) => d.type === 'sash_size')?.value;
+                              const sashName = details.find((d: any) => d.type === 'sash_name')?.value;
+                              const trophyType = details.find((d: any) => d.type === 'trophy_type')?.value;
+                              const trophyName = details.find((d: any) => d.type === 'trophy_name')?.value;
+                              const extraCompanions = details.find((d: any) => d.type === 'extra_companions_count')?.value;
+                              return (
+                                <>
+                                  {department && <div><strong>القسم:</strong> {department}</div>}
+                                  {sashColor && <div><strong>الوشاح:</strong> {sashColor} {sashSize ? `(${sashSize})` : ''}</div>}
+                                  {sashName && <div className="text-purple-600 font-semibold"><strong>اسم الوشاح:</strong> {sashName}</div>}
+                                  {trophyType && <div><strong>الدرع:</strong> {trophyType}</div>}
+                                  {trophyName && <div className="text-amber-600 font-semibold"><strong>اسم الدرع:</strong> {trophyName}</div>}
+                                  {extraCompanions && Number(extraCompanions) > 0 && (
+                                    <div><strong>مرافقين إضافيين:</strong> {extraCompanions}</div>
+                                  )}
+                                </>
+                              );
+                            })()}
                           </div>
                         ) : booking.companion_tickets > 0 ? (
                           <span className="px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700">

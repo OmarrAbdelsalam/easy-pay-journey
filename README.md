@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# حفلة التخرج 2026 - كلية الحاسبات والمعلومات
 
 ## Project info
 

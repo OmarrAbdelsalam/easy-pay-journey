@@ -33,22 +33,16 @@ const paymentMethods = [
     id: "instapay" as const,
     name: "InstaPay",
     logo: instapayLogo,
-    number: "mahmoud66297@instapay",
-    link: "https://ipn.eg/S/mahmoud66297/instapay/6vAtfO",
+    number: "01015868707",
+    holderName: "حفل تخرج حاسبات طنطا",
+    link: "https://instapay.eg",
   },
   {
     id: "vodafone" as const,
-    name: "Vodafone Cash",
+    name: "فودافون كاش",
     logo: vodafoneLogo,
-    number: "01016828081",
-    holderName: "امل شكري",
-  },
-  {
-    id: "orange" as const,
-    name: "Orange Cash",
-    logo: orangeLogo,
-    number: "01205992002",
-    holderName: " علي محمد",
+    number: "01015868707",
+    holderName: "حفل تخرج حاسبات طنطا",
   },
 ];
 
