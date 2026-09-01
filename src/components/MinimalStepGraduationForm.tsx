@@ -353,53 +353,50 @@ export const MinimalStepGraduationForm: React.FC = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto text-right" dir="rtl">
-      {/* ONE SINGLE UNIFIED FORM CARD CONTAINER */}
-      <div className="bg-card rounded-3xl border border-border/80 shadow-sm overflow-hidden">
-        {/* Full-Bleed Faculty Banner Image at the top of card */}
-        <div className="relative h-40 sm:h-56 w-full overflow-hidden bg-muted">
-          <img
-            src="/faculty-header.jpg"
-            alt="كلية الحاسبات والمعلومات"
-            className="w-full h-full object-cover object-center"
-          />
-          {/* Dark Gradient Overlay for Contrast */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/60" />
+    <div className="max-w-2xl mx-auto text-right space-y-4 sm:space-y-6" dir="rtl">
+      {/* 1. Header Logos (Top Left & Right) */}
+      <div className="flex items-center justify-between px-1">
+        <img src={logo} alt="Logo" className="h-9 sm:h-12 w-auto object-contain drop-shadow-xs" />
+        <img src={logo2} alt="Logo 2" className="h-9 sm:h-12 w-auto object-contain drop-shadow-xs" />
+      </div>
 
-          {/* Logos Floating Directly on Top of Image */}
-          <div className="absolute top-0 inset-x-0 p-4 sm:p-6 flex items-center justify-between z-10">
-            <img src={logo} alt="Logo" className="h-10 sm:h-14 w-auto object-contain drop-shadow-lg" />
-            <img src={logo2} alt="Logo 2" className="h-10 sm:h-14 w-auto object-contain drop-shadow-lg" />
+      {/* 2. Separate Banner Image Card (Separated from form content) */}
+      <div className="relative h-40 sm:h-56 w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-border/70 shadow-xs bg-muted">
+        <img
+          src="/faculty-header.jpg"
+          alt="كلية الحاسبات والمعلومات"
+          className="w-full h-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40" />
+      </div>
+
+      {/* 3. Main Form Container (Clean & Containerless on all screens) */}
+      <div className="bg-transparent p-0 space-y-6">
+        {/* Main Info Section */}
+        <div className="space-y-3 pb-4 border-b border-border/50">
+          <div className="flex items-center justify-between text-xs font-bold text-muted-foreground uppercase tracking-wider">
+            <span>FCI TANTA</span>
+            <span className="text-primary font-bold">دفعة 2026</span>
+          </div>
+
+          <h1 className="text-xl sm:text-2xl font-black text-foreground leading-snug tracking-tight">
+            حفل تخرج كلية الحاسبات والمعلومات - جامعة طنطا
+          </h1>
+          
+          <div className="text-xs sm:text-sm text-muted-foreground space-y-1.5 font-medium">
+            <p><strong className="text-foreground">تاريخ الحفل:</strong> أحد أيام (22 - 23 - 24) سبتمبر</p>
+            <p><strong className="text-foreground">مكان الحفل:</strong> قاعة المؤتمرات - المجمع الطبي - بجوار كلية العلوم</p>
+          </div>
+
+          <div className="pt-2 text-xs sm:text-sm text-foreground/90 font-medium leading-relaxed border-t border-border/40 mt-2">
+            <strong>باكدج الخريج:</strong> شنطة سينيور - درع نحاسي - روب + كاب - وشاح باسمك - شهادة تكريم - تذاكر 2 مرافق مجاني
           </div>
         </div>
 
-        {/* Card Body Container */}
-        <div className="p-6 sm:p-8 space-y-6">
-          {/* Main Info Section */}
-          <div className="space-y-3 pb-4 border-b border-border/50">
-            <div className="flex items-center justify-between text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              <span>FCI TANTA</span>
-              <span className="text-primary font-bold">دفعة 2026</span>
-            </div>
-
-            <h1 className="text-xl sm:text-2xl font-black text-foreground leading-snug tracking-tight">
-              حفل تخرج كلية الحاسبات والمعلومات - جامعة طنطا (دفعة 2026)
-            </h1>
-            
-            <div className="text-xs sm:text-sm text-muted-foreground space-y-1.5 font-medium">
-              <p><strong className="text-foreground">تاريخ الحفل:</strong> أحد أيام (22 - 23 - 24) سبتمبر</p>
-              <p><strong className="text-foreground">مكان الحفل:</strong> قاعة المؤتمرات - المجمع الطبي - بجوار كلية العلوم</p>
-            </div>
-
-            <div className="pt-2 text-xs sm:text-sm text-foreground/90 font-medium leading-relaxed border-t border-border/40 mt-2">
-              <strong>باكدج الخريج:</strong> شنطة سينيور - درع نحاسي - روب + كاب - وشاح باسمك - شهادة تكريم - تذاكر 2 مرافق مجاني
-            </div>
-          </div>
-
-          {/* Step Progress Bar (Sticky Top during scroll) */}
-          <div className="sticky top-0 z-30 bg-card/95 backdrop-blur-md py-3.5 -mx-6 sm:-mx-8 px-6 sm:px-8 border-b border-border/50 shadow-2xs transition-all">
-            <StepIndicator currentStep={currentStep} totalSteps={totalSteps} labels={stepLabels} />
-          </div>
+        {/* Step Progress Bar (Sticky Top during scroll) */}
+        <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md py-3.5 px-0 border-b border-border/50 transition-all">
+          <StepIndicator currentStep={currentStep} totalSteps={totalSteps} labels={stepLabels} />
+        </div>
 
           {/* Step 1: Sash Details */}
           {currentStep === 1 && (
