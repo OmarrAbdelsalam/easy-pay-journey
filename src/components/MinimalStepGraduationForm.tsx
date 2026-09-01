@@ -526,143 +526,152 @@ export const MinimalStepGraduationForm: React.FC = () => {
         </div>
       )}
 
-      {/* Step 2: Trophy Selection & Trophy Name */}
+      {/* Step 2: Trophy Details (Combined Card) */}
       {currentStep === 2 && (
         <div className="space-y-4 animate-fade-in">
-          {/* Question 1: Trophy Type Choice */}
-          <div className="gform-section space-y-3">
-            <label className="gform-label mb-1">
-              اختر نوع درع التخرج <span className="text-destructive">*</span>
-            </label>
+          <div className="gform-section space-y-4">
+            {/* Trophy Type Selection */}
             <div className="space-y-2.5">
-              <label
-                className={`gform-radio-item flex items-center justify-between cursor-pointer ${formData.trophyType === "brass" ? "gform-radio-selected" : ""}`}
-                onClick={() => setFormData({ ...formData, trophyType: "brass" })}
-              >
-                <div className="flex-1 flex items-center gap-3">
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
-                    formData.trophyType === "brass" ? "border-primary bg-background" : "border-gray-300 bg-background"
-                  }`}>
-                    {formData.trophyType === "brass" && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
-                  </div>
-                  <div>
-                    <span className="text-sm font-bold block">درع نحاسي عادي</span>
-                    <span className="text-xs text-muted-foreground block font-normal">درع نحاسي داخل علبة قطيفة (مجاناً - متضمن في سعر التذكرة الأساسي)</span>
-                  </div>
-                </div>
+              <label className="gform-label">
+                اختر نوع درع التخرج <span className="text-destructive">*</span>
               </label>
-
-              <label
-                className={`gform-radio-item flex items-center justify-between cursor-pointer ${formData.trophyType === "crystal" ? "gform-radio-selected" : ""}`}
-                onClick={() => setFormData({ ...formData, trophyType: "crystal" })}
-              >
-                <div className="flex-1 flex items-center gap-3">
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
-                    formData.trophyType === "crystal" ? "border-primary bg-background" : "border-gray-300 bg-background"
-                  }`}>
-                    {formData.trophyType === "crystal" && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
-                  </div>
-                  <div className="flex-1 flex items-center justify-between pl-3">
-                    <div>
-                      <span className="text-sm font-bold block">درع كريستال فاخر</span>
-                      <span className="text-xs text-muted-foreground block font-normal">درع كريستال قيم ومميز</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <label
+                  className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${
+                    formData.trophyType === "brass"
+                      ? "border-primary bg-primary/5 text-primary font-bold shadow-xs"
+                      : "border-border/70 bg-background hover:border-border text-foreground"
+                  }`}
+                  onClick={() => setFormData({ ...formData, trophyType: "brass" })}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                      formData.trophyType === "brass" ? "border-primary bg-primary" : "border-gray-300"
+                    }`}>
+                      {formData.trophyType === "brass" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                     </div>
-                    {/* Strictly Burgundy/White Badge */}
-                    <span className="text-xs sm:text-sm font-bold text-primary">
-                      +50 ج
-                    </span>
+                    <div>
+                      <span className="text-xs sm:text-sm font-bold block">درع نحاسي عادي</span>
+                      <span className="text-[11px] text-muted-foreground block font-normal">علبة قطيفة (متضمن مجاناً)</span>
+                    </div>
                   </div>
-                </div>
-              </label>
-            </div>
-          </div>
+                </label>
 
-          {/* Question 2: Trophy Name (Double Name) */}
-          <div className="gform-section space-y-2">
-            <label className="gform-label">
-              الاسم الثنائي المطلوب كتابته على الدرع <span className="text-destructive">*</span>
-            </label>
-            <p className="text-xs text-muted-foreground">
-              (الاسم الثنائي الذي ترغب في حفره/كتابته على الدرع، مثال: عمر مصطفى)
-            </p>
-            <input
-              type="text"
-              required
-              value={formData.trophyName}
-              onChange={(e) => setFormData({ ...formData, trophyName: e.target.value })}
-              placeholder="مثال: عمر مصطفى"
-              className="gform-input"
-            />
+                <label
+                  className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${
+                    formData.trophyType === "crystal"
+                      ? "border-primary bg-primary/5 text-primary font-bold shadow-xs"
+                      : "border-border/70 bg-background hover:border-border text-foreground"
+                  }`}
+                  onClick={() => setFormData({ ...formData, trophyType: "crystal" })}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                      formData.trophyType === "crystal" ? "border-primary bg-primary" : "border-gray-300"
+                    }`}>
+                      {formData.trophyType === "crystal" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                    </div>
+                    <div>
+                      <span className="text-xs sm:text-sm font-bold block">درع كريستال فاخر</span>
+                      <span className="text-[11px] text-muted-foreground block font-normal">درع كريستال قيم ومميز</span>
+                    </div>
+                  </div>
+                  <span className="text-xs font-extrabold text-primary shrink-0 mr-2">+50 ج</span>
+                </label>
+              </div>
+            </div>
+
+            <hr className="border-border/50 my-1" />
+
+            {/* Trophy Name Input */}
+            <div className="space-y-2">
+              <label className="gform-label">
+                الاسم الثنائي المطلوب كتابته على الدرع <span className="text-destructive">*</span>
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.trophyName}
+                onChange={(e) => setFormData({ ...formData, trophyName: e.target.value })}
+                placeholder="مثال: عمر مصطفى"
+                className="gform-input"
+              />
+            </div>
           </div>
         </div>
       )}
 
-      {/* Step 3: Student Personal Information & Extra Companions */}
+      {/* Step 3: Student Personal Information (Combined Card) */}
       {currentStep === 3 && (
         <div className="space-y-4 animate-fade-in">
-          {/* Field 1: Full Name */}
-          <div className="gform-section">
-            <label className="gform-label">
-              الاسم رباعي باللغة العربية <span className="text-destructive">*</span>
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.fullName}
-              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-              placeholder="أدخل اسمك الرباعي كاملاً باللغة العربية"
-              className="gform-input"
-            />
-          </div>
+          <div className="gform-section space-y-4">
+            {/* Field 1: Full Name */}
+            <div className="space-y-1.5">
+              <label className="gform-label">
+                الاسم رباعي باللغة العربية <span className="text-destructive">*</span>
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.fullName}
+                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                placeholder="أدخل اسمك الرباعي كاملاً باللغة العربية"
+                className="gform-input"
+              />
+            </div>
 
-          {/* Field 2: Department Choice */}
-          <div className="gform-section space-y-2">
-            <label className="gform-label">
-              القسم / التخصص <span className="text-destructive">*</span>
-            </label>
-            <div className="grid grid-cols-3 gap-3 pt-1">
-              {departmentOptions.map((dept) => (
-                <button
-                  key={dept}
-                  type="button"
-                  onClick={() => setFormData({ ...formData, department: dept })}
-                  className={`py-3 px-4 rounded-xl border text-base font-black font-mono transition-all ${
-                    formData.department === dept
-                      ? "bg-primary text-white border-primary shadow-sm"
-                      : "bg-background border-border hover:border-primary/50 text-foreground"
-                  }`}
-                >
-                  {dept}
-                </button>
-              ))}
+            <hr className="border-border/50 my-1" />
+
+            {/* Field 2: Department Choice */}
+            <div className="space-y-2">
+              <label className="gform-label">
+                القسم / التخصص <span className="text-destructive">*</span>
+              </label>
+              <div className="grid grid-cols-3 gap-2.5 max-w-xs">
+                {departmentOptions.map((dept) => (
+                  <button
+                    key={dept}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, department: dept })}
+                    className={`py-2 px-3 rounded-lg text-xs font-bold font-mono transition-all border ${
+                      formData.department === dept
+                        ? "bg-primary text-white border-primary shadow-xs"
+                        : "bg-background border-border hover:border-primary/50 text-foreground"
+                    }`}
+                  >
+                    {dept}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <hr className="border-border/50 my-1" />
+
+            {/* Field 3: Whatsapp Number */}
+            <div className="space-y-1.5">
+              <label className="gform-label">
+                رقم الواتس <span className="text-destructive">*</span>
+              </label>
+              <input
+                type="tel"
+                required
+                maxLength={11}
+                value={formData.whatsapp}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 11);
+                  setFormData({ ...formData, whatsapp: val });
+                }}
+                placeholder="01xxxxxxxxx"
+                dir="ltr"
+                className={`gform-input text-left font-mono ${
+                  formData.whatsapp.length > 0 && formData.whatsapp.length < 11 ? "border-destructive text-destructive" : ""
+                }`}
+              />
+              {formData.whatsapp.length > 0 && formData.whatsapp.length < 11 && (
+                <p className="text-xs text-destructive mt-1">يجب أن يكون رقم الواتس 11 رقم ({formData.whatsapp.length}/11)</p>
+              )}
             </div>
           </div>
-
-          {/* Field 3: Whatsapp Number */}
-          <div className="gform-section">
-            <label className="gform-label">
-              رقم الواتس <span className="text-destructive">*</span>
-            </label>
-            <input
-              type="tel"
-              required
-              maxLength={11}
-              value={formData.whatsapp}
-              onChange={(e) => {
-                const val = e.target.value.replace(/\D/g, "").slice(0, 11);
-                setFormData({ ...formData, whatsapp: val });
-              }}
-              placeholder="01xxxxxxxxx"
-              dir="ltr"
-              className={`gform-input text-left font-mono ${
-                formData.whatsapp.length > 0 && formData.whatsapp.length < 11 ? "border-destructive text-destructive" : ""
-              }`}
-            />
-            {formData.whatsapp.length > 0 && formData.whatsapp.length < 11 && (
-              <p className="text-xs text-destructive mt-1">يجب أن يكون رقم الواتس 11 رقم ({formData.whatsapp.length}/11)</p>
-            )}
-          </div>
-
         </div>
       )}
 
