@@ -365,8 +365,8 @@ export const MinimalStepGraduationForm: React.FC = () => {
         <div className="h-3.5 bg-primary w-full" />
         
         <div className="p-6 sm:p-7 space-y-3">
-          <h1 className="text-xl sm:text-2xl font-black text-foreground tracking-tight leading-snug">
-            حفل تخرج كلية الحاسبات والمعلومات - جامعة طنطا - دفعة 2026
+          <h1 className="text-base sm:text-2xl font-bold text-foreground leading-snug sm:leading-relaxed">
+            حفل تخرج كلية الحاسبات والمعلومات - جامعة طنطا (دفعة 2026)
           </h1>
           
           <div className="text-xs sm:text-sm text-muted-foreground space-y-1.5 font-medium">
@@ -392,10 +392,10 @@ export const MinimalStepGraduationForm: React.FC = () => {
           <div className="gform-section space-y-3">
             <div className="flex flex-col gap-1">
               <label className="gform-label">
-                ألوان الوشاح المفضلة (يمكنك اختيار حتى 3 ألوان بالترتيب) <span className="text-destructive">*</span>
+                ألوان الوشاح المفضلة <span className="text-destructive">*</span>
               </label>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                اضغط على الألوان لاختيار من <strong>1 إلى 3 رغبات</strong> بالترتيب المفضل لديك. (سيتم اعتماد اللون النهائي للدفعة بناءً على التصويت).
+                يمكنك اختيار حتى 3 ألوان بالترتيب (سيتم اعتماد اللون النهائي للدفعة بناءً على التصويت).
               </p>
             </div>
 
@@ -422,8 +422,8 @@ export const MinimalStepGraduationForm: React.FC = () => {
                     key={clr}
                     type="button"
                     onClick={() => handleSashColorToggle(clr)}
-                    className={`py-3.5 px-4 rounded-2xl border-2 text-sm font-bold transition-all duration-200 flex items-center justify-between ${config.bg} ${config.text} ${config.border} ${
-                      isSelected ? `ring-2 ${config.ring} ring-offset-2 shadow-lg scale-[1.02]` : "hover:opacity-90 shadow-sm"
+                    className={`py-3.5 px-4 rounded-2xl text-sm font-bold transition-all duration-200 flex items-center justify-between ${config.bg} ${config.text} ${clr === "أبيض" ? "border border-slate-200/80" : "border-none"} ${
+                      isSelected ? `ring-2 ${config.ring} ring-offset-2 shadow-md scale-[1.02]` : "hover:opacity-90 shadow-xs"
                     }`}
                   >
                     <span>{clr}</span>
@@ -453,67 +453,75 @@ export const MinimalStepGraduationForm: React.FC = () => {
             )}
           </div>
 
-          {/* Question 2: Sash Size */}
-          <div className="gform-section space-y-3">
-            <label className="gform-label mb-1">
-              مقاس الوشاح <span className="text-destructive">*</span>
-            </label>
-            <div className="space-y-2">
-              <label
-                className={`gform-radio-item flex items-center justify-between cursor-pointer ${formData.sashSize === "standard" ? "gform-radio-selected" : ""}`}
-                onClick={() => setFormData({ ...formData, sashSize: "standard" })}
-              >
-                <div className="flex-1 flex items-center gap-3">
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
-                    formData.sashSize === "standard" ? "border-primary bg-background" : "border-gray-300 bg-background"
-                  }`}>
-                    {formData.sashSize === "standard" && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
-                  </div>
-                  <div>
-                    <span className="text-sm font-bold block">مقاس عادي (افتراضي)</span>
-                    <span className="text-xs text-muted-foreground block font-normal">المقاس النمطي المناسب لمعظم الخريجين</span>
-                  </div>
-                </div>
+          {/* Question 2 & 3 Combined: Sash Specifications */}
+          <div className="gform-section space-y-4">
+            {/* Sash Size Selection */}
+            <div className="space-y-2.5">
+              <label className="gform-label">
+                مقاس الوشاح <span className="text-destructive">*</span>
               </label>
-
-              <label
-                className={`gform-radio-item flex items-center justify-between cursor-pointer ${formData.sashSize === "large" ? "gform-radio-selected" : ""}`}
-                onClick={() => setFormData({ ...formData, sashSize: "large" })}
-              >
-                <div className="flex-1 flex items-center gap-3">
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
-                    formData.sashSize === "large" ? "border-primary bg-background" : "border-gray-300 bg-background"
-                  }`}>
-                    {formData.sashSize === "large" && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
-                  </div>
-                  <div className="flex-1 flex items-center justify-between pl-3">
-                    <div>
-                      <span className="text-sm font-bold block">مقاس أكبر</span>
-                      <span className="text-xs text-muted-foreground block font-normal">للوزن فوق 110 كجم أو الطول فوق 185 سم</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <label
+                  className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${
+                    formData.sashSize === "standard"
+                      ? "border-primary bg-primary/5 text-primary font-bold shadow-xs"
+                      : "border-border/70 bg-background hover:border-border text-foreground"
+                  }`}
+                  onClick={() => setFormData({ ...formData, sashSize: "standard" })}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                      formData.sashSize === "standard" ? "border-primary bg-primary" : "border-gray-300"
+                    }`}>
+                      {formData.sashSize === "standard" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                     </div>
-                    {/* Strictly Burgundy/White Badge */}
-                    <span className="text-xs sm:text-sm font-bold text-primary">
-                      +30 ج
-                    </span>
+                    <div>
+                      <span className="text-xs sm:text-sm font-bold block">مقاس عادي (افتراضي)</span>
+                      <span className="text-[11px] text-muted-foreground block font-normal">المقاس النمطي المناسب لمعظم الخريجين</span>
+                    </div>
                   </div>
-                </div>
-              </label>
-            </div>
-          </div>
+                </label>
 
-          {/* Question 3: Sash Name (Triple Name) */}
-          <div className="gform-section">
-            <label className="gform-label">
-              الاسم المطلوب كتابته على الوشاح (ثلاثي) <span className="text-destructive">*</span>
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.sashName}
-              onChange={(e) => setFormData({ ...formData, sashName: e.target.value })}
-              placeholder="مثال: عمر أحمد مصطفى"
-              className="gform-input"
-            />
+                <label
+                  className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${
+                    formData.sashSize === "large"
+                      ? "border-primary bg-primary/5 text-primary font-bold shadow-xs"
+                      : "border-border/70 bg-background hover:border-border text-foreground"
+                  }`}
+                  onClick={() => setFormData({ ...formData, sashSize: "large" })}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                      formData.sashSize === "large" ? "border-primary bg-primary" : "border-gray-300"
+                    }`}>
+                      {formData.sashSize === "large" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                    </div>
+                    <div>
+                      <span className="text-xs sm:text-sm font-bold block">مقاس أكبر</span>
+                      <span className="text-[11px] text-muted-foreground block font-normal">فوق 110 كجم أو الطول فوق 185 سم</span>
+                    </div>
+                  </div>
+                  <span className="text-xs font-extrabold text-primary shrink-0 mr-2">+30 ج</span>
+                </label>
+              </div>
+            </div>
+
+            <hr className="border-border/50 my-1" />
+
+            {/* Sash Name Input */}
+            <div className="space-y-2">
+              <label className="gform-label">
+                الاسم المطلوب كتابته على الوشاح (ثلاثي) <span className="text-destructive">*</span>
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.sashName}
+                onChange={(e) => setFormData({ ...formData, sashName: e.target.value })}
+                placeholder="مثال: عمر أحمد مصطفى"
+                className="gform-input"
+              />
+            </div>
           </div>
         </div>
       )}
