@@ -366,10 +366,10 @@ export const MinimalStepGraduationForm: React.FC = () => {
           {/* Dark Overlay for Logos & Contrast */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/60" />
 
-          {/* Logos Floating on Top of Image */}
+          {/* Logos Floating Directly on Top of Image */}
           <div className="absolute top-0 inset-x-0 p-3 sm:p-4 flex items-center justify-between z-10">
-            <img src={logo} alt="Logo" className="h-9 sm:h-12 w-auto object-contain drop-shadow-md bg-white/90 rounded-lg p-1.5 backdrop-blur-xs" />
-            <img src={logo2} alt="Logo 2" className="h-9 sm:h-12 w-auto object-contain drop-shadow-md bg-white/90 rounded-lg p-1.5 backdrop-blur-xs" />
+            <img src={logo} alt="Logo" className="h-10 sm:h-14 w-auto object-contain drop-shadow-lg" />
+            <img src={logo2} alt="Logo 2" className="h-10 sm:h-14 w-auto object-contain drop-shadow-lg" />
           </div>
         </div>
         
