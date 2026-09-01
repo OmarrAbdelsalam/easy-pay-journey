@@ -365,7 +365,7 @@ export const MinimalStepGraduationForm: React.FC = () => {
         <img
           src="/faculty-header.jpg"
           alt="كلية الحاسبات والمعلومات"
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-cover object-bottom"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40" />
       </div>
@@ -397,14 +397,21 @@ export const MinimalStepGraduationForm: React.FC = () => {
             </p>
           </div>
 
-          {/* Unified Event Details */}
-          <div className="text-xs sm:text-sm text-muted-foreground space-y-2 font-medium pt-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+          {/* Event Details Description with Dots */}
+          <div className="space-y-2.5 text-xs sm:text-sm text-muted-foreground font-medium leading-relaxed pt-1">
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-1.5" />
               <p><strong className="text-foreground font-bold">تاريخ الحفل:</strong> أحد أيام (22 - 23 - 24) سبتمبر</p>
-              <p><strong className="text-foreground font-bold">مكان الحفل:</strong> قاعة المؤتمرات - المجمع الطبي</p>
             </div>
-            <div className="pt-2 border-t border-border/40 text-foreground/90 font-medium leading-relaxed">
-              <strong className="text-foreground font-bold">باكدج الخريج:</strong> شنطة سينيور - درع نحاسي - روب + كاب - وشاح باسمك - شهادة تكريم - تذاكر 2 مرافق مجاني
+            
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-1.5" />
+              <p><strong className="text-foreground font-bold">مكان الحفل:</strong> قاعة المؤتمرات - المجمع الطبي - بجوار كلية العلوم</p>
+            </div>
+
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-1.5" />
+              <p><strong className="text-foreground font-bold">باكدج الخريج:</strong> شنطة سينيور - درع نحاسي - روب + كاب - وشاح باسمك - شهادة تكريم - تذاكر 2 مرافق مجاني</p>
             </div>
           </div>
         </div>
