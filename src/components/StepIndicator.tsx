@@ -6,44 +6,36 @@ interface StepIndicatorProps {
 
 const StepIndicator = ({ currentStep, totalSteps, labels }: StepIndicatorProps) => {
   return (
-    <div className="w-full space-y-2" dir="rtl">
-      {/* Mobile Active Step Summary */}
-      <div className="flex sm:hidden items-center justify-between text-xs font-bold px-0.5 mb-1">
-        <span className="text-primary font-black text-xs">
-          الخطوة {currentStep} من {totalSteps}: {labels[currentStep - 1]}
-        </span>
-        <span className="text-muted-foreground/60 text-[11px] font-mono">
-          {Math.round((currentStep / totalSteps) * 100)}%
-        </span>
-      </div>
-
-      <div className="flex items-center w-full gap-2 sm:gap-3">
+    <div className="w-full" dir="rtl">
+      <div className="grid grid-cols-4 w-full gap-2 sm:gap-4">
         {Array.from({ length: totalSteps }, (_, index) => {
           const stepNumber = index + 1;
           const isCompleted = stepNumber < currentStep;
           const isActive = stepNumber === currentStep;
           
           return (
-            <div key={stepNumber} className="flex flex-col w-full gap-1.5 sm:gap-2">
-              <span
-                className={`text-[11px] sm:text-xs font-bold transition-colors truncate ${
+            <div key={stepNumber} className="flex flex-col w-full gap-2">
+              <div
+                className={`text-xs sm:text-sm font-bold transition-colors flex items-center gap-1 ${
                   isActive
-                    ? "text-primary font-black"
+                    ? "text-primary font-bold"
                     : isCompleted
-                    ? "text-primary/70"
-                    : "text-muted-foreground/40"
+                    ? "text-primary/70 font-medium"
+                    : "text-muted-foreground/40 font-medium"
                 }`}
               >
-                <span className="opacity-60 ml-0.5 sm:ml-1 font-mono">{stepNumber.toString().padStart(2, '0')}</span> 
-                <span className="hidden sm:inline">{labels[index]}</span>
-              </span>
+                <span className="font-mono text-[11px] sm:text-xs opacity-70">
+                  {stepNumber.toString().padStart(2, '0')}
+                </span>
+                <span className="truncate">{labels[index]}</span>
+              </div>
               <div
-                className={`h-1.5 rounded-full w-full transition-all duration-300 ${
+                className={`h-[2px] w-full transition-all duration-300 ${
                   isActive
-                    ? "bg-primary shadow-xs"
+                    ? "bg-primary"
                     : isCompleted
-                    ? "bg-primary/50"
-                    : "bg-border/60"
+                    ? "bg-primary/40"
+                    : "bg-muted-foreground/20"
                 }`}
               />
             </div>

@@ -360,12 +360,12 @@ export const MinimalStepGraduationForm: React.FC = () => {
         <img src={logo2} alt="Logo 2" className="h-9 sm:h-12 w-auto object-contain drop-shadow-xs" />
       </div>
 
-      {/* 2. Separate Banner Image Card (Separated from form content) */}
-      <div className="relative h-40 sm:h-56 w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-border/70 shadow-xs bg-muted">
+      {/* 2. Separate Banner Image Card (Increased height for full view) */}
+      <div className="relative h-52 sm:h-72 w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-border/70 shadow-xs bg-muted">
         <img
           src="/faculty-header.jpg"
           alt="كلية الحاسبات والمعلومات"
-          className="w-full h-full object-cover object-bottom"
+          className="w-full h-full object-cover object-[center_40%]"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40" />
       </div>
@@ -435,36 +435,51 @@ export const MinimalStepGraduationForm: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Sash Preview Image */}
-                <div className="overflow-hidden rounded-2xl border border-border/70 bg-muted/10 my-2 flex flex-col items-center justify-center p-2 sm:p-3">
-                  <img
-                    src="/sash-preview.png"
-                    alt="معاينة نموذج الوشاح"
-                    className="w-full max-w-[240px] sm:max-w-[280px] h-auto max-h-[280px] sm:max-h-[320px] object-contain rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-300"
-                  />
-                  <div className="pt-2 text-center text-xs font-semibold text-muted-foreground">
-                    نموذج لمعاينة تصميم الوشاح وروب التخرج
+                {/* Sash Preview Image (Raised view with clean minimal border) */}
+                <div className="my-3 flex flex-col items-center justify-center p-1">
+                  <div className="overflow-hidden rounded-2xl border border-border/60 shadow-xs max-w-[240px] sm:max-w-[280px] bg-muted">
+                    <img
+                      src="/sash-preview.png"
+                      alt="معاينة نموذج الوشاح"
+                      className="w-full h-auto max-h-[260px] sm:max-h-[300px] object-cover object-[center_15%] hover:scale-[1.01] transition-transform duration-300"
+                    />
                   </div>
+                  <span className="pt-2 text-center text-xs font-medium text-muted-foreground">
+                    نموذج لمعاينة تصميم الوشاح وروب التخرج
+                  </span>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
+                {/* Minimal Color Swatch Selection Buttons */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-1">
                   {sashColorOptions.map((clr) => {
-                    const config = sashColorConfig[clr];
                     const selectedIndex = (formData.sashColors || []).indexOf(clr);
                     const isSelected = selectedIndex !== -1;
+                    const swatches: Record<string, string> = {
+                      "أبيض": "bg-white border border-gray-300",
+                      "نبيتي": "bg-[#7A0C2E]",
+                      "أسود": "bg-slate-900",
+                      "بترولي": "bg-[#00729A]",
+                      "ازرق": "bg-[#1D4ED8]",
+                      "بيج": "bg-[#F5E6D3] border border-amber-200/60",
+                    };
 
                     return (
                       <button
                         key={clr}
                         type="button"
                         onClick={() => handleSashColorToggle(clr)}
-                        className={`py-3.5 px-4 rounded-2xl text-sm font-bold transition-all duration-200 flex items-center justify-between ${config.bg} ${config.text} ${clr === "أبيض" ? "border border-slate-200/80" : "border-none"} ${
-                          isSelected ? `ring-2 ${config.ring} ring-offset-2 shadow-md scale-[1.02]` : "hover:opacity-90 shadow-xs"
+                        className={`py-2.5 px-3.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-between border ${
+                          isSelected
+                            ? "border-primary bg-primary/5 text-primary ring-1 ring-primary/40 shadow-xs"
+                            : "border-border/70 bg-background text-foreground hover:border-primary/40 hover:bg-muted/20"
                         }`}
                       >
-                        <span>{clr}</span>
+                        <div className="flex items-center gap-2">
+                          <span className={`w-3.5 h-3.5 rounded-full shrink-0 shadow-2xs ${swatches[clr] || "bg-gray-400"}`} />
+                          <span>{clr}</span>
+                        </div>
                         {isSelected && (
-                          <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-bold ${config.badge}`}>
+                          <span className="text-[10px] sm:text-[11px] bg-primary text-white px-2 py-0.5 rounded-md font-bold shrink-0">
                             رغبة {selectedIndex + 1}
                           </span>
                         )}
