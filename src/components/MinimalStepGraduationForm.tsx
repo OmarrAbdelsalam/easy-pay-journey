@@ -353,361 +353,403 @@ export const MinimalStepGraduationForm: React.FC = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4 text-right" dir="rtl">
-      {/* Full-Bleed Banner Image Header (No side container margins/padding and straight edges) */}
-      <div className="-mx-3 sm:-mx-6 -mt-6 sm:-mt-10 relative h-40 sm:h-56 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden bg-muted rounded-none shadow-sm mb-4">
-        <img
-          src="/faculty-header.jpg"
-          alt="كلية الحاسبات والمعلومات"
-          className="w-full h-full object-cover object-center"
-        />
-        {/* Dark Gradient Overlay for Contrast */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/60" />
+    <div className="max-w-2xl mx-auto text-right" dir="rtl">
+      {/* ONE SINGLE UNIFIED FORM CARD CONTAINER */}
+      <div className="bg-card rounded-3xl border border-border/80 shadow-sm overflow-hidden">
+        {/* Full-Bleed Faculty Banner Image at the top of card */}
+        <div className="relative h-40 sm:h-56 w-full overflow-hidden bg-muted">
+          <img
+            src="/faculty-header.jpg"
+            alt="كلية الحاسبات والمعلومات"
+            className="w-full h-full object-cover object-center"
+          />
+          {/* Dark Gradient Overlay for Contrast */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/60" />
 
-        {/* Logos Floating Directly on Top of Image */}
-        <div className="absolute top-0 inset-x-0 p-4 sm:p-6 flex items-center justify-between z-10">
-          <img src={logo} alt="Logo" className="h-10 sm:h-14 w-auto object-contain drop-shadow-lg" />
-          <img src={logo2} alt="Logo 2" className="h-10 sm:h-14 w-auto object-contain drop-shadow-lg" />
-        </div>
-      </div>
-
-      {/* Main Info Section (Clean without card background) */}
-      <div className="p-2 sm:p-3 space-y-3">
-        <h1 className="text-lg sm:text-2xl font-black text-foreground leading-snug sm:leading-snug tracking-tight">
-          حفل تخرج كلية الحاسبات والمعلومات - جامعة طنطا (دفعة 2026)
-        </h1>
-        
-        <div className="text-xs sm:text-sm text-muted-foreground space-y-1.5 font-medium">
-          <p><strong className="text-foreground">تاريخ الحفل:</strong> أحد أيام (22 - 23 - 24) سبتمبر</p>
-          <p><strong className="text-foreground">مكان الحفل:</strong> قاعة المؤتمرات - المجمع الطبي - بجوار كلية العلوم</p>
+          {/* Logos Floating Directly on Top of Image */}
+          <div className="absolute top-0 inset-x-0 p-4 sm:p-6 flex items-center justify-between z-10">
+            <img src={logo} alt="Logo" className="h-10 sm:h-14 w-auto object-contain drop-shadow-lg" />
+            <img src={logo2} alt="Logo 2" className="h-10 sm:h-14 w-auto object-contain drop-shadow-lg" />
+          </div>
         </div>
 
-        <div className="pt-2 border-t border-border/70 text-xs sm:text-sm text-foreground/90 font-medium leading-relaxed">
-          <strong>باكدج الخريج:</strong> شنطة سينيور - درع نحاسي - روب + كاب - وشاح باسمك - شهادة تكريم - تذاكر 2 مرافق مجاني
-        </div>
-      </div>
-
-      {/* Step Progress Bar (Sticky fixed at top during scroll) */}
-      <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md py-3 -mx-3 sm:-mx-6 px-3 sm:px-6 border-b border-border/40 shadow-xs mb-2 transition-all">
-        <StepIndicator currentStep={currentStep} totalSteps={totalSteps} labels={stepLabels} />
-      </div>
-
-      {/* Step 1: Sash Details */}
-      {currentStep === 1 && (
-        <div className="space-y-4 animate-fade-in">
-          {/* Question 1: Sash Color Vote */}
-          <div className="gform-section space-y-3">
-            <div className="flex flex-col gap-1">
-              <label className="gform-label">
-                ألوان الوشاح المفضلة <span className="text-destructive">*</span>
-              </label>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                يمكنك اختيار حتى 3 ألوان بالترتيب (سيتم اعتماد اللون النهائي للدفعة بناءً على التصويت).
-              </p>
+        {/* Card Body Container */}
+        <div className="p-6 sm:p-8 space-y-6">
+          {/* Main Info Section */}
+          <div className="space-y-3 pb-4 border-b border-border/50">
+            <div className="flex items-center justify-between text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              <span>FCI TANTA</span>
+              <span className="text-primary font-bold">دفعة 2026</span>
             </div>
 
-            {/* Sash Preview Image */}
-            <div className="overflow-hidden rounded-2xl border border-border shadow-xs bg-muted/10 my-3 flex flex-col items-center justify-center p-2 sm:p-4">
-              <img
-                src="/sash-preview.png"
-                alt="معاينة نموذج الوشاح"
-                className="w-full max-w-xs sm:max-w-sm h-auto max-h-[500px] object-contain rounded-xl shadow-sm hover:scale-[1.01] transition-transform duration-300"
-              />
-              <div className="pt-2 text-center text-xs font-semibold text-muted-foreground">
-                نموذج لمعاينة تصميم الوشاح وروب التخرج
+            <h1 className="text-xl sm:text-2xl font-black text-foreground leading-snug tracking-tight">
+              حفل تخرج كلية الحاسبات والمعلومات - جامعة طنطا (دفعة 2026)
+            </h1>
+            
+            <div className="text-xs sm:text-sm text-muted-foreground space-y-1.5 font-medium">
+              <p><strong className="text-foreground">تاريخ الحفل:</strong> أحد أيام (22 - 23 - 24) سبتمبر</p>
+              <p><strong className="text-foreground">مكان الحفل:</strong> قاعة المؤتمرات - المجمع الطبي - بجوار كلية العلوم</p>
+            </div>
+
+            <div className="pt-2 text-xs sm:text-sm text-foreground/90 font-medium leading-relaxed border-t border-border/40 mt-2">
+              <strong>باكدج الخريج:</strong> شنطة سينيور - درع نحاسي - روب + كاب - وشاح باسمك - شهادة تكريم - تذاكر 2 مرافق مجاني
+            </div>
+          </div>
+
+          {/* Step Progress Bar */}
+          <div className="pb-4 border-b border-border/40">
+            <StepIndicator currentStep={currentStep} totalSteps={totalSteps} labels={stepLabels} />
+          </div>
+
+          {/* Step 1: Sash Details */}
+          {currentStep === 1 && (
+            <div className="space-y-6 animate-fade-in">
+              {/* Question 1: Sash Color Vote */}
+              <div className="space-y-3">
+                <div className="flex flex-col gap-1">
+                  <label className="gform-label">
+                    ألوان الوشاح المفضلة <span className="text-destructive">*</span>
+                  </label>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    يمكنك اختيار حتى 3 ألوان بالترتيب (سيتم اعتماد اللون النهائي للدفعة بناءً على التصويت).
+                  </p>
+                </div>
+
+                {/* Sash Preview Image */}
+                <div className="overflow-hidden rounded-2xl border border-border/70 bg-muted/10 my-3 flex flex-col items-center justify-center p-2 sm:p-4">
+                  <img
+                    src="/sash-preview.png"
+                    alt="معاينة نموذج الوشاح"
+                    className="w-full max-w-xs sm:max-w-sm h-auto max-h-[500px] object-contain rounded-xl shadow-sm hover:scale-[1.01] transition-transform duration-300"
+                  />
+                  <div className="pt-2 text-center text-xs font-semibold text-muted-foreground">
+                    نموذج لمعاينة تصميم الوشاح وروب التخرج
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
+                  {sashColorOptions.map((clr) => {
+                    const config = sashColorConfig[clr];
+                    const selectedIndex = (formData.sashColors || []).indexOf(clr);
+                    const isSelected = selectedIndex !== -1;
+
+                    return (
+                      <button
+                        key={clr}
+                        type="button"
+                        onClick={() => handleSashColorToggle(clr)}
+                        className={`py-3.5 px-4 rounded-2xl text-sm font-bold transition-all duration-200 flex items-center justify-between ${config.bg} ${config.text} ${clr === "أبيض" ? "border border-slate-200/80" : "border-none"} ${
+                          isSelected ? `ring-2 ${config.ring} ring-offset-2 shadow-md scale-[1.02]` : "hover:opacity-90 shadow-xs"
+                        }`}
+                      >
+                        <span>{clr}</span>
+                        {isSelected && (
+                          <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-bold ${config.badge}`}>
+                            رغبة {selectedIndex + 1}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {(formData.sashColors || []).length > 0 ? (
+                  <div className="p-3 bg-primary/5 rounded-xl border border-primary/20 text-xs font-semibold text-primary flex items-center gap-2">
+                    <span>ترتيب رغباتك:</span>
+                    <div className="flex items-center gap-1.5 font-bold flex-wrap">
+                      {(formData.sashColors || []).map((clr, idx) => (
+                        <span key={clr} className="inline-flex items-center gap-1 bg-primary text-white px-2.5 py-0.5 rounded-lg text-xs">
+                          <span className="opacity-80 text-[10px]">#{idx + 1}</span> {clr}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-xs text-destructive font-medium">برجاء اختيار رغبة واحدة على الأقل (حتى 3 رغبات)</p>
+                )}
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
-              {sashColorOptions.map((clr) => {
-                const config = sashColorConfig[clr];
-                const selectedIndex = (formData.sashColors || []).indexOf(clr);
-                const isSelected = selectedIndex !== -1;
+              <hr className="border-border/40" />
 
-                return (
-                  <button
-                    key={clr}
-                    type="button"
-                    onClick={() => handleSashColorToggle(clr)}
-                    className={`py-3.5 px-4 rounded-2xl text-sm font-bold transition-all duration-200 flex items-center justify-between ${config.bg} ${config.text} ${clr === "أبيض" ? "border border-slate-200/80" : "border-none"} ${
-                      isSelected ? `ring-2 ${config.ring} ring-offset-2 shadow-md scale-[1.02]` : "hover:opacity-90 shadow-xs"
-                    }`}
-                  >
-                    <span>{clr}</span>
-                    {isSelected && (
-                      <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-bold ${config.badge}`}>
-                        رغبة {selectedIndex + 1}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+              {/* Question 2 & 3 Combined: Sash Specifications */}
+              <div className="space-y-4">
+                {/* Sash Size Selection */}
+                <div className="space-y-2.5">
+                  <label className="gform-label">
+                    مقاس الوشاح <span className="text-destructive">*</span>
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <label
+                      className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${
+                        formData.sashSize === "standard"
+                          ? "border-primary bg-primary/5 text-primary font-bold shadow-xs"
+                          : "border-border/70 bg-background hover:border-border text-foreground"
+                      }`}
+                      onClick={() => setFormData({ ...formData, sashSize: "standard" })}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                          formData.sashSize === "standard" ? "border-primary bg-primary" : "border-gray-300"
+                        }`}>
+                          {formData.sashSize === "standard" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                        </div>
+                        <div>
+                          <span className="text-xs sm:text-sm font-bold block">مقاس عادي (افتراضي)</span>
+                          <span className="text-[11px] text-muted-foreground block font-normal">المقاس النمطي المناسب لمعظم الخريجين</span>
+                        </div>
+                      </div>
+                    </label>
 
-            {(formData.sashColors || []).length > 0 ? (
-              <div className="p-3 bg-primary/5 rounded-xl border border-primary/20 text-xs font-semibold text-primary flex items-center gap-2">
-                <span>ترتيب رغباتك:</span>
-                <div className="flex items-center gap-1.5 font-bold flex-wrap">
-                  {(formData.sashColors || []).map((clr, idx) => (
-                    <span key={clr} className="inline-flex items-center gap-1 bg-primary text-white px-2.5 py-0.5 rounded-lg text-xs">
-                      <span className="opacity-80 text-[10px]">#{idx + 1}</span> {clr}
-                    </span>
-                  ))}
+                    <label
+                      className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${
+                        formData.sashSize === "large"
+                          ? "border-primary bg-primary/5 text-primary font-bold shadow-xs"
+                          : "border-border/70 bg-background hover:border-border text-foreground"
+                      }`}
+                      onClick={() => setFormData({ ...formData, sashSize: "large" })}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                          formData.sashSize === "large" ? "border-primary bg-primary" : "border-gray-300"
+                        }`}>
+                          {formData.sashSize === "large" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                        </div>
+                        <div>
+                          <span className="text-xs sm:text-sm font-bold block">مقاس أكبر</span>
+                          <span className="text-[11px] text-muted-foreground block font-normal">فوق 110 كجم أو الطول فوق 185 سم</span>
+                        </div>
+                      </div>
+                      <span className="text-xs font-extrabold text-primary shrink-0 mr-2">+30 ج</span>
+                    </label>
+                  </div>
+                </div>
+
+                <hr className="border-border/40 my-1" />
+
+                {/* Sash Name Input */}
+                <div className="space-y-2">
+                  <label className="gform-label">
+                    الاسم المطلوب كتابته على الوشاح (ثلاثي) <span className="text-destructive">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.sashName}
+                    onChange={(e) => setFormData({ ...formData, sashName: e.target.value })}
+                    placeholder="مثال: عمر أحمد مصطفى"
+                    className="gform-input"
+                  />
                 </div>
               </div>
-            ) : (
-              <p className="text-xs text-destructive font-medium">برجاء اختيار رغبة واحدة على الأقل (حتى 3 رغبات)</p>
-            )}
-          </div>
+            </div>
+          )}
 
-          {/* Question 2 & 3 Combined: Sash Specifications */}
-          <div className="gform-section space-y-4">
-            {/* Sash Size Selection */}
-            <div className="space-y-2.5">
-              <label className="gform-label">
-                مقاس الوشاح <span className="text-destructive">*</span>
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                <label
-                  className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${
-                    formData.sashSize === "standard"
-                      ? "border-primary bg-primary/5 text-primary font-bold shadow-xs"
-                      : "border-border/70 bg-background hover:border-border text-foreground"
-                  }`}
-                  onClick={() => setFormData({ ...formData, sashSize: "standard" })}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                      formData.sashSize === "standard" ? "border-primary bg-primary" : "border-gray-300"
-                    }`}>
-                      {formData.sashSize === "standard" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                    </div>
-                    <div>
-                      <span className="text-xs sm:text-sm font-bold block">مقاس عادي (افتراضي)</span>
-                      <span className="text-[11px] text-muted-foreground block font-normal">المقاس النمطي المناسب لمعظم الخريجين</span>
-                    </div>
-                  </div>
-                </label>
+          {/* Step 2: Trophy Details */}
+          {currentStep === 2 && (
+            <div className="space-y-4 animate-fade-in">
+              <div className="space-y-4">
+                {/* Trophy Type Selection */}
+                <div className="space-y-2.5">
+                  <label className="gform-label">
+                    اختر نوع درع التخرج <span className="text-destructive">*</span>
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <label
+                      className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${
+                        formData.trophyType === "brass"
+                          ? "border-primary bg-primary/5 text-primary font-bold shadow-xs"
+                          : "border-border/70 bg-background hover:border-border text-foreground"
+                      }`}
+                      onClick={() => setFormData({ ...formData, trophyType: "brass" })}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                          formData.trophyType === "brass" ? "border-primary bg-primary" : "border-gray-300"
+                        }`}>
+                          {formData.trophyType === "brass" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                        </div>
+                        <div>
+                          <span className="text-xs sm:text-sm font-bold block">درع نحاسي عادي</span>
+                          <span className="text-[11px] text-muted-foreground block font-normal">علبة قطيفة (متضمن مجاناً)</span>
+                        </div>
+                      </div>
+                    </label>
 
-                <label
-                  className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${
-                    formData.sashSize === "large"
-                      ? "border-primary bg-primary/5 text-primary font-bold shadow-xs"
-                      : "border-border/70 bg-background hover:border-border text-foreground"
-                  }`}
-                  onClick={() => setFormData({ ...formData, sashSize: "large" })}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                      formData.sashSize === "large" ? "border-primary bg-primary" : "border-gray-300"
-                    }`}>
-                      {formData.sashSize === "large" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                    </div>
-                    <div>
-                      <span className="text-xs sm:text-sm font-bold block">مقاس أكبر</span>
-                      <span className="text-[11px] text-muted-foreground block font-normal">فوق 110 كجم أو الطول فوق 185 سم</span>
-                    </div>
+                    <label
+                      className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${
+                        formData.trophyType === "crystal"
+                          ? "border-primary bg-primary/5 text-primary font-bold shadow-xs"
+                          : "border-border/70 bg-background hover:border-border text-foreground"
+                      }`}
+                      onClick={() => setFormData({ ...formData, trophyType: "crystal" })}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                          formData.trophyType === "crystal" ? "border-primary bg-primary" : "border-gray-300"
+                        }`}>
+                          {formData.trophyType === "crystal" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                        </div>
+                        <div>
+                          <span className="text-xs sm:text-sm font-bold block">درع كريستال فاخر</span>
+                          <span className="text-[11px] text-muted-foreground block font-normal">درع كريستال قيم ومميز</span>
+                        </div>
+                      </div>
+                      <span className="text-xs font-extrabold text-primary shrink-0 mr-2">+50 ج</span>
+                    </label>
                   </div>
-                  <span className="text-xs font-extrabold text-primary shrink-0 mr-2">+30 ج</span>
-                </label>
+                </div>
+
+                <hr className="border-border/40 my-1" />
+
+                {/* Trophy Name Input */}
+                <div className="space-y-2">
+                  <label className="gform-label">
+                    الاسم الثنائي المطلوب كتابته على الدرع <span className="text-destructive">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.trophyName}
+                    onChange={(e) => setFormData({ ...formData, trophyName: e.target.value })}
+                    placeholder="مثال: عمر مصطفى"
+                    className="gform-input"
+                  />
+                </div>
               </div>
             </div>
+          )}
 
-            <hr className="border-border/50 my-1" />
+          {/* Step 3: Student Personal Information */}
+          {currentStep === 3 && (
+            <div className="space-y-4 animate-fade-in">
+              <div className="space-y-4">
+                {/* Field 1: Full Name */}
+                <div className="space-y-1.5">
+                  <label className="gform-label">
+                    الاسم رباعي باللغة العربية <span className="text-destructive">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.fullName}
+                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    placeholder="أدخل اسمك الرباعي كاملاً باللغة العربية"
+                    className="gform-input"
+                  />
+                </div>
 
-            {/* Sash Name Input */}
-            <div className="space-y-2">
-              <label className="gform-label">
-                الاسم المطلوب كتابته على الوشاح (ثلاثي) <span className="text-destructive">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.sashName}
-                onChange={(e) => setFormData({ ...formData, sashName: e.target.value })}
-                placeholder="مثال: عمر أحمد مصطفى"
-                className="gform-input"
-              />
-            </div>
-          </div>
-        </div>
-      )}
+                <hr className="border-border/40 my-1" />
 
-      {/* Step 2: Trophy Details (Combined Card) */}
-      {currentStep === 2 && (
-        <div className="space-y-4 animate-fade-in">
-          <div className="gform-section space-y-4">
-            {/* Trophy Type Selection */}
-            <div className="space-y-2.5">
-              <label className="gform-label">
-                اختر نوع درع التخرج <span className="text-destructive">*</span>
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                <label
-                  className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${
-                    formData.trophyType === "brass"
-                      ? "border-primary bg-primary/5 text-primary font-bold shadow-xs"
-                      : "border-border/70 bg-background hover:border-border text-foreground"
-                  }`}
-                  onClick={() => setFormData({ ...formData, trophyType: "brass" })}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                      formData.trophyType === "brass" ? "border-primary bg-primary" : "border-gray-300"
-                    }`}>
-                      {formData.trophyType === "brass" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                    </div>
-                    <div>
-                      <span className="text-xs sm:text-sm font-bold block">درع نحاسي عادي</span>
-                      <span className="text-[11px] text-muted-foreground block font-normal">علبة قطيفة (متضمن مجاناً)</span>
-                    </div>
+                {/* Field 2: Department Choice */}
+                <div className="space-y-2">
+                  <label className="gform-label">
+                    القسم / التخصص <span className="text-destructive">*</span>
+                  </label>
+                  <div className="grid grid-cols-3 gap-2.5 max-w-xs">
+                    {departmentOptions.map((dept) => (
+                      <button
+                        key={dept}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, department: dept })}
+                        className={`py-2.5 px-3.5 rounded-xl text-xs sm:text-sm font-bold font-mono transition-all border ${
+                          formData.department === dept
+                            ? "bg-primary text-white border-primary shadow-xs"
+                            : "bg-background border-border hover:border-primary/50 text-foreground"
+                        }`}
+                      >
+                        {dept}
+                      </button>
+                    ))}
                   </div>
-                </label>
+                </div>
 
-                <label
-                  className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${
-                    formData.trophyType === "crystal"
-                      ? "border-primary bg-primary/5 text-primary font-bold shadow-xs"
-                      : "border-border/70 bg-background hover:border-border text-foreground"
-                  }`}
-                  onClick={() => setFormData({ ...formData, trophyType: "crystal" })}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                      formData.trophyType === "crystal" ? "border-primary bg-primary" : "border-gray-300"
-                    }`}>
-                      {formData.trophyType === "crystal" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                    </div>
-                    <div>
-                      <span className="text-xs sm:text-sm font-bold block">درع كريستال فاخر</span>
-                      <span className="text-[11px] text-muted-foreground block font-normal">درع كريستال قيم ومميز</span>
-                    </div>
-                  </div>
-                  <span className="text-xs font-extrabold text-primary shrink-0 mr-2">+50 ج</span>
-                </label>
-              </div>
-            </div>
+                <hr className="border-border/40 my-1" />
 
-            <hr className="border-border/50 my-1" />
-
-            {/* Trophy Name Input */}
-            <div className="space-y-2">
-              <label className="gform-label">
-                الاسم الثنائي المطلوب كتابته على الدرع <span className="text-destructive">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.trophyName}
-                onChange={(e) => setFormData({ ...formData, trophyName: e.target.value })}
-                placeholder="مثال: عمر مصطفى"
-                className="gform-input"
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Step 3: Student Personal Information (Combined Card) */}
-      {currentStep === 3 && (
-        <div className="space-y-4 animate-fade-in">
-          <div className="gform-section space-y-4">
-            {/* Field 1: Full Name */}
-            <div className="space-y-1.5">
-              <label className="gform-label">
-                الاسم رباعي باللغة العربية <span className="text-destructive">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.fullName}
-                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                placeholder="أدخل اسمك الرباعي كاملاً باللغة العربية"
-                className="gform-input"
-              />
-            </div>
-
-            <hr className="border-border/50 my-1" />
-
-            {/* Field 2: Department Choice */}
-            <div className="space-y-2">
-              <label className="gform-label">
-                القسم / التخصص <span className="text-destructive">*</span>
-              </label>
-              <div className="grid grid-cols-3 gap-2.5 max-w-xs">
-                {departmentOptions.map((dept) => (
-                  <button
-                    key={dept}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, department: dept })}
-                    className={`py-2.5 px-3.5 rounded-xl text-xs sm:text-sm font-bold font-mono transition-all border ${
-                      formData.department === dept
-                        ? "bg-primary text-white border-primary shadow-xs"
-                        : "bg-background border-border hover:border-primary/50 text-foreground"
+                {/* Field 3: Whatsapp Number */}
+                <div className="space-y-1.5">
+                  <label className="gform-label">
+                    رقم الواتس <span className="text-destructive">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    maxLength={11}
+                    value={formData.whatsapp}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, "").slice(0, 11);
+                      setFormData({ ...formData, whatsapp: val });
+                    }}
+                    placeholder="01xxxxxxxxx"
+                    dir="ltr"
+                    className={`gform-input text-left font-mono ${
+                      formData.whatsapp.length > 0 && formData.whatsapp.length < 11 ? "border-destructive text-destructive" : ""
                     }`}
-                  >
-                    {dept}
-                  </button>
-                ))}
+                  />
+                  {formData.whatsapp.length > 0 && formData.whatsapp.length < 11 && (
+                    <p className="text-xs text-destructive mt-1">يجب أن يكون رقم الواتس 11 رقم ({formData.whatsapp.length}/11)</p>
+                  )}
+                </div>
               </div>
             </div>
+          )}
 
-            <hr className="border-border/50 my-1" />
-
-            {/* Field 3: Whatsapp Number */}
-            <div className="space-y-1.5">
-              <label className="gform-label">
-                رقم الواتس <span className="text-destructive">*</span>
-              </label>
-              <input
-                type="tel"
-                required
-                maxLength={11}
-                value={formData.whatsapp}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, "").slice(0, 11);
-                  setFormData({ ...formData, whatsapp: val });
+          {/* Step 4: Payment Upload */}
+          {currentStep === 4 && (
+            <div className="animate-fade-in">
+              <PaymentUpload
+                selectedPackage="graduation_2026"
+                companions={[]}
+                selectedMethod={formData.paymentMethod}
+                onMethodSelect={(method) => setFormData({ ...formData, paymentMethod: method || "instapay" })}
+                paymentScreenshot={paymentScreenshot}
+                onScreenshotChange={(file) => setPaymentScreenshot(file)}
+                paymentDetails={{
+                  transactionNumber: formData.transactionNumber,
+                  senderPhone: formData.senderInfo,
+                  senderName: formData.senderInfo,
                 }}
-                placeholder="01xxxxxxxxx"
-                dir="ltr"
-                className={`gform-input text-left font-mono ${
-                  formData.whatsapp.length > 0 && formData.whatsapp.length < 11 ? "border-destructive text-destructive" : ""
-                }`}
+                onPaymentDetailsChange={(details) =>
+                  setFormData({
+                    ...formData,
+                    transactionNumber: details.transactionNumber,
+                    senderInfo: details.senderPhone || details.senderName || "",
+                  })
+                }
+                companionsCount={formData.extraCompanionsCount}
+                totalOverride={totalPrice}
               />
-              {formData.whatsapp.length > 0 && formData.whatsapp.length < 11 && (
-                <p className="text-xs text-destructive mt-1">يجب أن يكون رقم الواتس 11 رقم ({formData.whatsapp.length}/11)</p>
-              )}
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {/* Step 4: Original PaymentUpload Component from Git */}
-      {currentStep === 4 && (
-        <div className="gform-section animate-fade-in">
-          <PaymentUpload
-            selectedPackage="graduation_2026"
-            companions={[]}
-            selectedMethod={formData.paymentMethod}
-            onMethodSelect={(method) => setFormData({ ...formData, paymentMethod: method || "instapay" })}
-            paymentScreenshot={paymentScreenshot}
-            onScreenshotChange={(file) => setPaymentScreenshot(file)}
-            paymentDetails={{
-              transactionNumber: formData.transactionNumber,
-              senderPhone: formData.senderInfo,
-              senderName: formData.senderInfo,
-            }}
-            onPaymentDetailsChange={(details) =>
-              setFormData({
-                ...formData,
-                transactionNumber: details.transactionNumber,
-                senderInfo: details.senderPhone || details.senderName || "",
-              })
-            }
-            companionsCount={formData.extraCompanionsCount}
-            totalOverride={totalPrice}
-          />
-        </div>
+          {/* Navigation Controls inside Main Card */}
+          <div className="flex items-center justify-between pt-6 border-t border-border/60">
+            <button
+              type="button"
+              onClick={handleBack}
+              disabled={currentStep === 1}
+              className="text-xs sm:text-sm font-bold text-muted-foreground hover:text-foreground transition-all disabled:opacity-30 flex items-center gap-1.5 px-2 py-1"
+            >
+              <ArrowRight className="w-4 h-4" />
+              الخطوة السابقة
+            </button>
+
+            <button
+              type="button"
+              onClick={handleNext}
+              disabled={!canProceed() || isSubmitting}
+              className="px-6 sm:px-8 py-2.5 rounded-xl bg-primary text-white font-bold text-xs sm:text-sm hover:bg-primary/90 transition-all disabled:opacity-50 shadow-xs flex items-center gap-2"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  جاري الإرسال...
+                </>
+              ) : (
+                <>
+                  {currentStep === totalSteps ? "تأكيد وإرسال الحجز" : "الخطوة التالية"}
+                  <ArrowLeft className="w-4 h-4" />
+                </>
+              )}
       )}
 
       {/* Step Navigation Controls */}
