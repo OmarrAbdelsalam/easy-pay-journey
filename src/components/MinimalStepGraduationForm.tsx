@@ -387,8 +387,8 @@ export const MinimalStepGraduationForm: React.FC = () => {
         </div>
       </div>
 
-      {/* Step Progress Bar (Clean without card background) */}
-      <div className="py-2 px-1">
+      {/* Step Progress Bar (Sticky fixed at top during scroll) */}
+      <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md py-3 -mx-3 sm:-mx-6 px-3 sm:px-6 border-b border-border/40 shadow-xs mb-2 transition-all">
         <StepIndicator currentStep={currentStep} totalSteps={totalSteps} labels={stepLabels} />
       </div>
 
