@@ -372,8 +372,8 @@ export const MinimalStepGraduationForm: React.FC = () => {
 
       {/* 3. Main Form Container (Clean & Containerless on all screens) */}
       <div className="bg-transparent p-0 space-y-6">
-        {/* Main Info Section (Exact layout from target design) */}
-        <div className="space-y-3 pb-4 border-b border-border/50">
+        {/* Main Info Section */}
+        <div className="space-y-4 pb-4 border-b border-border/50">
           <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest font-mono">
             FCI TANTA
           </div>
@@ -387,13 +387,25 @@ export const MinimalStepGraduationForm: React.FC = () => {
             <span className="text-xs sm:text-sm font-bold text-muted-foreground">EGP</span>
           </div>
 
-          <div className="text-xs sm:text-sm text-muted-foreground space-y-1 font-medium">
-            <p><strong className="text-foreground">تاريخ الحفل:</strong> أحد أيام (22 - 23 - 24) سبتمبر</p>
-            <p><strong className="text-foreground">مكان الحفل:</strong> قاعة المؤتمرات - المجمع الطبي - بجوار كلية العلوم</p>
+          {/* Priority Honoring Banner Card */}
+          <div className="bg-primary/5 border border-primary/20 rounded-2xl p-3.5 sm:p-4 space-y-1 text-right">
+            <div className="text-sm font-bold text-primary flex items-center gap-1.5">
+              <span>ترتيب التكريم بأولوية الحجز! 🎖️</span>
+            </div>
+            <p className="text-xs text-primary/85 font-medium leading-relaxed">
+              تنبيه هام: يتم ترتيب المناداة وتكريم الخريجين على المسرح بأسبقية وأولوية الحجز والتسجيل.
+            </p>
           </div>
 
-          <div className="pt-2 text-xs sm:text-sm text-foreground/90 font-medium leading-relaxed border-t border-border/40 mt-2">
-            <strong>باكدج الخريج:</strong> شنطة سينيور - درع نحاسي - روب + كاب - وشاح باسمك - شهادة تكريم - تذاكر 2 مرافق مجاني
+          {/* Unified Event Details */}
+          <div className="text-xs sm:text-sm text-muted-foreground space-y-2 font-medium pt-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+              <p><strong className="text-foreground font-bold">تاريخ الحفل:</strong> أحد أيام (22 - 23 - 24) سبتمبر</p>
+              <p><strong className="text-foreground font-bold">مكان الحفل:</strong> قاعة المؤتمرات - المجمع الطبي</p>
+            </div>
+            <div className="pt-2 border-t border-border/40 text-foreground/90 font-medium leading-relaxed">
+              <strong className="text-foreground font-bold">باكدج الخريج:</strong> شنطة سينيور • درع نحاسي • روب + كاب • وشاح باسمك • شهادة تكريم • تذاكر 2 مرافق مجاني
+            </div>
           </div>
         </div>
 
