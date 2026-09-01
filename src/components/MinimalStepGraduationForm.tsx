@@ -354,38 +354,36 @@ export const MinimalStepGraduationForm: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-4 text-right" dir="rtl">
-      {/* Main Header Form Card with Faculty Banner */}
-      <div className="bg-card rounded-2xl border border-border shadow-sm relative overflow-hidden">
-        {/* Banner Image Container */}
-        <div className="relative h-36 sm:h-48 w-full overflow-hidden bg-muted">
-          <img
-            src="/faculty-header.jpg"
-            alt="كلية الحاسبات والمعلومات"
-            className="w-full h-full object-cover object-center"
-          />
-          {/* Dark Overlay for Logos & Contrast */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/60" />
+      {/* Full-Bleed Banner Image Header (No side container margins or padding) */}
+      <div className="-mx-3 sm:-mx-6 -mt-6 sm:-mt-10 relative h-40 sm:h-56 w-[calc(100%+1.5rem)] sm:w-[calc(100%+3rem)] overflow-hidden bg-muted rounded-b-3xl shadow-sm mb-4">
+        <img
+          src="/faculty-header.jpg"
+          alt="كلية الحاسبات والمعلومات"
+          className="w-full h-full object-cover object-center"
+        />
+        {/* Dark Gradient Overlay for Contrast */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/60" />
 
-          {/* Logos Floating Directly on Top of Image */}
-          <div className="absolute top-0 inset-x-0 p-3 sm:p-4 flex items-center justify-between z-10">
-            <img src={logo} alt="Logo" className="h-10 sm:h-14 w-auto object-contain drop-shadow-lg" />
-            <img src={logo2} alt="Logo 2" className="h-10 sm:h-14 w-auto object-contain drop-shadow-lg" />
-          </div>
+        {/* Logos Floating Directly on Top of Image */}
+        <div className="absolute top-0 inset-x-0 p-4 sm:p-6 flex items-center justify-between z-10">
+          <img src={logo} alt="Logo" className="h-10 sm:h-14 w-auto object-contain drop-shadow-lg" />
+          <img src={logo2} alt="Logo 2" className="h-10 sm:h-14 w-auto object-contain drop-shadow-lg" />
         </div>
-        
-        <div className="p-5 sm:p-6 space-y-3">
-          <h1 className="text-base sm:text-2xl font-bold text-foreground leading-snug sm:leading-relaxed">
-            حفل تخرج كلية الحاسبات والمعلومات - جامعة طنطا (دفعة 2026)
-          </h1>
-          
-          <div className="text-xs sm:text-sm text-muted-foreground space-y-1.5 font-medium">
-            <p><strong className="text-foreground">تاريخ الحفل:</strong> أحد أيام (22 - 23 - 24) سبتمبر</p>
-            <p><strong className="text-foreground">مكان الحفل:</strong> قاعة المؤتمرات - المجمع الطبي - بجوار كلية العلوم</p>
-          </div>
+      </div>
 
-          <div className="pt-2 border-t border-border/70 text-xs sm:text-sm text-foreground/90 font-medium leading-relaxed">
-            <strong>باكدج الخريج:</strong> شنطة سينيور - درع نحاسي - روب + كاب - وشاح باسمك - شهادة تكريم - تذاكر 2 مرافق مجاني
-          </div>
+      {/* Main Info Card */}
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-5 sm:p-6 space-y-3">
+        <h1 className="text-base sm:text-2xl font-bold text-foreground leading-snug sm:leading-relaxed">
+          حفل تخرج كلية الحاسبات والمعلومات - جامعة طنطا (دفعة 2026)
+        </h1>
+        
+        <div className="text-xs sm:text-sm text-muted-foreground space-y-1.5 font-medium">
+          <p><strong className="text-foreground">تاريخ الحفل:</strong> أحد أيام (22 - 23 - 24) سبتمبر</p>
+          <p><strong className="text-foreground">مكان الحفل:</strong> قاعة المؤتمرات - المجمع الطبي - بجوار كلية العلوم</p>
+        </div>
+
+        <div className="pt-2 border-t border-border/70 text-xs sm:text-sm text-foreground/90 font-medium leading-relaxed">
+          <strong>باكدج الخريج:</strong> شنطة سينيور - درع نحاسي - روب + كاب - وشاح باسمك - شهادة تكريم - تذاكر 2 مرافق مجاني
         </div>
       </div>
 
