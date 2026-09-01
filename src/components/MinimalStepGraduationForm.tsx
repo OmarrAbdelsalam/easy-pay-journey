@@ -747,41 +747,9 @@ export const MinimalStepGraduationForm: React.FC = () => {
               ) : (
                 <>
                   {currentStep === totalSteps ? "تأكيد وإرسال الحجز" : "الخطوة التالية"}
-                  <ArrowLeft className="w-4 h-4" />
-                </>
-              )}
-      )}
-
-      {/* Step Navigation Controls */}
-      <div className="flex items-center justify-between pt-4 border-t border-border">
-        <button
-          type="button"
-          onClick={handleBack}
-          disabled={currentStep === 1}
-          className="px-4 sm:px-5 py-2.5 rounded-xl border border-border font-bold text-xs sm:text-sm text-foreground/90 hover:bg-muted transition-all disabled:opacity-30 flex items-center gap-1.5"
-        >
-          <ArrowRight className="w-4 h-4" />
-          الخطوة السابقة
-        </button>
-
-        <button
-          type="button"
-          onClick={handleNext}
-          disabled={!canProceed() || isSubmitting}
-          className="px-6 sm:px-7 py-2.5 rounded-xl bg-primary text-white font-bold text-xs sm:text-sm hover:bg-primary/90 transition-all disabled:opacity-50 shadow-xs flex items-center gap-1.5"
-        >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              جاري الإرسال...
-            </>
-          ) : (
-            <>
-              {currentStep === totalSteps ? "إرسال وتأكيد الحجز" : "الخطوة التالية"}
-              <ArrowLeft className="w-4 h-4" />
-            </>
-          )}
-        </button>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
