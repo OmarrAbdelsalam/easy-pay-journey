@@ -747,6 +747,9 @@ export const MinimalStepGraduationForm: React.FC = () => {
               ) : (
                 <>
                   {currentStep === totalSteps ? "تأكيد وإرسال الحجز" : "الخطوة التالية"}
+                  <ArrowLeft className="w-4 h-4" />
+                </>
+              )}
             </button>
           </div>
         </div>
