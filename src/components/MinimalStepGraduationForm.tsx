@@ -372,18 +372,23 @@ export const MinimalStepGraduationForm: React.FC = () => {
 
       {/* 3. Main Form Container (Clean & Containerless on all screens) */}
       <div className="bg-transparent p-0 space-y-6">
-        {/* Main Info Section */}
+        {/* Main Info Section (Exact layout from target design) */}
         <div className="space-y-3 pb-4 border-b border-border/50">
-          <div className="flex items-center justify-between text-xs font-bold text-muted-foreground uppercase tracking-wider">
+          <div className="flex items-center justify-between text-xs font-bold text-muted-foreground uppercase tracking-widest font-mono">
             <span>FCI TANTA</span>
-            <span className="text-primary font-bold">دفعة 2026</span>
+            <span className="text-primary font-bold underline cursor-pointer hover:opacity-80">تغيير الدفعة</span>
           </div>
 
           <h1 className="text-xl sm:text-2xl font-black text-foreground leading-snug tracking-tight">
             حفل تخرج كلية الحاسبات والمعلومات - جامعة طنطا
           </h1>
-          
-          <div className="text-xs sm:text-sm text-muted-foreground space-y-1.5 font-medium">
+
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-2xl sm:text-3xl font-black text-primary">1100</span>
+            <span className="text-xs sm:text-sm font-bold text-muted-foreground">EGP</span>
+          </div>
+
+          <div className="text-xs sm:text-sm text-muted-foreground space-y-1 font-medium">
             <p><strong className="text-foreground">تاريخ الحفل:</strong> أحد أيام (22 - 23 - 24) سبتمبر</p>
             <p><strong className="text-foreground">مكان الحفل:</strong> قاعة المؤتمرات - المجمع الطبي - بجوار كلية العلوم</p>
           </div>
