@@ -371,8 +371,8 @@ export const MinimalStepGraduationForm: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Info Card */}
-      <div className="bg-card rounded-2xl border border-border shadow-sm p-5 sm:p-6 space-y-3">
+      {/* Main Info Section (Clean without card background) */}
+      <div className="p-2 sm:p-3 space-y-3">
         <h1 className="text-base sm:text-2xl font-bold text-foreground leading-snug sm:leading-relaxed">
           حفل تخرج كلية الحاسبات والمعلومات - جامعة طنطا (دفعة 2026)
         </h1>
