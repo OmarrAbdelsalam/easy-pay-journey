@@ -396,14 +396,14 @@ export const MinimalStepGraduationForm: React.FC = () => {
             </div>
           </div>
 
-          {/* Step Progress Bar */}
-          <div className="pb-4 border-b border-border/40">
+          {/* Step Progress Bar (Sticky Top during scroll) */}
+          <div className="sticky top-0 z-30 bg-card/95 backdrop-blur-md py-3.5 -mx-6 sm:-mx-8 px-6 sm:px-8 border-b border-border/50 shadow-2xs transition-all">
             <StepIndicator currentStep={currentStep} totalSteps={totalSteps} labels={stepLabels} />
           </div>
 
           {/* Step 1: Sash Details */}
           {currentStep === 1 && (
-            <div className="space-y-6 animate-fade-in">
+            <div className="space-y-6 animate-fade-in pt-2">
               {/* Question 1: Sash Color Vote */}
               <div className="space-y-3">
                 <div className="flex flex-col gap-1">
@@ -416,11 +416,11 @@ export const MinimalStepGraduationForm: React.FC = () => {
                 </div>
 
                 {/* Sash Preview Image */}
-                <div className="overflow-hidden rounded-2xl border border-border/70 bg-muted/10 my-3 flex flex-col items-center justify-center p-2 sm:p-4">
+                <div className="overflow-hidden rounded-2xl border border-border/70 bg-muted/10 my-2 flex flex-col items-center justify-center p-2 sm:p-3">
                   <img
                     src="/sash-preview.png"
                     alt="معاينة نموذج الوشاح"
-                    className="w-full max-w-xs sm:max-w-sm h-auto max-h-[500px] object-contain rounded-xl shadow-sm hover:scale-[1.01] transition-transform duration-300"
+                    className="w-full max-w-[240px] sm:max-w-[280px] h-auto max-h-[280px] sm:max-h-[320px] object-contain rounded-xl shadow-xs hover:scale-[1.01] transition-transform duration-300"
                   />
                   <div className="pt-2 text-center text-xs font-semibold text-muted-foreground">
                     نموذج لمعاينة تصميم الوشاح وروب التخرج
