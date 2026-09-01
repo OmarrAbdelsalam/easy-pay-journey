@@ -365,7 +365,7 @@ export const MinimalStepGraduationForm: React.FC = () => {
         <img
           src="/faculty-header.jpg"
           alt="كلية الحاسبات والمعلومات"
-          className="w-full h-full object-cover object-[center_40%]"
+          className="w-full h-full object-cover object-[center_60%]"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40" />
       </div>
