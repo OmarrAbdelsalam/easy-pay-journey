@@ -374,9 +374,8 @@ export const MinimalStepGraduationForm: React.FC = () => {
       <div className="bg-transparent p-0 space-y-6">
         {/* Main Info Section (Exact layout from target design) */}
         <div className="space-y-3 pb-4 border-b border-border/50">
-          <div className="flex items-center justify-between text-xs font-bold text-muted-foreground uppercase tracking-widest font-mono">
-            <span>FCI TANTA</span>
-            <span className="text-primary font-bold underline cursor-pointer hover:opacity-80">تغيير الدفعة</span>
+          <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest font-mono">
+            FCI TANTA
           </div>
 
           <h1 className="text-xl sm:text-2xl font-black text-foreground leading-snug tracking-tight">
