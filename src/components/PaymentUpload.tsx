@@ -35,7 +35,7 @@ const paymentMethods = [
     logo: instapayLogo,
     number: "01098505924",
     holderName: "عمر عبدالسلام",
-    link: "https://instapay.eg",
+    link: "https://ipn.eg/S/01098505924/instapay/",
   },
   {
     id: "vodafone" as const,
