@@ -704,14 +704,14 @@ export const MinimalStepGraduationForm: React.FC = () => {
       )}
 
       {/* Step Navigation Controls */}
-      <div className="flex items-center justify-between pt-4 border-t border-border">
+      <div className="flex items-center justify-between pt-3 border-t border-border">
         <button
           type="button"
           onClick={handleBack}
           disabled={currentStep === 1}
-          className="px-5 py-2.5 rounded-xl border border-border font-bold text-sm text-primary hover:bg-primary/10 transition-all disabled:opacity-30 flex items-center gap-1.5"
+          className="px-4 py-2 rounded-lg border border-border font-bold text-xs sm:text-sm text-foreground/80 hover:bg-muted transition-all disabled:opacity-30 flex items-center gap-1.5"
         >
-          <ArrowRight className="w-4 h-4" />
+          <ArrowRight className="w-3.5 h-3.5" />
           الخطوة السابقة
         </button>
 
@@ -719,7 +719,7 @@ export const MinimalStepGraduationForm: React.FC = () => {
           type="button"
           onClick={handleNext}
           disabled={!canProceed() || isSubmitting}
-          className="px-7 py-2.5 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary/90 transition-all disabled:opacity-50 shadow-md flex items-center gap-1.5"
+          className="px-5 py-2 rounded-lg bg-primary text-white font-bold text-xs sm:text-sm hover:bg-primary/90 transition-all disabled:opacity-50 shadow-xs flex items-center gap-1.5"
         >
           {isSubmitting ? (
             <>

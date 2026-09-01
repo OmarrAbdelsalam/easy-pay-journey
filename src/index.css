@@ -85,7 +85,7 @@
   }
 
   .gform-input {
-    @apply w-full border-0 border-b border-muted-foreground/30 bg-transparent py-3 text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary transition-all font-medium text-base;
+    @apply w-full border-0 border-b border-muted-foreground/30 bg-transparent py-2 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary transition-all font-medium text-xs sm:text-sm;
   }
 
   .gform-label {
