@@ -387,10 +387,10 @@ export const MinimalStepGraduationForm: React.FC = () => {
             <span className="text-xs sm:text-sm font-bold text-muted-foreground">EGP</span>
           </div>
 
-          {/* Priority Honoring Banner Card */}
+          {/* Priority Honoring Banner Card (No icons or emojis) */}
           <div className="bg-primary/5 border border-primary/20 rounded-2xl p-3.5 sm:p-4 space-y-1 text-right">
-            <div className="text-sm font-bold text-primary flex items-center gap-1.5">
-              <span>ترتيب التكريم بأولوية الحجز! 🎖️</span>
+            <div className="text-sm font-bold text-primary">
+              ترتيب التكريم بأولوية الحجز!
             </div>
             <p className="text-xs text-primary/85 font-medium leading-relaxed">
               تنبيه هام: يتم ترتيب المناداة وتكريم الخريجين على المسرح بأسبقية وأولوية الحجز والتسجيل.
@@ -404,7 +404,7 @@ export const MinimalStepGraduationForm: React.FC = () => {
               <p><strong className="text-foreground font-bold">مكان الحفل:</strong> قاعة المؤتمرات - المجمع الطبي</p>
             </div>
             <div className="pt-2 border-t border-border/40 text-foreground/90 font-medium leading-relaxed">
-              <strong className="text-foreground font-bold">باكدج الخريج:</strong> شنطة سينيور • درع نحاسي • روب + كاب • وشاح باسمك • شهادة تكريم • تذاكر 2 مرافق مجاني
+              <strong className="text-foreground font-bold">باكدج الخريج:</strong> شنطة سينيور - درع نحاسي - روب + كاب - وشاح باسمك - شهادة تكريم - تذاكر 2 مرافق مجاني
             </div>
           </div>
         </div>
