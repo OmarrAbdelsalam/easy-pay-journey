@@ -374,10 +374,6 @@ export const MinimalStepGraduationForm: React.FC = () => {
       <div className="bg-transparent p-0 space-y-6">
         {/* Main Info Section */}
         <div className="space-y-4 pb-4 border-b border-border/50">
-          <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest font-mono">
-            FCI TANTA
-          </div>
-
           <h1 className="text-xl sm:text-2xl font-black text-foreground leading-snug tracking-tight">
             حفل تخرج كلية الحاسبات والمعلومات - جامعة طنطا
           </h1>
@@ -449,37 +445,25 @@ export const MinimalStepGraduationForm: React.FC = () => {
                   </span>
                 </div>
 
-                {/* Minimal Color Swatch Selection Buttons */}
+                {/* Solid Color Selection Buttons */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-1">
                   {sashColorOptions.map((clr) => {
+                    const config = sashColorConfig[clr];
                     const selectedIndex = (formData.sashColors || []).indexOf(clr);
                     const isSelected = selectedIndex !== -1;
-                    const swatches: Record<string, string> = {
-                      "أبيض": "bg-white border border-gray-300",
-                      "نبيتي": "bg-[#7A0C2E]",
-                      "أسود": "bg-slate-900",
-                      "بترولي": "bg-[#00729A]",
-                      "ازرق": "bg-[#1D4ED8]",
-                      "بيج": "bg-[#F5E6D3] border border-amber-200/60",
-                    };
 
                     return (
                       <button
                         key={clr}
                         type="button"
                         onClick={() => handleSashColorToggle(clr)}
-                        className={`py-2.5 px-3.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-between border ${
-                          isSelected
-                            ? "border-primary bg-primary/5 text-primary ring-1 ring-primary/40 shadow-xs"
-                            : "border-border/70 bg-background text-foreground hover:border-primary/40 hover:bg-muted/20"
+                        className={`py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-between ${config.bg} ${config.text} ${clr === "أبيض" ? "border border-slate-200" : "border-none"} ${
+                          isSelected ? `ring-2 ${config.ring} ring-offset-2 shadow-sm scale-[1.01]` : "hover:opacity-90 shadow-2xs"
                         }`}
                       >
-                        <div className="flex items-center gap-2">
-                          <span className={`w-3.5 h-3.5 rounded-full shrink-0 shadow-2xs ${swatches[clr] || "bg-gray-400"}`} />
-                          <span>{clr}</span>
-                        </div>
+                        <span>{clr}</span>
                         {isSelected && (
-                          <span className="text-[10px] sm:text-[11px] bg-primary text-white px-2 py-0.5 rounded-md font-bold shrink-0">
+                          <span className={`text-[10px] sm:text-[11px] px-2.5 py-0.5 rounded-full font-bold ${config.badge}`}>
                             رغبة {selectedIndex + 1}
                           </span>
                         )}
