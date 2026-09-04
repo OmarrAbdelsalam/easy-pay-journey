@@ -261,6 +261,14 @@ export const MyBooking: React.FC = () => {
                         </div>
                       </div>
 
+                      {/* Standalone Burgundy Sash Note */}
+                      <div className="bg-[#7A0C2E] text-white rounded-2xl px-4 py-3.5 sm:px-5 sm:py-4 flex items-center justify-between shadow-xs">
+                        <span className="text-xs sm:text-sm font-medium text-white/90">لون الوشاح:</span>
+                        <span className="text-xs sm:text-sm font-bold text-white">
+                          اللون النبيتي (باختيار الأغلبية)
+                        </span>
+                      </div>
+
                       {/* Unified Minimalist Details List */}
                       <div className="bg-slate-50/60 rounded-2xl border border-slate-200/60 divide-y divide-slate-200/60 overflow-hidden">
                         {department && (
@@ -269,13 +277,6 @@ export const MyBooking: React.FC = () => {
                             <span className="font-bold text-slate-900 text-xs sm:text-sm bg-white px-2.5 py-1 rounded-lg border border-slate-200/60">
                               {department}
                             </span>
-                          </div>
-                        )}
-
-                        {sashColor && (
-                          <div className="flex items-center justify-between px-4 py-3">
-                            <span className="text-slate-500 font-medium text-xs sm:text-sm">ألوان الوشاح</span>
-                            <span className="font-bold text-slate-800 text-xs sm:text-sm">{sashColor}</span>
                           </div>
                         )}
 

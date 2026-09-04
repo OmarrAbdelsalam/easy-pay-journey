@@ -60,6 +60,7 @@ const Dashboard = () => {
   const [trophyFilter, setTrophyFilter] = useState<string>("all");
   const [sashColorFilter, setSashColorFilter] = useState<string>("all");
   const [sashSizeFilter, setSashSizeFilter] = useState<string>("all");
+  const [dateFilter, setDateFilter] = useState<string>("all");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [warningsExpanded, setWarningsExpanded] = useState(false);
   const [showWaitingList, setShowWaitingList] = useState(false);
@@ -420,6 +421,28 @@ const Dashboard = () => {
     localStorage.removeItem("dashboard_auth");
   };
 
+  const availableDates = useMemo(() => {
+    const datesMap = new Map<string, string>();
+    bookings.forEach((b) => {
+      const d = new Date(b.created_at);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      const isoKey = `${yyyy}-${mm}-${dd}`;
+      if (!datesMap.has(isoKey)) {
+        const formatted = d.toLocaleDateString("ar-EG", {
+          weekday: "short",
+          day: "numeric",
+          month: "short"
+        });
+        datesMap.set(isoKey, formatted);
+      }
+    });
+    return Array.from(datesMap.entries())
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([value, label]) => ({ value, label }));
+  }, [bookings]);
+
   const filteredBookings = useMemo(() => bookings.filter((booking) => {
     // Filter by batch first
     const bookingBatch = (booking as any).batch || 1;
@@ -461,8 +484,13 @@ const Dashboard = () => {
         return false;
       }) ?? false);
 
-    return matchesSearch && matchesPayment && matchesStatus && matchesDepartment && matchesTrophy && matchesSashColor && matchesSashSize;
-  }), [bookings, currentBatch, searchTerm, paymentFilter, statusFilter, departmentFilter, trophyFilter, sashColorFilter, sashSizeFilter]);
+    const bDate = new Date(booking.created_at);
+    const bYYYYMMDD = `${bDate.getFullYear()}-${String(bDate.getMonth() + 1).padStart(2, "0")}-${String(bDate.getDate()).padStart(2, "0")}`;
+
+    const matchesDate = dateFilter === "all" || bYYYYMMDD === dateFilter;
+
+    return matchesSearch && matchesPayment && matchesStatus && matchesDepartment && matchesTrophy && matchesSashColor && matchesSashSize && matchesDate;
+  }), [bookings, currentBatch, searchTerm, paymentFilter, statusFilter, departmentFilter, trophyFilter, sashColorFilter, sashSizeFilter, dateFilter]);
 
   // Filter waiting list by batch too
   const filteredWaitingList = useMemo(() => waitingList.filter((entry) => {
@@ -564,30 +592,92 @@ const Dashboard = () => {
   };
 
   const exportToCSV = () => {
-    const headers = ["رقم الطلب", "الاسم", "الهاتف", "الرقم القومي", "السنة", "تذاكر طلاب", "تذاكر مرافقين", "وسيلة الدفع", "رقم المعاملة", "المحول منه", "الإجمالي", "الحالة", "التاريخ"];
-    const rows = filteredBookings.map((b) => [
-      b.order_number,
-      b.customer_name,
-      b.customer_phone,
-      b.customer_national_id,
-      b.customer_year,
-      b.student_tickets,
-      b.companion_tickets,
-      paymentMethodLabels[b.payment_method] || b.payment_method,
-      b.transaction_number,
-      b.sender_name || b.sender_phone || "-",
-      b.total_price,
-      b.status === "pending" ? "قيد الانتظار" : b.status === "approved" ? "موافق" : "مرفوض",
-      new Date(b.created_at).toLocaleDateString("ar-EG"),
-    ]);
+    const headers = [
+      "م",
+      "رقم الطلب",
+      "اسم الخريج",
+      "رقم الموبايل",
+      "القسم",
+      "ألوان الوشاح",
+      "مقاس الوشاح",
+      "الاسم على الوشاح",
+      "نوع الدرع",
+      "الاسم على الدرع",
+      "المرافقين الإضافيين",
+      "إجمالي عدد الحضور",
+      "المبلغ الإجمالي (ج.م)",
+      "وسيلة الدفع",
+      "رقم المعاملة",
+      "المحول منه",
+      "هل تم دفع الفلوس؟ (حالة الدفع)",
+      "حالة الطلب",
+      "تاريخ ووقت الحجز"
+    ];
 
-    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    // Sort by seniority (oldest first: created_at ASC)
+    const sortedBookings = [...filteredBookings].sort(
+      (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    );
+
+    const rows = sortedBookings.map((b, index) => {
+      const details = Array.isArray(b.companions_details) ? b.companions_details : [];
+      const department = details.find((d: any) => d.type === "department")?.value || "-";
+      const sashColor = details.find((d: any) => d.type === "sash_color")?.value || "-";
+      const sashSize = details.find((d: any) => d.type === "sash_size")?.value || "-";
+      const sashName = details.find((d: any) => d.type === "sash_name")?.value || "-";
+      const trophyType = details.find((d: any) => d.type === "trophy_type")?.value || "-";
+      const trophyName = details.find((d: any) => d.type === "trophy_name")?.value || "-";
+      const extraCompanions = Number(details.find((d: any) => d.type === "extra_companions_count")?.value) || (b.companion_tickets > 2 ? b.companion_tickets - 2 : 0);
+      const totalAttendees = 1 + 2 + extraCompanions;
+
+      const paymentStatus = b.status === "approved"
+        ? "تم الدفع وتأكيد الحجز"
+        : b.status === "rejected"
+        ? "مرفوض"
+        : "قيد المراجعة (لم يتم التأكيد)";
+
+      const orderStatus = b.status === "approved" ? "موافق" : b.status === "rejected" ? "مرفوض" : "قيد الانتظار";
+
+      const createdAtFormatted = new Date(b.created_at).toLocaleString("ar-EG", {
+        timeZone: "Africa/Cairo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      });
+
+      return [
+        index + 1,
+        `"${b.order_number}"`,
+        `"${(b.customer_name || "").replace(/"/g, '""')}"`,
+        `"\t${b.customer_phone || ""}"`,
+        `"${department.replace(/"/g, '""')}"`,
+        `"${sashColor.replace(/"/g, '""')}"`,
+        `"${sashSize.replace(/"/g, '""')}"`,
+        `"${sashName.replace(/"/g, '""')}"`,
+        `"${trophyType.replace(/"/g, '""')}"`,
+        `"${trophyName.replace(/"/g, '""')}"`,
+        extraCompanions,
+        totalAttendees,
+        b.total_price,
+        `"${paymentMethodLabels[b.payment_method] || b.payment_method}"`,
+        `"\t${b.transaction_number || ""}"`,
+        `"${(b.sender_name || b.sender_phone || "-").replace(/"/g, '""')}"`,
+        `"${paymentStatus}"`,
+        `"${orderStatus}"`,
+        `"${createdAtFormatted}"`
+      ];
+    });
+
+    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\r\n");
     const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `bookings_${new Date().toISOString().split("T")[0]}.csv`;
+    link.download = `graduates_fci_2026_${new Date().toISOString().split("T")[0]}.csv`;
     link.click();
-    toast.success("تم تصدير البيانات");
+    toast.success("تم تصدير شيت الطلاب مرتبين بالأقدمية بنجاح");
   };
 
   const getStatusBadge = (status: string) => {
@@ -1077,12 +1167,25 @@ const Dashboard = () => {
                 <SelectItem value="standard">المقاس العادي</SelectItem>
               </SelectContent>
             </Select>
+
+            <Select value={dateFilter} onValueChange={setDateFilter}>
+              <SelectTrigger className="w-full sm:w-40 bg-white border-gray-200 text-gray-700">
+                <SelectValue placeholder="اليوم" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">كل الأيام</SelectItem>
+                {availableDates.map(d => (
+                  <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             <Button variant="outline" size="icon" className="bg-white border-gray-200 text-gray-700 hover:bg-gray-100" onClick={exportToCSV} title="تصدير CSV">
               <Download className="w-4 h-4" />
             </Button>
           </div>
           {/* Approve All Button - shows when filter is not "all" */}
-          {(paymentFilter !== "all" || statusFilter !== "all" || departmentFilter !== "all" || trophyFilter !== "all" || sashColorFilter !== "all" || sashSizeFilter !== "all") && (
+          {(paymentFilter !== "all" || statusFilter !== "all" || departmentFilter !== "all" || trophyFilter !== "all" || sashColorFilter !== "all" || sashSizeFilter !== "all" || dateFilter !== "all") && (
             <div className="mt-3 flex justify-end">
               <Button
                 size="sm"
@@ -1130,6 +1233,9 @@ const Dashboard = () => {
                         </div>
                         <div className="font-semibold text-gray-900">{booking.customer_name}</div>
                         <div className="text-xs text-gray-500" dir="ltr">{booking.customer_phone}</div>
+                        <div className="text-[10px] text-gray-400 font-medium mt-0.5">
+                          {new Date(booking.created_at).toLocaleDateString("ar-EG")} • {new Date(booking.created_at).toLocaleTimeString("ar-EG", { hour: '2-digit', minute: '2-digit', hour12: true })}
+                        </div>
                         {booking.customer_national_id && (
                           <div className="text-xs text-purple-500 font-medium truncate max-w-[200px]">{booking.customer_national_id}</div>
                         )}

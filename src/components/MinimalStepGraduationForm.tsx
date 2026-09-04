@@ -34,7 +34,7 @@ export const MinimalStepGraduationForm: React.FC = () => {
     ticketName: "",
     extraCompanionsCount: 0,
     gownSize: "L",
-    sashColors: [],
+    sashColors: ["نبيتي"],
     sashSize: "standard",
     sashName: "",
     trophyType: "brass",
@@ -62,80 +62,7 @@ export const MinimalStepGraduationForm: React.FC = () => {
     return base + extraCompanionsPrice + trophyPrice + sashSizePrice;
   }, [formData.extraCompanionsCount, formData.trophyType, formData.sashSize]);
 
-  const sashColorOptions = ["أبيض", "نبيتي", "أسود", "بترولي", "ازرق", "بيج"];
-
-  const sashColorConfig: Record<string, {
-    hex: string;
-    bg: string;
-    text: string;
-    border: string;
-    ring: string;
-    badge: string;
-  }> = {
-    "أبيض": {
-      hex: "#FFFFFF",
-      bg: "bg-white",
-      text: "text-slate-900",
-      border: "border-slate-300",
-      ring: "ring-slate-900",
-      badge: "bg-slate-900 text-white",
-    },
-    "نبيتي": {
-      hex: "#7A0C2E",
-      bg: "bg-[#7A0C2E]",
-      text: "text-white",
-      border: "border-[#5A0820]",
-      ring: "ring-[#7A0C2E]",
-      badge: "bg-white text-[#7A0C2E]",
-    },
-    "أسود": {
-      hex: "#18181B",
-      bg: "bg-[#18181B]",
-      text: "text-white",
-      border: "border-[#09090B]",
-      ring: "ring-zinc-800",
-      badge: "bg-white text-zinc-950",
-    },
-    "بترولي": {
-      hex: "#00729A",
-      bg: "bg-[#00729A]",
-      text: "text-white",
-      border: "border-[#005A7A]",
-      ring: "ring-[#00729A]",
-      badge: "bg-white text-[#00729A]",
-    },
-    "ازرق": {
-      hex: "#1D4ED8",
-      bg: "bg-[#1D4ED8]",
-      text: "text-white",
-      border: "border-[#1E3A8A]",
-      ring: "ring-[#1D4ED8]",
-      badge: "bg-white text-blue-950",
-    },
-    "بيج": {
-      hex: "#F5E6D3",
-      bg: "bg-[#F5E6D3]",
-      text: "text-[#5C4033]",
-      border: "border-[#E5D2BC]",
-      ring: "ring-[#B59473]",
-      badge: "bg-[#5C4033] text-white",
-    },
-  };
-
   const departmentOptions: ("CS" | "IT" | "IS")[] = ["CS", "IT", "IS"];
-
-  const handleSashColorToggle = (clr: string) => {
-    const current = formData.sashColors || [];
-    if (current.includes(clr)) {
-      setFormData({ ...formData, sashColors: current.filter((c) => c !== clr) });
-    } else {
-      if (current.length >= 3) {
-        toast.error("يمكنك اختيار حتى 3 ألوان فقط بالترتيب المفضّل لك");
-        return;
-      }
-      setFormData({ ...formData, sashColors: [...current, clr] });
-    }
-  };
 
   const companionOptions = [
     { value: 0, label: "0 مرافق إضافي", text: "بدون مرافقين إضافيين (الاكتفاء بـ 2 المرافقين المجانيين المتضمنين بالتذكرة)", extraBadge: null },
@@ -265,7 +192,7 @@ export const MinimalStepGraduationForm: React.FC = () => {
       ticketName: "",
       extraCompanionsCount: 0,
       gownSize: "L",
-      sashColors: [],
+      sashColors: ["نبيتي"],
       sashSize: "standard",
       sashName: "",
       trophyType: "brass",
@@ -311,8 +238,8 @@ export const MinimalStepGraduationForm: React.FC = () => {
                 <span className="font-bold text-primary font-mono">{formData.department}</span>
               </div>
               <div className="flex justify-between border-b border-border/60 pb-2">
-                <span className="text-muted-foreground">ألوان الوشاح المفضلة:</span>
-                <span className="font-bold text-primary">{(formData.sashColors || []).join(" - ")} ({formData.sashSize === "large" ? "مقاس أكبر +30ج" : "مقاس عادي"})</span>
+                <span className="text-muted-foreground">لون الوشاح المعتمد:</span>
+                <span className="font-bold text-primary">نبيتي ({formData.sashSize === "large" ? "مقاس أكبر +30ج" : "مقاس عادي"})</span>
               </div>
               <div className="flex justify-between border-b border-border/60 pb-2">
                 <span className="text-muted-foreground">الاسم المطلوب على الوشاح:</span>
@@ -410,6 +337,11 @@ export const MinimalStepGraduationForm: React.FC = () => {
               <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-1.5" />
               <p><strong className="text-foreground font-bold">باكدج الخريج:</strong> شنطة سينيور - درع نحاسي - روب + كاب - وشاح باسمك - شهادة تكريم - تذاكر 2 مرافق مجاني</p>
             </div>
+
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-1.5" />
+              <p><strong className="text-foreground font-bold">لون الوشاح:</strong> اللون النبيتي (باختيار الأغلبية)</p>
+            </div>
           </div>
         </div>
 
@@ -421,16 +353,16 @@ export const MinimalStepGraduationForm: React.FC = () => {
           {/* Step 1: Sash Details */}
           {currentStep === 1 && (
             <div className="space-y-6 animate-fade-in pt-2">
-              {/* Question 1: Sash Color Vote */}
-              <div className="space-y-3">
-                <div className="flex flex-col gap-1">
-                  <label className="gform-label">
-                    ألوان الوشاح المفضلة <span className="text-destructive">*</span>
-                  </label>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    يمكنك اختيار حتى 3 ألوان بالترتيب (سيتم اعتماد اللون النهائي للدفعة بناءً على التصويت).
-                  </p>
+              {/* Confirmed Winning Sash Color */}
+              <div className="space-y-2">
+                <label className="gform-label">
+                  لون الوشاح <span className="text-destructive">*</span>
+                </label>
+                <div className="p-3.5 bg-muted/40 rounded-xl border border-border text-xs sm:text-sm font-bold text-foreground flex items-center justify-between">
+                  <span>اللون النبيتي (باختيار الأغلبية)</span>
+                  <span className="w-3.5 h-3.5 rounded-full bg-[#7A0C2E]" />
                 </div>
+              </div>
 
                 {/* Sash Preview Image (Raised view with clean minimal border) */}
                 <div className="my-3 flex flex-col items-center justify-center p-1">
@@ -442,52 +374,9 @@ export const MinimalStepGraduationForm: React.FC = () => {
                     />
                   </div>
                   <span className="pt-2 text-center text-xs font-medium text-muted-foreground">
-                    نموذج لمعاينة تصميم الوشاح وروب التخرج
+                    نموذج لمعاينة تصميم وقصة الوشاح وروب التخرج
                   </span>
                 </div>
-
-                {/* Solid Color Selection Buttons */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-1">
-                  {sashColorOptions.map((clr) => {
-                    const config = sashColorConfig[clr];
-                    const selectedIndex = (formData.sashColors || []).indexOf(clr);
-                    const isSelected = selectedIndex !== -1;
-
-                    return (
-                      <button
-                        key={clr}
-                        type="button"
-                        onClick={() => handleSashColorToggle(clr)}
-                        className={`py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-between ${config.bg} ${config.text} ${clr === "أبيض" ? "border border-slate-200" : "border-none"} ${
-                          isSelected ? `ring-2 ${config.ring} ring-offset-2 shadow-sm scale-[1.01]` : "hover:opacity-90 shadow-2xs"
-                        }`}
-                      >
-                        <span>{clr}</span>
-                        {isSelected && (
-                          <span className={`text-[10px] sm:text-[11px] px-2.5 py-0.5 rounded-full font-bold ${config.badge}`}>
-                            رغبة {selectedIndex + 1}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {(formData.sashColors || []).length > 0 ? (
-                  <div className="p-3 bg-primary/5 rounded-xl border border-primary/20 text-xs font-semibold text-primary flex items-center gap-2">
-                    <span>ترتيب رغباتك:</span>
-                    <div className="flex items-center gap-1.5 font-bold flex-wrap">
-                      {(formData.sashColors || []).map((clr, idx) => (
-                        <span key={clr} className="inline-flex items-center gap-1 bg-primary text-white px-2.5 py-0.5 rounded-lg text-xs">
-                          <span className="opacity-80 text-[10px]">#{idx + 1}</span> {clr}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <p className="text-xs text-destructive font-medium">برجاء اختيار رغبة واحدة على الأقل (حتى 3 رغبات)</p>
-                )}
-              </div>
 
               <hr className="border-border/40" />
 
