@@ -594,22 +594,20 @@ const Dashboard = () => {
   const exportToCSV = () => {
     const headers = [
       "م",
-      "رقم الطلب",
       "اسم الخريج",
+      "المرافقين الإضافيين",
+      "دفع فلوس المرافقين الإضافيين ولا لا",
       "رقم الموبايل",
       "القسم",
-      "ألوان الوشاح",
       "مقاس الوشاح",
       "الاسم على الوشاح",
       "نوع الدرع",
       "الاسم على الدرع",
-      "المرافقين الإضافيين",
       "إجمالي عدد الحضور",
       "المبلغ الإجمالي (ج.م)",
       "وسيلة الدفع",
       "رقم المعاملة",
       "المحول منه",
-      "هل تم دفع الفلوس؟ (حالة الدفع)",
       "حالة الطلب",
       "تاريخ ووقت الحجز"
     ];
@@ -622,7 +620,6 @@ const Dashboard = () => {
     const rows = sortedBookings.map((b, index) => {
       const details = Array.isArray(b.companions_details) ? b.companions_details : [];
       const department = details.find((d: any) => d.type === "department")?.value || "-";
-      const sashColor = details.find((d: any) => d.type === "sash_color")?.value || "-";
       const sashSize = details.find((d: any) => d.type === "sash_size")?.value || "-";
       const sashName = details.find((d: any) => d.type === "sash_name")?.value || "-";
       const trophyType = details.find((d: any) => d.type === "trophy_type")?.value || "-";
@@ -630,11 +627,10 @@ const Dashboard = () => {
       const extraCompanions = Number(details.find((d: any) => d.type === "extra_companions_count")?.value) || (b.companion_tickets > 2 ? b.companion_tickets - 2 : 0);
       const totalAttendees = 1 + 2 + extraCompanions;
 
-      const paymentStatus = b.status === "approved"
-        ? "تم الدفع وتأكيد الحجز"
-        : b.status === "rejected"
-        ? "مرفوض"
-        : "قيد المراجعة (لم يتم التأكيد)";
+      let extraCompanionsPayment = "لا يوجد مرافقين إضافيين";
+      if (extraCompanions > 0) {
+        extraCompanionsPayment = b.status === "approved" ? "تم الدفع" : b.status === "rejected" ? "مرفوض" : "قيد المراجعة";
+      }
 
       const orderStatus = b.status === "approved" ? "موافق" : b.status === "rejected" ? "مرفوض" : "قيد الانتظار";
 
@@ -650,22 +646,20 @@ const Dashboard = () => {
 
       return [
         index + 1,
-        `"${b.order_number}"`,
         `"${(b.customer_name || "").replace(/"/g, '""')}"`,
+        extraCompanions > 0 ? `"${extraCompanions} مرافق إضافي"` : '"بدون مرافقين إضافيين (0)"',
+        `"${extraCompanionsPayment}"`,
         `"\t${b.customer_phone || ""}"`,
         `"${department.replace(/"/g, '""')}"`,
-        `"${sashColor.replace(/"/g, '""')}"`,
         `"${sashSize.replace(/"/g, '""')}"`,
         `"${sashName.replace(/"/g, '""')}"`,
         `"${trophyType.replace(/"/g, '""')}"`,
         `"${trophyName.replace(/"/g, '""')}"`,
-        extraCompanions,
         totalAttendees,
         b.total_price,
         `"${paymentMethodLabels[b.payment_method] || b.payment_method}"`,
         `"\t${b.transaction_number || ""}"`,
         `"${(b.sender_name || b.sender_phone || "-").replace(/"/g, '""')}"`,
-        `"${paymentStatus}"`,
         `"${orderStatus}"`,
         `"${createdAtFormatted}"`
       ];
