@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { ArrowLeft, Loader2, CheckCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,28 +6,46 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+const normalizePhone = (value: string) => {
+  const englishDigits = value
+    .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
+    .replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)));
+
+  let digits = englishDigits.replace(/\D/g, "");
+
+  if (digits.startsWith("0020")) digits = `0${digits.slice(4)}`;
+  else if (digits.startsWith("20") && digits.length === 12) digits = `0${digits.slice(2)}`;
+  else if (digits.startsWith("1") && digits.length === 10) digits = `0${digits}`;
+
+  return digits;
+};
+
 const WaitingList = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const canSubmit = name.trim() !== "" && phone.trim().length === 11;
+  const normalizedPhone = normalizePhone(phone);
+  const isPhoneValid = /^01[0125]\d{8}$/.test(normalizedPhone);
+  const canSubmit = name.trim() !== "" && isPhoneValid;
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (!canSubmit) return;
     setIsSubmitting(true);
     try {
       const { error } = await supabase.from("waiting_list").insert({
         name: name.trim(),
-        phone: phone.trim(),
+        phone: normalizedPhone,
         selected_package: "tshirt",
         batch: 4,
       });
       if (error) throw error;
       setIsSubmitted(true);
       toast.success("تم تسجيلك في قائمة الانتظار بنجاح!");
-    } catch {
+    } catch (error) {
+      console.error("Waiting list submission failed:", error);
       toast.error("حدث خطأ، حاول مرة أخرى");
     } finally {
       setIsSubmitting(false);
@@ -79,48 +97,52 @@ const WaitingList = () => {
         </div>
 
         <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-border/50 shadow-black/5" dir="rtl">
-          <div className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
             <div className="space-y-2 text-right">
-              <Label className="text-sm font-semibold text-gray-700">الاسم رباعي <span className="text-red-500">*</span></Label>
+              <Label htmlFor="waiting-list-name" className="text-sm font-semibold text-gray-700">الاسم <span className="text-red-500">*</span></Label>
               <Input
+                id="waiting-list-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="اكتب اسمك رباعي"
+                placeholder="اكتب اسمك"
+                autoComplete="name"
                 className="h-12 rounded-xl bg-gray-50/50 border-border/60 focus:bg-white transition-colors text-right"
               />
             </div>
 
             <div className="space-y-2 text-right">
-              <Label className="text-sm font-semibold text-gray-700">رقم الواتساب <span className="text-red-500">*</span></Label>
+              <Label htmlFor="waiting-list-phone" className="text-sm font-semibold text-gray-700">رقم الموبايل <span className="text-red-500">*</span></Label>
               <Input
+                id="waiting-list-phone"
                 type="tel"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 11))}
+                onChange={(e) => setPhone(e.target.value)}
                 placeholder="01xxxxxxxxx"
-                maxLength={11}
+                inputMode="tel"
+                autoComplete="tel"
                 dir="ltr"
-                className={`h-12 rounded-xl bg-gray-50/50 border-border/60 focus:bg-white transition-colors text-left font-mono text-lg ${phone.length > 0 && phone.length < 11 ? "border-red-500/50 focus-visible:ring-red-500/20" : ""}`}
+                className={`h-12 rounded-xl bg-gray-50/50 border-border/60 focus:bg-white transition-colors text-left font-mono text-lg ${phone.length > 0 && !isPhoneValid ? "border-red-500/50 focus-visible:ring-red-500/20" : ""}`}
               />
-              {phone.length > 0 && phone.length < 11 && (
-                <p className="text-xs text-red-500 font-medium">الرقم لازم يكون 11 رقم ({phone.length}/11)</p>
+              {phone.length > 0 && !isPhoneValid && (
+                <p className="text-xs text-red-500 font-medium">اكتب رقم موبايل مصري صحيح من 11 رقم</p>
               )}
             </div>
-          </div>
 
-          <div className="mt-8">
-            <Button
-              onClick={handleSubmit}
-              disabled={!canSubmit || isSubmitting}
-              className="w-full h-14 rounded-xl text-base font-bold bg-gray-900 hover:bg-gray-800 text-white shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
-            >
-              {isSubmitting ? (
-                <><Loader2 className="w-5 h-5 animate-spin ml-2" />جاري التسجيل...</>
-              ) : (
-                <>سجل في قائمة الانتظار <ArrowLeft className="w-5 h-5 mr-2" /></>
-              )}
-            </Button>
-          </div>
+            <div className="pt-3">
+              <Button
+                type="submit"
+                disabled={!canSubmit || isSubmitting}
+                className="w-full h-14 rounded-xl text-base font-bold bg-gray-900 hover:bg-gray-800 text-white shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
+              >
+                {isSubmitting ? (
+                  <><Loader2 className="w-5 h-5 animate-spin ml-2" />جاري التسجيل...</>
+                ) : (
+                  <>سجل في قائمة الانتظار <ArrowLeft className="w-5 h-5 mr-2" /></>
+                )}
+              </Button>
+            </div>
+          </form>
         </div>
         
         <p className="text-center text-xs text-gray-400 mt-6 font-medium tracking-wide uppercase">
