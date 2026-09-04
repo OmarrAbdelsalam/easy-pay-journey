@@ -124,7 +124,19 @@ export const GraduationEventHeader = () => {
               <ul className="text-xs sm:text-sm text-foreground/90 space-y-1.5 pr-2">
                 <li className="flex items-start gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>درع نحاسي فاخر داخل علبة قطيفة 📦 (ومتاح كريستال أو أكريليك بتكلفة إضافية)</span>
+                  <div>
+                    <span>درع نحاسي فاخر داخل علبة قطيفة 📦 (ومتاح كريستال بتكلفة إضافية)</span>
+                    <div className="grid grid-cols-2 gap-2 mt-2 pt-1">
+                      <div className="rounded-xl border border-border/60 p-1.5 bg-background text-center">
+                        <img src="/brass-shield.png" alt="درع نحاسي" className="h-20 w-full object-cover rounded-lg" />
+                        <span className="text-[10px] font-bold text-muted-foreground block mt-1">درع نحاسي</span>
+                      </div>
+                      <div className="rounded-xl border border-border/60 p-1.5 bg-background text-center">
+                        <img src="/crystal-shield.png" alt="درع كريستال" className="h-20 w-full object-cover rounded-lg" />
+                        <span className="text-[10px] font-bold text-muted-foreground block mt-1">درع كريستال</span>
+                      </div>
+                    </div>
+                  </div>
                 </li>
                 <li className="flex items-start gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />

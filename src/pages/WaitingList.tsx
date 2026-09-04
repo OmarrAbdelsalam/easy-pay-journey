@@ -38,8 +38,8 @@ const WaitingList = () => {
       const { error } = await supabase.from("waiting_list").insert({
         name: name.trim(),
         phone: normalizedPhone,
-        selected_package: "tshirt",
-        batch: 4,
+        selected_package: "graduation_2026",
+        batch: 2026,
       });
       if (error) throw error;
       setIsSubmitted(true);
@@ -62,7 +62,7 @@ const WaitingList = () => {
             </div>
             <h2 className="text-2xl font-black text-gray-900 mb-3 tracking-tight">تم تسجيلك بنجاح!</h2>
             <p className="text-gray-500 mb-8 leading-relaxed text-sm sm:text-base">
-              تم إضافتك لقائمة الانتظار، هنتواصل معاك في أقرب وقت لو توفرت كمية إضافية من التيشرتات.
+              تم إضافتك لقائمة الانتظار بنجاح، هنتواصل معاك فور إتاحة مقاعد أو تذاكر إضافية لحفلة التخرج.
             </p>
             <Button 
               variant="outline" 
@@ -73,7 +73,7 @@ const WaitingList = () => {
                 setPhone("");
               }}
             >
-              تسجيل شخص آخر
+              تسجيل خريج آخر
             </Button>
           </div>
         </div>
@@ -82,7 +82,7 @@ const WaitingList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background py-6 sm:py-12 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-background py-6 sm:py-12 flex flex-col items-center justify-center" dir="rtl">
       <div className="container max-w-md mx-auto px-4 w-full">
         <div className="text-center mb-8">
           <img src="/logo.webp" alt="Logo" className="h-14 w-auto mx-auto mb-6 drop-shadow-sm" />
@@ -90,9 +90,11 @@ const WaitingList = () => {
             <Clock className="w-4 h-4" />
             <span>قائمة الانتظار</span>
           </div>
-          <h1 className="text-3xl font-black text-gray-900 mb-3 tracking-tight">الكمية الحالية خلصت!</h1>
+          <h1 className="text-3xl font-black text-gray-900 mb-3 tracking-tight" dir="rtl">
+            اكتمل عدد الحجز الحالي!
+          </h1>
           <p className="text-gray-500 text-sm sm:text-base px-4">
-            سجل بياناتك دلوقتي وهنكون أول حد نكلمه لما نفتح الحجز للدفعة الجديدة.
+            سجل بياناتك الآن في قائمة الانتظار، وهنتواصل معاك فور إتاحة مقاعد إضافية لحفلة التخرج.
           </p>
         </div>
 
@@ -105,7 +107,7 @@ const WaitingList = () => {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="اكتب اسمك"
+                placeholder="اكتب اسمك الثلاثي أو رباعي"
                 autoComplete="name"
                 className="h-12 rounded-xl bg-gray-50/50 border-border/60 focus:bg-white transition-colors text-right"
               />
@@ -145,8 +147,17 @@ const WaitingList = () => {
           </form>
         </div>
         
+        <div className="mt-4 text-center">
+          <a
+            href="/my-booking"
+            className="text-xs text-blue-600 hover:text-blue-800 font-semibold inline-flex items-center gap-1 hover:underline"
+          >
+            <span>مسجل بالفعل؟ استعلم عن بيانات حجزك برقم الموبايل</span>
+          </a>
+        </div>
+
         <p className="text-center text-xs text-gray-400 mt-6 font-medium tracking-wide uppercase">
-          FCI Tanta T-Shirts • Batch 4
+          FCI Tanta Graduation 2026 • حفل تخرج 2026
         </p>
       </div>
     </div>

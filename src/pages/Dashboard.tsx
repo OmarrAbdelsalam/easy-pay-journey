@@ -2,10 +2,12 @@ import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Lock, Search, Download, Eye, X, CreditCard, Package, Users, CheckCircle, XCircle, Clock, AlertTriangle, ChevronDown, ChevronUp, Trash2, ListOrdered, Settings, ToggleLeft, ToggleRight, Calendar } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Lock, Search, Download, Eye, X, CreditCard, Package, Users, CheckCircle, XCircle, Clock, AlertTriangle, ChevronDown, ChevronUp, Trash2, ListOrdered, Settings, ToggleLeft, ToggleRight, Calendar, Shield, Edit3, Pencil } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
 const DASHBOARD_PASSWORD = "cairo2024";
@@ -57,6 +59,7 @@ const Dashboard = () => {
   const [departmentFilter, setDepartmentFilter] = useState<string>("all");
   const [trophyFilter, setTrophyFilter] = useState<string>("all");
   const [sashColorFilter, setSashColorFilter] = useState<string>("all");
+  const [sashSizeFilter, setSashSizeFilter] = useState<string>("all");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [warningsExpanded, setWarningsExpanded] = useState(false);
   const [showWaitingList, setShowWaitingList] = useState(false);
@@ -65,6 +68,83 @@ const Dashboard = () => {
   const [homepageMode, setHomepageMode] = useState<"booking" | "waiting">("booking");
   const [savingMode, setSavingMode] = useState(false);
   const [currentBatch, setCurrentBatch] = useState<number>(2026);
+
+  // Trophy Edit Modal State
+  const [editingTrophyBooking, setEditingTrophyBooking] = useState<Booking | null>(null);
+  const [editTrophyType, setEditTrophyType] = useState<string>("");
+  const [editTrophyName, setEditTrophyName] = useState<string>("");
+  const [editTotalPrice, setEditTotalPrice] = useState<number>(0);
+  const [isSavingTrophy, setIsSavingTrophy] = useState<boolean>(false);
+
+  const handleOpenTrophyModal = (booking: Booking) => {
+    setEditingTrophyBooking(booking);
+    const trophyTypeDetail = booking.companions_details?.find((d: any) => d.type === "trophy_type")?.value || "درع نحاسي (مجاناً)";
+    const trophyNameDetail = booking.companions_details?.find((d: any) => d.type === "trophy_name")?.value || booking.customer_name || "";
+    setEditTrophyType(trophyTypeDetail);
+    setEditTrophyName(trophyNameDetail);
+    setEditTotalPrice(Number(booking.total_price) || 0);
+  };
+
+  const handleTrophyTypeChange = (newType: string) => {
+    const wasCrystal = editTrophyType.includes("كريستال");
+    const isNowCrystal = newType.includes("كريستال");
+    if (!wasCrystal && isNowCrystal) {
+      setEditTotalPrice(prev => prev + 50);
+    } else if (wasCrystal && !isNowCrystal) {
+      setEditTotalPrice(prev => Math.max(0, prev - 50));
+    }
+    setEditTrophyType(newType);
+  };
+
+  const handleSaveTrophy = async () => {
+    if (!editingTrophyBooking) return;
+    setIsSavingTrophy(true);
+    try {
+      const existingDetails = Array.isArray(editingTrophyBooking.companions_details)
+        ? [...editingTrophyBooking.companions_details]
+        : [];
+
+      const typeIdx = existingDetails.findIndex((d: any) => d.type === "trophy_type");
+      if (typeIdx >= 0) {
+        existingDetails[typeIdx] = { ...existingDetails[typeIdx], value: editTrophyType };
+      } else {
+        existingDetails.push({ type: "trophy_type", value: editTrophyType });
+      }
+
+      const nameIdx = existingDetails.findIndex((d: any) => d.type === "trophy_name");
+      if (nameIdx >= 0) {
+        existingDetails[nameIdx] = { ...existingDetails[nameIdx], value: editTrophyName };
+      } else {
+        existingDetails.push({ type: "trophy_name", value: editTrophyName });
+      }
+
+      const { error } = await supabase
+        .from("bookings")
+        .update({ 
+          companions_details: existingDetails,
+          total_price: editTotalPrice
+        })
+        .eq("id", editingTrophyBooking.id);
+
+      if (error) throw error;
+
+      setBookings((prev) =>
+        prev.map((b) =>
+          b.id === editingTrophyBooking.id
+            ? { ...b, companions_details: existingDetails, total_price: editTotalPrice }
+            : b
+        )
+      );
+
+      toast.success("تم تحديث بيانات الدرع والمبلغ بنجاح");
+      setEditingTrophyBooking(null);
+    } catch (error) {
+      console.error("Error updating trophy:", error);
+      toast.error("فشل في تحديث بيانات الدرع");
+    } finally {
+      setIsSavingTrophy(false);
+    }
+  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -368,8 +448,21 @@ const Dashboard = () => {
     const matchesSashColor = sashColorFilter === "all" || 
       (booking.companions_details?.some((d: any) => d.type === "sash_color" && d.value?.includes(sashColorFilter)) ?? false);
 
-    return matchesSearch && matchesPayment && matchesStatus && matchesDepartment && matchesTrophy && matchesSashColor;
-  }), [bookings, currentBatch, searchTerm, paymentFilter, statusFilter, departmentFilter, trophyFilter, sashColorFilter]);
+    const matchesSashSize = sashSizeFilter === "all" || 
+      (booking.companions_details?.some((d: any) => {
+        if (d.type !== "sash_size") return false;
+        const val = d.value || "";
+        if (sashSizeFilter === "large") {
+          return val.includes("أكبر") || val.includes("الكبير") || val.toLowerCase().includes("large");
+        }
+        if (sashSizeFilter === "standard") {
+          return val.includes("عادي") || val.toLowerCase().includes("standard");
+        }
+        return false;
+      }) ?? false);
+
+    return matchesSearch && matchesPayment && matchesStatus && matchesDepartment && matchesTrophy && matchesSashColor && matchesSashSize;
+  }), [bookings, currentBatch, searchTerm, paymentFilter, statusFilter, departmentFilter, trophyFilter, sashColorFilter, sashSizeFilter]);
 
   // Filter waiting list by batch too
   const filteredWaitingList = useMemo(() => waitingList.filter((entry) => {
@@ -592,6 +685,12 @@ const Dashboard = () => {
                 </>
               )}
             </Button>
+            <a href="/my-booking" target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" size="sm" className="bg-white border-gray-200 text-gray-700 hover:bg-gray-100">
+                <Search className="w-4 h-4 ml-1" />
+                صفحة الاستعلام
+              </Button>
+            </a>
             <Button variant="outline" size="sm" className="bg-white border-gray-200 text-gray-700 hover:bg-gray-100" onClick={handleLogout}>
               تسجيل خروج
             </Button>
@@ -644,8 +743,8 @@ const Dashboard = () => {
                           <td className="px-4 py-3 font-semibold text-gray-900">{entry.name}</td>
                           <td className="px-4 py-3 text-gray-600" dir="ltr">{entry.phone}</td>
                           <td className="px-4 py-3">
-                            <span className="px-2 py-1 rounded text-xs font-medium bg-blue-500/20 text-blue-300">
-                              إفطار
+                            <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                              {entry.selected_package === "graduation_2026" ? "حفلة تخرج 2026" : entry.selected_package || "حفلة تخرج"}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-gray-500 text-xs">
@@ -968,12 +1067,22 @@ const Dashboard = () => {
                 <SelectItem value="بيج">بيج</SelectItem>
               </SelectContent>
             </Select>
+            <Select value={sashSizeFilter} onValueChange={setSashSizeFilter}>
+              <SelectTrigger className="w-full sm:w-36 bg-white border-gray-200 text-gray-700">
+                <SelectValue placeholder="مقاس الوشاح" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">كل المقاسات</SelectItem>
+                <SelectItem value="large">المقاس الكبير</SelectItem>
+                <SelectItem value="standard">المقاس العادي</SelectItem>
+              </SelectContent>
+            </Select>
             <Button variant="outline" size="icon" className="bg-white border-gray-200 text-gray-700 hover:bg-gray-100" onClick={exportToCSV} title="تصدير CSV">
               <Download className="w-4 h-4" />
             </Button>
           </div>
           {/* Approve All Button - shows when filter is not "all" */}
-          {(paymentFilter !== "all" || statusFilter !== "all" || departmentFilter !== "all" || trophyFilter !== "all" || sashColorFilter !== "all") && (
+          {(paymentFilter !== "all" || statusFilter !== "all" || departmentFilter !== "all" || trophyFilter !== "all" || sashColorFilter !== "all" || sashSizeFilter !== "all") && (
             <div className="mt-3 flex justify-end">
               <Button
                 size="sm"
@@ -1077,7 +1186,19 @@ const Dashboard = () => {
                                   {department && <div><strong>القسم:</strong> {department}</div>}
                                   {sashColor && <div><strong>الوشاح:</strong> {sashColor} {sashSize ? `(${sashSize})` : ''}</div>}
                                   {sashName && <div className="text-purple-600 font-semibold"><strong>اسم الوشاح:</strong> {sashName}</div>}
-                                  {trophyType && <div><strong>الدرع:</strong> {trophyType}</div>}
+                                  {trophyType && (
+                                    <div className="flex items-center gap-1">
+                                      <span><strong>الدرع:</strong> {trophyType}</span>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleOpenTrophyModal(booking)}
+                                        className="text-amber-600 hover:text-amber-700 p-0.5 rounded hover:bg-amber-50"
+                                        title="تعديل بيانات الدرع"
+                                      >
+                                        <Edit3 className="w-3.5 h-3.5 inline ml-0.5" />
+                                      </button>
+                                    </div>
+                                  )}
                                   {trophyName && <div className="text-amber-600 font-semibold"><strong>اسم الدرع:</strong> {trophyName}</div>}
                                   {extraCompanions && Number(extraCompanions) > 0 && (
                                     <div><strong>مرافقين إضافيين:</strong> {extraCompanions}</div>
@@ -1147,6 +1268,15 @@ const Dashboard = () => {
                               </SelectContent>
                             </Select>
                           )}
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8 bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-100"
+                            onClick={() => handleOpenTrophyModal(booking)}
+                            title="تعديل بيانات الدرع"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button
@@ -1210,6 +1340,82 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Trophy Edit Modal */}
+      <Dialog open={!!editingTrophyBooking} onOpenChange={(open) => !open && setEditingTrophyBooking(null)}>
+        <DialogContent className="bg-white max-w-md" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="text-right text-lg font-bold flex items-center gap-2">
+              <Pencil className="w-5 h-5 text-amber-500" />
+              تعديل بيانات الدرع
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-3 text-right">
+            <div>
+              <p className="text-xs text-gray-500 mb-1">العميل:</p>
+              <p className="font-bold text-gray-900">{editingTrophyBooking?.customer_name}</p>
+              <p className="text-xs text-gray-500 font-mono">{editingTrophyBooking?.order_number}</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold text-gray-700">نوع الدرع</Label>
+              <Select value={editTrophyType} onValueChange={handleTrophyTypeChange}>
+                <SelectTrigger className="w-full bg-white border-gray-200">
+                  <SelectValue placeholder="اختر نوع الدرع" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="درع نحاسي (مجاناً)">درع نحاسي (مجاناً)</SelectItem>
+                  <SelectItem value="درع كريستال (+50ج)">درع كريستال (+50ج)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold text-gray-700">الاسم المطلوب على الدرع</Label>
+              <Input
+                value={editTrophyName}
+                onChange={(e) => setEditTrophyName(e.target.value)}
+                placeholder="اسم الخريج المكتوب على الدرع"
+                className="bg-gray-50 border-gray-200"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-semibold text-gray-700">المبلغ الإجمالي (ج.م)</Label>
+                {editTrophyType.includes("كريستال") && (
+                  <span className="text-[11px] font-semibold text-amber-700 bg-amber-100/70 px-2 py-0.5 rounded">
+                    +50 ج فرق درع كريستال
+                  </span>
+                )}
+              </div>
+              <Input
+                type="number"
+                value={editTotalPrice}
+                onChange={(e) => setEditTotalPrice(Number(e.target.value))}
+                placeholder="المبلغ الإجمالي"
+                className="bg-gray-50 border-gray-200 font-bold text-gray-900"
+              />
+            </div>
+          </div>
+          <DialogFooter className="flex gap-2 justify-end">
+            <Button
+              variant="outline"
+              onClick={() => setEditingTrophyBooking(null)}
+              disabled={isSavingTrophy}
+            >
+              إلغاء
+            </Button>
+            <Button
+              className="bg-amber-600 hover:bg-amber-700 text-white font-bold"
+              onClick={handleSaveTrophy}
+              disabled={isSavingTrophy}
+            >
+              {isSavingTrophy ? "جاري الحفظ..." : "حفظ التغيرات"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

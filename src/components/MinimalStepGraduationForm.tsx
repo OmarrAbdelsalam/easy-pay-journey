@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo } from "react";
-import { Upload, X, ChevronDown, ChevronUp, CheckCircle, Download, FileText, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
+import { Upload, X, ChevronDown, ChevronUp, CheckCircle, Download, FileText, ArrowRight, ArrowLeft, Loader2, ZoomIn } from "lucide-react";
 import StepIndicator from "@/components/StepIndicator";
 import PaymentUpload, { PaymentMethod } from "@/components/PaymentUpload";
 import logo from "/logo.webp";
@@ -47,6 +47,7 @@ export const MinimalStepGraduationForm: React.FC = () => {
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
+  const [modalImage, setModalImage] = useState<{ src: string; title: string } | null>(null);
 
   const totalSteps = 4;
   const stepLabels = ["الوشاح", "نوع وتصميم الدرع", "بيانات الخريج", "الدفع والإيصال"];
@@ -568,53 +569,102 @@ export const MinimalStepGraduationForm: React.FC = () => {
             <div className="space-y-4 animate-fade-in">
               <div className="space-y-4">
                 {/* Trophy Type Selection */}
-                <div className="space-y-2.5">
-                  <label className="gform-label">
-                    اختر نوع درع التخرج <span className="text-destructive">*</span>
-                  </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <label
-                      className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${
+                <div className="space-y-3">
+                  <div className="flex flex-col gap-1">
+                    <label className="gform-label">
+                      اختر نوع درع التخرج <span className="text-destructive">*</span>
+                    </label>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      اختر نوع الدرع المفضل لديك (انقر على الصورة لمعاينتها بحجم أكبر).
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {/* Brass Shield Card (2nd image) */}
+                    <div
+                      className={`group relative overflow-hidden rounded-2xl border-2 transition-all cursor-pointer p-3 flex flex-col justify-between ${
                         formData.trophyType === "brass"
-                          ? "border-primary bg-primary/5 text-primary font-bold shadow-xs"
-                          : "border-border/70 bg-background hover:border-border text-foreground"
+                          ? "border-primary bg-primary/5 shadow-md ring-2 ring-primary/20"
+                          : "border-border/70 bg-card hover:border-primary/50 hover:shadow-xs"
                       }`}
                       onClick={() => setFormData({ ...formData, trophyType: "brass" })}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                          formData.trophyType === "brass" ? "border-primary bg-primary" : "border-gray-300"
-                        }`}>
-                          {formData.trophyType === "brass" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                      <div className="space-y-3">
+                        <div className="relative aspect-[4/5] sm:h-64 w-full overflow-hidden rounded-xl bg-slate-900/5 dark:bg-slate-900/40 border border-border/50 p-2 flex items-center justify-center group/img">
+                          <img
+                            src="/brass-shield.png"
+                            alt="درع نحاسي"
+                            className="h-full w-full object-contain object-center group-hover:scale-[1.02] transition-transform duration-300 drop-shadow-xs"
+                          />
+                          <span className="absolute top-2 right-2 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500 text-white shadow-xs z-10">
+                            متضمن مجاناً
+                          </span>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setModalImage({ src: "/brass-shield.png", title: "درع نحاسي داخل علبة قطيفة" });
+                            }}
+                            className="absolute bottom-2 left-2 p-1.5 rounded-lg bg-black/60 text-white opacity-90 hover:opacity-100 hover:bg-black/80 transition-all shadow-xs z-10"
+                            title="توسيع الصورة"
+                          >
+                            <ZoomIn className="w-4 h-4" />
+                          </button>
                         </div>
-                        <div>
-                          <span className="text-xs sm:text-sm font-bold block">درع نحاسي عادي</span>
-                          <span className="text-[11px] text-muted-foreground block font-normal">علبة قطيفة (متضمن مجاناً)</span>
+
+                        <div className="flex items-center gap-2.5 pt-0.5">
+                          <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                            formData.trophyType === "brass" ? "border-primary bg-primary" : "border-gray-300"
+                          }`}>
+                            {formData.trophyType === "brass" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                          </div>
+                          <span className="text-xs sm:text-sm font-bold block text-foreground">درع نحاسي</span>
                         </div>
                       </div>
-                    </label>
+                    </div>
 
-                    <label
-                      className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${
+                    {/* Crystal Shield Card (1st image) */}
+                    <div
+                      className={`group relative overflow-hidden rounded-2xl border-2 transition-all cursor-pointer p-3 flex flex-col justify-between ${
                         formData.trophyType === "crystal"
-                          ? "border-primary bg-primary/5 text-primary font-bold shadow-xs"
-                          : "border-border/70 bg-background hover:border-border text-foreground"
+                          ? "border-primary bg-primary/5 shadow-md ring-2 ring-primary/20"
+                          : "border-border/70 bg-card hover:border-primary/50 hover:shadow-xs"
                       }`}
                       onClick={() => setFormData({ ...formData, trophyType: "crystal" })}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                          formData.trophyType === "crystal" ? "border-primary bg-primary" : "border-gray-300"
-                        }`}>
-                          {formData.trophyType === "crystal" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                      <div className="space-y-3">
+                        <div className="relative aspect-[4/5] sm:h-64 w-full overflow-hidden rounded-xl bg-slate-900/5 dark:bg-slate-900/40 border border-border/50 p-2 flex items-center justify-center group/img">
+                          <img
+                            src="/crystal-shield.png"
+                            alt="درع كريستال"
+                            className="h-full w-full object-contain object-center group-hover:scale-[1.02] transition-transform duration-300 drop-shadow-xs"
+                          />
+                          <span className="absolute top-2 right-2 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-primary text-white shadow-xs z-10">
+                            +50 ج
+                          </span>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setModalImage({ src: "/crystal-shield.png", title: "درع كريستال" });
+                            }}
+                            className="absolute bottom-2 left-2 p-1.5 rounded-lg bg-black/60 text-white opacity-90 hover:opacity-100 hover:bg-black/80 transition-all shadow-xs z-10"
+                            title="توسيع الصورة"
+                          >
+                            <ZoomIn className="w-4 h-4" />
+                          </button>
                         </div>
-                        <div>
-                          <span className="text-xs sm:text-sm font-bold block">درع كريستال فاخر</span>
-                          <span className="text-[11px] text-muted-foreground block font-normal">درع كريستال قيم ومميز</span>
+
+                        <div className="flex items-center gap-2.5 pt-0.5">
+                          <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                            formData.trophyType === "crystal" ? "border-primary bg-primary" : "border-gray-300"
+                          }`}>
+                            {formData.trophyType === "crystal" && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                          </div>
+                          <span className="text-xs sm:text-sm font-bold block text-foreground">درع كريستال</span>
                         </div>
                       </div>
-                      <span className="text-xs font-extrabold text-primary shrink-0 mr-2">+50 ج</span>
-                    </label>
+                    </div>
                   </div>
                 </div>
 
@@ -770,9 +820,40 @@ export const MinimalStepGraduationForm: React.FC = () => {
                 </>
               )}
             </button>
-          </div>
         </div>
+
+        {/* Image Preview Modal */}
+        {modalImage && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 animate-fade-in backdrop-blur-xs"
+            onClick={() => setModalImage(null)}
+          >
+            <div
+              className="relative max-w-xl w-full bg-card rounded-2xl overflow-hidden border border-border p-3 space-y-3 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-2 pt-1 border-b border-border/50 pb-2">
+                <h3 className="text-sm font-bold text-foreground">{modalImage.title}</h3>
+                <button
+                  type="button"
+                  onClick={() => setModalImage(null)}
+                  className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="overflow-hidden rounded-xl bg-black/5 flex items-center justify-center max-h-[75vh]">
+                <img
+                  src={modalImage.src}
+                  alt={modalImage.title}
+                  className="max-h-[70vh] w-auto max-w-full object-contain rounded-lg"
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
+    </div>
   );
 };
 

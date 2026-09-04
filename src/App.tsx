@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import WaitingList from "./pages/WaitingList";
 import Home from "./pages/Home";
 import CapacityReached from "./pages/CapacityReached";
+import MyBooking from "./pages/MyBooking";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,9 @@ const App = () => (
           <Route path="/senior" element={<Index defaultBatchType="Senior" />} />
           <Route path="/semi-senior" element={<Index defaultBatchType="Semi-Senior" />} />
           <Route path="/waiting-list" element={<WaitingList />} />
+          <Route path="/my-booking" element={<MyBooking />} />
+          <Route path="/status" element={<MyBooking />} />
+          <Route path="/inquiry" element={<MyBooking />} />
           <Route path="/grads" element={<Grads />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/capacity-reached" element={<CapacityReached />} />
