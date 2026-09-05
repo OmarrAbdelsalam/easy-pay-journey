@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Lock, Search, Download, Eye, X, CreditCard, Package, Users, CheckCircle, XCircle, Clock, AlertTriangle, ChevronDown, ChevronUp, Trash2, ListOrdered, Settings, ToggleLeft, ToggleRight, Calendar, Shield, Edit3, Pencil } from "lucide-react";
+import { Lock, Search, Download, Eye, X, CreditCard, Package, Users, CheckCircle, XCircle, Clock, AlertTriangle, ChevronDown, ChevronUp, Trash2, ListOrdered, Settings, ToggleLeft, ToggleRight, Calendar, Shield, Edit3, Pencil, ExternalLink } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -1281,6 +1281,7 @@ const Dashboard = () => {
                               const trophyType = details.find((d: any) => d.type === 'trophy_type')?.value;
                               const trophyName = details.find((d: any) => d.type === 'trophy_name')?.value;
                               const extraCompanions = details.find((d: any) => d.type === 'extra_companions_count')?.value;
+                              const driveLink = details.find((d: any) => d.type === 'drive_link')?.value;
                               return (
                                 <>
                                   {department && <div><strong>القسم:</strong> {department}</div>}
@@ -1302,6 +1303,19 @@ const Dashboard = () => {
                                   {trophyName && <div className="text-amber-600 font-semibold"><strong>اسم الدرع:</strong> {trophyName}</div>}
                                   {extraCompanions && Number(extraCompanions) > 0 && (
                                     <div><strong>مرافقين إضافيين:</strong> {extraCompanions}</div>
+                                  )}
+                                  {driveLink && (
+                                    <div className="pt-1">
+                                      <a
+                                        href={driveLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1 text-[11px] text-blue-600 hover:text-blue-800 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-200"
+                                      >
+                                        <ExternalLink className="w-3 h-3" />
+                                        <span>مجلد Google Drive</span>
+                                      </a>
+                                    </div>
                                   )}
                                 </>
                               );
