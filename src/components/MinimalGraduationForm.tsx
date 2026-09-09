@@ -112,7 +112,7 @@ export const MinimalGraduationForm: React.FC = () => {
         { type: "gown_size", value: formData.gownSize },
       ];
 
-      await supabase.from("bookings").insert({
+      const { error: insertError } = await supabase.from("bookings").insert({
         order_number: generatedOrderNumber,
         selected_package: "graduation_2025",
         student_tickets: 1,
@@ -131,6 +131,9 @@ export const MinimalGraduationForm: React.FC = () => {
         booking_type: "graduation",
         batch: 2025,
       });
+
+      // من غير الشرط ده الطالب كان بيشوف شاشة النجاح حتى لو الحجز اترفض
+      if (insertError) throw insertError;
 
       setOrderNumber(generatedOrderNumber);
       setIsSubmitted(true);

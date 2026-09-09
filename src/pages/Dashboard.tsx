@@ -10,7 +10,6 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
-const DASHBOARD_PASSWORD = "cairo2024";
 
 interface WaitingListEntry {
   id: string;
@@ -50,7 +49,9 @@ interface Booking {
 
 const Dashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -147,22 +148,37 @@ const Dashboard = () => {
     }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === DASHBOARD_PASSWORD) {
-      setIsAuthenticated(true);
-      localStorage.setItem("dashboard_auth", "true");
+    setIsLoggingIn(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+      if (error) throw error;
+      setPassword("");
       toast.success("تم تسجيل الدخول بنجاح");
-    } else {
-      toast.error("كلمة المرور غير صحيحة");
+    } catch (err) {
+      console.error("Login failed:", err);
+      toast.error("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
+  // الصلاحية بقت جاية من جلسة Supabase نفسها، مش من قيمة في localStorage.
+  // من غير جلسة صالحة الـ RLS بترفض أي قراءة أو تعديل من الأساس.
   useEffect(() => {
-    const auth = localStorage.getItem("dashboard_auth");
-    if (auth === "true") {
-      setIsAuthenticated(true);
-    }
+    supabase.auth.getSession().then(({ data }) => {
+      setIsAuthenticated(!!data.session);
+    });
+
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => sub.subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -416,9 +432,10 @@ const Dashboard = () => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    localStorage.removeItem("dashboard_auth"); // تنظيف بقايا النظام القديم
     setIsAuthenticated(false);
-    localStorage.removeItem("dashboard_auth");
   };
 
   const availableDates = useMemo(() => {
@@ -710,19 +727,30 @@ const Dashboard = () => {
                 <Lock className="w-8 h-8 text-blue-400" />
               </div>
               <h1 className="text-xl font-bold text-gray-900">لوحة التحكم</h1>
-              <p className="text-sm text-gray-500">أدخل كلمة المرور للدخول</p>
+              <p className="text-sm text-gray-500">سجّل الدخول بحساب الأدمن</p>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-4">
               <Input
+                type="email"
+                autoComplete="username"
+                placeholder="البريد الإلكتروني"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="text-center bg-gray-50 border-gray-200 text-gray-900"
+                dir="ltr"
+              />
+              <Input
                 type="password"
+                autoComplete="current-password"
                 placeholder="كلمة المرور"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="text-center bg-gray-50 border-gray-200 text-gray-900"
+                dir="ltr"
               />
-              <Button type="submit" className="w-full">
-                دخول
+              <Button type="submit" className="w-full" disabled={isLoggingIn}>
+                {isLoggingIn ? "جارٍ الدخول..." : "دخول"}
               </Button>
             </form>
           </div>

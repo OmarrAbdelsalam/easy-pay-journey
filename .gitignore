@@ -26,3 +26,8 @@ dist-ssr
 # Data exports
 *.xlsx
 *.csv
+
+# Local secrets
+.env
+.env.*
+!.env.example

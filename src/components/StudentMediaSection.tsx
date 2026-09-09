@@ -298,16 +298,11 @@ export const StudentMediaSection: React.FC<StudentMediaSectionProps> = ({
     const fetchSavedDriveLink = async () => {
       if (!phone) return;
       try {
-        let query = supabase.from("bookings").select("id, companions_details");
-        if (bookingId) {
-          query = query.eq("id", bookingId);
-        } else {
-          query = query.eq("customer_phone", phone).order("created_at", { ascending: false }).limit(1);
-        }
-        const { data, error } = await query;
-        if (!error && data && data.length > 0) {
-          const details = Array.isArray(data[0].companions_details) ? data[0].companions_details : [];
-          const found = details.find((d: any) => d.type === "drive_link")?.value || "";
+        const { data, error } = await supabase.rpc("find_bookings_by_phone", { p_phone: phone });
+        const rows = bookingId ? (data ?? []).filter((b) => b.id === bookingId) : (data ?? []);
+        if (!error && rows.length > 0) {
+          const details = Array.isArray(rows[0].companions_details) ? rows[0].companions_details : [];
+          const found = (details as any[]).find((d: any) => d.type === "drive_link")?.value || "";
           if (found) {
             setDriveFolderLink(found);
             setInputLink(found);
@@ -340,29 +335,13 @@ export const StudentMediaSection: React.FC<StudentMediaSectionProps> = ({
 
     setIsSavingLink(true);
     try {
-      let query = supabase.from("bookings").select("id, companions_details");
-      if (bookingId) {
-        query = query.eq("id", bookingId);
-      } else {
-        query = query.eq("customer_phone", phone).order("created_at", { ascending: false }).limit(1);
-      }
-      const { data: bookings, error: fetchErr } = await query;
-      if (fetchErr || !bookings || bookings.length === 0) {
-        throw new Error("لم يتم العثور على الحجز في قاعدة البيانات");
-      }
-
-      const targetBooking = bookings[0];
-      const existingDetails = Array.isArray(targetBooking.companions_details)
-        ? [...targetBooking.companions_details]
-        : [];
-
-      const updatedDetails = existingDetails.filter((d: any) => d.type !== "drive_link");
-      updatedDetails.push({ type: "drive_link", value: trimmed });
-
-      const { error: updateErr } = await supabase
-        .from("bookings")
-        .update({ companions_details: updatedDetails })
-        .eq("id", targetBooking.id);
+      // الدالة بتدوّر على الحجز وتحدّثه على السيرفر بعد التأكد إنه بتاع نفس الرقم.
+      // الكلاينت مالوش صلاحية UPDATE على جدول bookings خالص.
+      const { error: updateErr } = await supabase.rpc("set_booking_drive_link", {
+        p_phone: phone,
+        p_booking_id: bookingId ?? null,
+        p_link: trimmed,
+      });
 
       if (updateErr) throw updateErr;
 
@@ -385,28 +364,12 @@ export const StudentMediaSection: React.FC<StudentMediaSectionProps> = ({
   const handleRemoveDriveFolderLink = async () => {
     setIsSavingLink(true);
     try {
-      let query = supabase.from("bookings").select("id, companions_details");
-      if (bookingId) {
-        query = query.eq("id", bookingId);
-      } else {
-        query = query.eq("customer_phone", phone).order("created_at", { ascending: false }).limit(1);
-      }
-      const { data: bookings, error: fetchErr } = await query;
-      if (fetchErr || !bookings || bookings.length === 0) {
-        throw new Error("لم يتم العثور على الحجز");
-      }
-
-      const targetBooking = bookings[0];
-      const existingDetails = Array.isArray(targetBooking.companions_details)
-        ? [...targetBooking.companions_details]
-        : [];
-
-      const updatedDetails = existingDetails.filter((d: any) => d.type !== "drive_link");
-
-      const { error: updateErr } = await supabase
-        .from("bookings")
-        .update({ companions_details: updatedDetails })
-        .eq("id", targetBooking.id);
+      // نفس الدالة، بس من غير رابط -- يعني امسح المسجّل حالياً
+      const { error: updateErr } = await supabase.rpc("set_booking_drive_link", {
+        p_phone: phone,
+        p_booking_id: bookingId ?? null,
+        p_link: null,
+      });
 
       if (updateErr) throw updateErr;
 

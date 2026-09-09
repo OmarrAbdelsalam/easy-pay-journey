@@ -6,6 +6,39 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
+export type BookingRow = {
+  companion_tickets: number
+  companions_details: Json | null
+  created_at: string
+  customer_name: string
+  customer_national_id: string
+  customer_phone: string
+  customer_year: string
+  id: string
+  order_number: string
+  payment_method: string
+  payment_screenshot_url: string | null
+  selected_package: string
+  sender_name: string | null
+  sender_phone: string | null
+  status: string
+  student_tickets: number
+  total_price: number
+  transaction_number: string
+  updated_at: string
+  booking_type: string
+  batch: number
+}
+
+export type WaitingListRow = {
+  id: string
+  name: string
+  phone: string
+  selected_package: string
+  created_at: string
+  batch: number
+}
+
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
@@ -15,29 +48,7 @@ export type Database = {
   public: {
     Tables: {
       bookings: {
-        Row: {
-          companion_tickets: number
-          companions_details: Json | null
-          created_at: string
-          customer_name: string
-          customer_national_id: string
-          customer_phone: string
-          customer_year: string
-          id: string
-          order_number: string
-          payment_method: string
-          payment_screenshot_url: string | null
-          selected_package: string
-          sender_name: string | null
-          sender_phone: string | null
-          status: string
-          student_tickets: number
-          total_price: number
-          transaction_number: string
-          updated_at: string
-          booking_type: string
-          batch: number
-        }
+        Row: BookingRow
         Insert: {
           companion_tickets?: number
           companions_details?: Json | null
@@ -87,14 +98,7 @@ export type Database = {
         Relationships: []
       }
       waiting_list: {
-        Row: {
-          id: string
-          name: string
-          phone: string
-          selected_package: string
-          created_at: string
-          batch: number
-        }
+        Row: WaitingListRow
         Insert: {
           id?: string
           name: string
@@ -145,7 +149,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      find_bookings_by_phone: {
+        Args: { p_phone: string }
+        Returns: BookingRow[]
+      }
+      find_waiting_by_phone: {
+        Args: { p_phone: string }
+        Returns: WaitingListRow[]
+      }
+      set_booking_drive_link: {
+        Args: {
+          p_phone: string
+          p_booking_id?: string | null
+          p_link?: string | null
+        }
+        Returns: BookingRow
+      }
     }
     Enums: {
       [_ in never]: never

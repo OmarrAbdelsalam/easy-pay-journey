@@ -151,7 +151,7 @@ export const MinimalStepGraduationForm: React.FC = () => {
         { type: "trophy_name", value: formData.trophyName },
       ];
 
-      await supabase.from("bookings").insert({
+      const { error: insertError } = await supabase.from("bookings").insert({
         order_number: generatedOrderNumber,
         selected_package: "graduation_2026",
         student_tickets: 1,
@@ -170,6 +170,10 @@ export const MinimalStepGraduationForm: React.FC = () => {
         booking_type: "graduation",
         batch: 2026,
       });
+
+      // من غير الشرط ده الطالب كان بيشوف شاشة النجاح حتى لو الحجز اترفض
+      // (وضع الانتظار، أو صلاحيات، أو أي خطأ من السيرفر)
+      if (insertError) throw insertError;
 
       setOrderNumber(generatedOrderNumber);
       setCurrentStep(5);

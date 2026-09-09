@@ -143,11 +143,10 @@ export const MyBooking: React.FC = () => {
 
     try {
       // 1. Search in bookings
+      // عن طريق دالة على السيرفر بترجّع حجوزات الرقم ده بس -- المفتاح العام
+      // مالوش صلاحية SELECT على الجدول أصلاً.
       const { data: bookingsData, error: bookingsError } = await supabase
-        .from("bookings")
-        .select("*")
-        .or(`customer_phone.eq.${targetPhone},sender_phone.eq.${targetPhone}`)
-        .order("created_at", { ascending: false });
+        .rpc("find_bookings_by_phone", { p_phone: targetPhone });
 
       if (bookingsError) throw bookingsError;
 
@@ -162,13 +161,10 @@ export const MyBooking: React.FC = () => {
       } else {
         // 2. Fallback: Search in waiting_list
         const { data: waitingData, error: waitingError } = await supabase
-          .from("waiting_list")
-          .select("*")
-          .eq("phone", targetPhone)
-          .maybeSingle();
+          .rpc("find_waiting_by_phone", { p_phone: targetPhone });
 
-        if (!waitingError && waitingData) {
-          setWaitingEntry(waitingData as WaitingResult);
+        if (!waitingError && waitingData && waitingData.length > 0) {
+          setWaitingEntry(waitingData[0] as WaitingResult);
         }
       }
     } catch (err) {
