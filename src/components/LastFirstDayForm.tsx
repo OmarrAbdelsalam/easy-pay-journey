@@ -4,7 +4,7 @@ import StepIndicator from "@/components/StepIndicator";
 import PaymentUpload from "@/components/PaymentUpload";
 import logo from "/logo.webp";
 import logo2 from "/logo2.webp";
-import { supabase } from "@/integrations/supabase/client";
+import { publicSupabase as supabase } from "@/integrations/supabase/publicClient";
 import { toast } from "sonner";
 import { EVENT } from "@/config/event";
 
