@@ -16,7 +16,8 @@ interface FormData {
   whatsapp: string;
   paymentMethod: "instapay" | "vodafone" | "orange";
   transactionNumber: string;
-  senderInfo: string;
+  senderPhone: string;
+  senderName: string;
 }
 
 const emptyForm: FormData = {
@@ -25,7 +26,8 @@ const emptyForm: FormData = {
   whatsapp: "",
   paymentMethod: "instapay",
   transactionNumber: "",
-  senderInfo: "",
+  senderPhone: "",
+  senderName: "",
 };
 
 const MAX_PHOTO_MB = 10;
@@ -58,7 +60,13 @@ export const LastFirstDayForm: React.FC = () => {
       case 2:
         return studentPhoto !== null;
       case 3:
-        return formData.transactionNumber.trim() !== "" && paymentScreenshot !== null;
+        return (
+          formData.transactionNumber.trim() !== "" &&
+          (formData.paymentMethod === "instapay"
+            ? formData.senderName.trim() !== ""
+            : formData.senderPhone.length === 11) &&
+          paymentScreenshot !== null
+        );
       default:
         return true;
     }
@@ -125,6 +133,9 @@ export const LastFirstDayForm: React.FC = () => {
         `${generatedOrderNumber}-${Date.now()}.${ext(paymentScreenshot)}`
       );
 
+      // InstaPay بيطلب اسم الحساب، والمحافظ بتطلب الرقم المحول منه
+      const sender = (formData.paymentMethod === "instapay" ? formData.senderName : formData.senderPhone).trim();
+
       const details = [
         { type: "department", value: formData.department },
         { type: "student_photo", value: photoUrl },
@@ -142,8 +153,8 @@ export const LastFirstDayForm: React.FC = () => {
         customer_year: String(EVENT.batch),
         payment_method: formData.paymentMethod,
         transaction_number: formData.transactionNumber,
-        sender_phone: formData.senderInfo || null,
-        sender_name: formData.senderInfo || null,
+        sender_phone: sender || null,
+        sender_name: sender || null,
         payment_screenshot_url: screenshotUrl,
         total_price: totalPrice,
         booking_type: "student",
@@ -421,14 +432,15 @@ export const LastFirstDayForm: React.FC = () => {
               onScreenshotChange={(file) => setPaymentScreenshot(file)}
               paymentDetails={{
                 transactionNumber: formData.transactionNumber,
-                senderPhone: formData.senderInfo,
-                senderName: formData.senderInfo,
+                senderPhone: formData.senderPhone,
+                senderName: formData.senderName,
               }}
               onPaymentDetailsChange={(details) =>
                 setFormData({
                   ...formData,
                   transactionNumber: details.transactionNumber,
-                  senderInfo: details.senderPhone || details.senderName || "",
+                  senderPhone: details.senderPhone,
+                  senderName: details.senderName,
                 })
               }
               companionsCount={0}
