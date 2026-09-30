@@ -7,7 +7,10 @@ interface StepIndicatorProps {
 const StepIndicator = ({ currentStep, totalSteps, labels }: StepIndicatorProps) => {
   return (
     <div className="w-full" dir="rtl">
-      <div className="grid grid-cols-4 w-full gap-2 sm:gap-4">
+      <div
+        className="grid w-full gap-2 sm:gap-4"
+        style={{ gridTemplateColumns: `repeat(${totalSteps}, minmax(0, 1fr))` }}
+      >
         {Array.from({ length: totalSteps }, (_, index) => {
           const stepNumber = index + 1;
           const isCompleted = stepNumber < currentStep;

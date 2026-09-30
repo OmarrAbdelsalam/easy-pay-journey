@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import MinimalStepGraduationForm from "@/components/MinimalStepGraduationForm";
+import LastFirstDayForm from "@/components/LastFirstDayForm";
 import WaitingList from "./WaitingList";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -61,7 +61,7 @@ export const Index = ({ isGrad, defaultBatchType }: { isGrad?: boolean; defaultB
   return (
     <div className="min-h-screen bg-background py-6 sm:py-10">
       <div className="container max-w-3xl mx-auto px-3 sm:px-4">
-        <MinimalStepGraduationForm />
+        <LastFirstDayForm />
       </div>
     </div>
   );

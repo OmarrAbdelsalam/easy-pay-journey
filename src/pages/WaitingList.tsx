@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { EVENT } from "@/config/event";
 
 const normalizePhone = (value: string) => {
   const englishDigits = value
@@ -38,8 +39,8 @@ const WaitingList = () => {
       const { error } = await supabase.from("waiting_list").insert({
         name: name.trim(),
         phone: normalizedPhone,
-        selected_package: "graduation_2026",
-        batch: 2026,
+        selected_package: EVENT.selectedPackage,
+        batch: EVENT.batch,
       });
       if (error) throw error;
       setIsSubmitted(true);
@@ -62,7 +63,7 @@ const WaitingList = () => {
             </div>
             <h2 className="text-2xl font-black text-gray-900 mb-3 tracking-tight">تم تسجيلك بنجاح!</h2>
             <p className="text-gray-500 mb-8 leading-relaxed text-sm sm:text-base">
-              تم إضافتك لقائمة الانتظار بنجاح، هنتواصل معاك فور إتاحة مقاعد أو تذاكر إضافية لحفلة التخرج.
+              تم إضافتك لقائمة الانتظار بنجاح، هنتواصل معاك فور إتاحة مقاعد أو تذاكر إضافية لـ Last First Day.
             </p>
             <Button 
               variant="outline" 
@@ -73,7 +74,7 @@ const WaitingList = () => {
                 setPhone("");
               }}
             >
-              تسجيل خريج آخر
+              تسجيل طالب آخر
             </Button>
           </div>
         </div>
@@ -94,7 +95,7 @@ const WaitingList = () => {
             اكتمل عدد الحجز الحالي!
           </h1>
           <p className="text-gray-500 text-sm sm:text-base px-4">
-            سجل بياناتك الآن في قائمة الانتظار، وهنتواصل معاك فور إتاحة مقاعد إضافية لحفلة التخرج.
+            سجل بياناتك الآن في قائمة الانتظار، وهنتواصل معاك فور إتاحة مقاعد إضافية لـ Last First Day.
           </p>
         </div>
 
@@ -157,7 +158,7 @@ const WaitingList = () => {
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-6 font-medium tracking-wide uppercase">
-          FCI Tanta Graduation 2026 • حفل تخرج 2026
+          FCI Tanta • Last First Day 2027
         </p>
       </div>
     </div>

@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Link, useSearchParams } from "react-router-dom";
 import { StudentMediaSection } from "@/components/StudentMediaSection";
+import { EVENT } from "@/config/event";
 
 // أرقام الموبايل المحمية بكلمة مرور خاصة
 const PROTECTED_PHONE_PASSWORDS: Record<string, string> = {
@@ -263,14 +264,14 @@ export const MyBooking: React.FC = () => {
     toast.success("تم نسخ رقم الطلب");
   };
 
-  const getStatusDisplay = (status: string) => {
+  const getStatusDisplay = (status: string, isLfd: boolean) => {
     switch (status) {
       case "approved":
         return {
           title: "تمت الموافقة وتأكيد الحجز",
           badgeClass: "bg-green-100 text-green-700 border-green-200",
           icon: <CheckCircle2 className="w-5 h-5 text-green-600" />,
-          desc: "تمت مراجعة إيصال السداد والموافقة على حجزك بنجاح. ننتظرك في حفل التخرج!",
+          desc: `تمت مراجعة إيصال السداد والموافقة على حجزك بنجاح. ننتظرك في ${isLfd ? EVENT.title : "حفل التخرج"}!`,
         };
       case "rejected":
         return {
@@ -359,7 +360,8 @@ export const MyBooking: React.FC = () => {
             {/* Case 1: Found Bookings */}
             {bookings.length > 0 ? (
               bookings.map((booking) => {
-                const statusInfo = getStatusDisplay(booking.status);
+                const isLfd = booking.selected_package === EVENT.selectedPackage;
+                const statusInfo = getStatusDisplay(booking.status, isLfd);
                 const details = Array.isArray(booking.companions_details) ? booking.companions_details : [];
                 const department = details.find((d: any) => d.type === "department")?.value;
                 const sashColor = details.find((d: any) => d.type === "sash_color")?.value;
@@ -369,6 +371,7 @@ export const MyBooking: React.FC = () => {
                 const trophyName = details.find((d: any) => d.type === "trophy_name")?.value;
                 const extraCompanions = Number(details.find((d: any) => d.type === "extra_companions_count")?.value) || 0;
                 const driveLink = details.find((d: any) => d.type === "drive_link")?.value;
+                const studentPhoto = details.find((d: any) => d.type === "student_photo")?.value;
 
                 return (
                   <div key={booking.id} className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
@@ -387,7 +390,7 @@ export const MyBooking: React.FC = () => {
                       {/* Order Number & Student Name */}
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-slate-100">
                         <div>
-                          <span className="text-[11px] text-slate-400 font-semibold block mb-0.5">اسم الخريج:</span>
+                          <span className="text-[11px] text-slate-400 font-semibold block mb-0.5">{isLfd ? "الاسم:" : "اسم الخريج:"}</span>
                           <h3 className="text-lg sm:text-xl font-black text-slate-900">{booking.customer_name}</h3>
                           <span className="text-xs text-slate-500 font-mono mt-0.5 inline-block" dir="ltr">
                             {booking.customer_phone}
@@ -410,7 +413,8 @@ export const MyBooking: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* 2 Tabs: الصور والوسائط | بيانات الحجز */}
+                      {/* 2 Tabs: الصور والوسائط | بيانات الحجز (حفلة التخرج بس) */}
+                      {!isLfd && (
                       <div className="flex bg-slate-100/80 p-1 rounded-xl gap-1 border border-slate-200/60">
                         <button
                           type="button"
@@ -438,17 +442,36 @@ export const MyBooking: React.FC = () => {
                           <span>بيانات الحجز</span>
                         </button>
                       </div>
+                      )}
 
                       {/* Tab 1: بيانات الحجز */}
-                      {activeTab === "booking" && (
+                      {(isLfd || activeTab === "booking") && (
                         <div className="space-y-4 animate-in fade-in-50 duration-200">
                           {/* Standalone Burgundy Sash Note */}
+                          {!isLfd && (
                           <div className="bg-[#7A0C2E] text-white rounded-2xl px-4 py-3.5 sm:px-5 sm:py-4 flex items-center justify-between shadow-xs">
                             <span className="text-xs sm:text-sm font-medium text-white/90">لون الوشاح:</span>
                             <span className="text-xs sm:text-sm font-bold text-white">
                               اللون النبيتي (باختيار الأغلبية)
                             </span>
                           </div>
+                          )}
+
+                          {studentPhoto && (
+                            <div className="flex items-center gap-3 bg-slate-50/60 rounded-2xl border border-slate-200/60 p-3">
+                              <a href={studentPhoto} target="_blank" rel="noopener noreferrer">
+                                <img
+                                  src={studentPhoto}
+                                  alt="صورتك"
+                                  className="w-16 h-16 rounded-xl object-cover border border-slate-200"
+                                />
+                              </a>
+                              <div>
+                                <span className="font-bold text-slate-800 text-xs sm:text-sm block">صورة الستيك</span>
+                                <span className="text-slate-500 text-[11px] sm:text-xs">صورتك وانت صغير اللي هتتطبع على الستيك بتاعك</span>
+                              </div>
+                            </div>
+                          )}
 
                           {/* Unified Minimalist Details List */}
                           <div className="bg-slate-50/60 rounded-2xl border border-slate-200/60 divide-y divide-slate-200/60 overflow-hidden">
@@ -489,6 +512,7 @@ export const MyBooking: React.FC = () => {
                               </div>
                             )}
 
+                            {!isLfd && (
                             <div className="flex items-center justify-between px-4 py-3">
                               <span className="text-slate-500 font-medium text-xs sm:text-sm">التذاكر والحضور</span>
                               <span className="font-bold text-slate-800 text-xs sm:text-sm text-left">
@@ -496,6 +520,7 @@ export const MyBooking: React.FC = () => {
                                 <span className="text-slate-400 font-normal mr-1.5">({3 + extraCompanions} أفراد)</span>
                               </span>
                             </div>
+                            )}
 
                             <div className="flex items-center justify-between px-4 py-3">
                               <span className="text-slate-500 font-medium text-xs sm:text-sm">وسيلة الدفع والمعاملة</span>
@@ -541,7 +566,7 @@ export const MyBooking: React.FC = () => {
                       )}
 
                       {/* Tab 2: الصور والوسائط */}
-                      {activeTab === "media" && (
+                      {!isLfd && activeTab === "media" && (
                         <div className="animate-in fade-in-50 duration-200">
                           <StudentMediaSection
                             phone={booking.customer_phone}
@@ -585,7 +610,7 @@ export const MyBooking: React.FC = () => {
                   مرحباً {waitingEntry.name}
                 </h3>
                 <p className="text-slate-600 text-sm leading-relaxed max-w-md mx-auto mb-4">
-                  أنت مسجل حالياً في **قائمة الانتظار** الخاصة بحفلة التخرج. سيتم التواصل معك عبر الواتساب أو الاتصال فور إتاحة مقاعد أو تذاكر إضافية.
+                  أنت مسجل حالياً في **قائمة الانتظار** الخاصة بالإيفنت. سيتم التواصل معك عبر الواتساب أو الاتصال فور إتاحة مقاعد أو تذاكر إضافية.
                 </p>
                 <div className="text-xs text-slate-400">
                   تاريخ التسجيل: {new Date(waitingEntry.created_at).toLocaleDateString("ar-EG")}

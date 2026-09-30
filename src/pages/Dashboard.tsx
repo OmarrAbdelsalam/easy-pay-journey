@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { EVENT, GRADUATION_BATCH } from "@/config/event";
 
 
 interface WaitingListEntry {
@@ -69,7 +70,18 @@ const Dashboard = () => {
   const [waitingListLoading, setWaitingListLoading] = useState(false);
   const [homepageMode, setHomepageMode] = useState<"booking" | "waiting">("booking");
   const [savingMode, setSavingMode] = useState(false);
-  const [currentBatch, setCurrentBatch] = useState<number>(2026);
+  const [currentBatch, setCurrentBatch] = useState<number>(EVENT.batch);
+  // أدوات الوشاح والدرع خاصة بحجوزات حفلة التخرج بس
+  const isGradBatch = currentBatch === GRADUATION_BATCH;
+
+  const switchBatch = (batch: number) => {
+    setCurrentBatch(batch);
+    setTrophyFilter("all");
+    setSashColorFilter("all");
+    setSashSizeFilter("all");
+    setDepartmentFilter("all");
+    setDateFilter("all");
+  };
 
   // Trophy Edit Modal State
   const [editingTrophyBooking, setEditingTrophyBooking] = useState<Booking | null>(null);
@@ -609,6 +621,10 @@ const Dashboard = () => {
   };
 
   const exportToCSV = () => {
+    if (!isGradBatch) {
+      exportEventCSV();
+      return;
+    }
     const headers = [
       "م",
       "اسم الخريج",
@@ -691,6 +707,65 @@ const Dashboard = () => {
     toast.success("تم تصدير شيت الطلاب مرتبين بالأقدمية بنجاح");
   };
 
+  const exportEventCSV = () => {
+    const headers = [
+      "م",
+      "الاسم",
+      "رقم الموبايل",
+      "القسم",
+      "رابط الصورة",
+      "المبلغ (ج.م)",
+      "وسيلة الدفع",
+      "رقم المعاملة",
+      "المحول منه",
+      "حالة الطلب",
+      "تاريخ ووقت الحجز"
+    ];
+    const esc = (v: string) => `"${(v || "").replace(/"/g, '""')}"`;
+
+    const sortedBookings = [...filteredBookings].sort(
+      (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    );
+
+    const rows = sortedBookings.map((b, index) => {
+      const details = Array.isArray(b.companions_details) ? b.companions_details : [];
+      const department = details.find((d: any) => d.type === "department")?.value || "-";
+      const photo = details.find((d: any) => d.type === "student_photo")?.value || "-";
+      const orderStatus = b.status === "approved" ? "موافق" : b.status === "rejected" ? "مرفوض" : "قيد الانتظار";
+      const createdAtFormatted = new Date(b.created_at).toLocaleString("ar-EG", {
+        timeZone: "Africa/Cairo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      });
+
+      return [
+        index + 1,
+        esc(b.customer_name),
+        `"\t${b.customer_phone || ""}"`,
+        esc(department),
+        esc(photo),
+        b.total_price,
+        esc(paymentMethodLabels[b.payment_method] || b.payment_method),
+        `"\t${b.transaction_number || ""}"`,
+        esc(b.sender_name || b.sender_phone || "-"),
+        esc(orderStatus),
+        esc(createdAtFormatted)
+      ];
+    });
+
+    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\r\n");
+    const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `last_first_day_${EVENT.batch}_${new Date().toISOString().split("T")[0]}.csv`;
+    link.click();
+    toast.success("تم تصدير شيت الطلاب مرتبين بالأقدمية بنجاح");
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "approved":
@@ -766,7 +841,23 @@ const Dashboard = () => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">لوحة التحكم</h1>
-            <p className="text-sm text-gray-500">إدارة حجوزات حفلة التخرج 2026</p>
+            <p className="text-sm text-gray-500">
+              {isGradBatch ? "إدارة حجوزات حفلة التخرج 2026" : `إدارة حجوزات ${EVENT.title}`}
+            </p>
+            <div className="flex gap-1 mt-2 bg-gray-100 p-1 rounded-lg w-fit">
+              {[EVENT.batch, GRADUATION_BATCH].map((batch) => (
+                <button
+                  key={batch}
+                  type="button"
+                  onClick={() => switchBatch(batch)}
+                  className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
+                    currentBatch === batch ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-800"
+                  }`}
+                >
+                  {batch === GRADUATION_BATCH ? "حفلة التخرج 2026" : EVENT.title}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="flex gap-2">
             <Button 
@@ -856,7 +947,7 @@ const Dashboard = () => {
                           <td className="px-4 py-3 text-gray-600" dir="ltr">{entry.phone}</td>
                           <td className="px-4 py-3">
                             <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700">
-                              {entry.selected_package === "graduation_2026" ? "حفلة تخرج 2026" : entry.selected_package || "حفلة تخرج"}
+                              {entry.selected_package === EVENT.selectedPackage ? EVENT.title : entry.selected_package === "graduation_2026" ? "حفلة تخرج 2026" : entry.selected_package || "حفلة تخرج"}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-gray-500 text-xs">
@@ -1074,6 +1165,7 @@ const Dashboard = () => {
         </div>
 
         {/* إحصائيات تصويت الوشاح */}
+        {isGradBatch && (
         <div className="bg-white rounded-xl border border-gray-200 mb-6 overflow-hidden">
           <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
             <h3 className="font-bold text-sm text-gray-900">إحصائيات تصويت ألوان الوشاح</h3>
@@ -1108,6 +1200,7 @@ const Dashboard = () => {
             </table>
           </div>
         </div>
+        )}
 
         {/* Filters */}
         <div className="bg-white rounded-xl p-4 border border-gray-200 mb-6">
@@ -1155,6 +1248,8 @@ const Dashboard = () => {
                 <SelectItem value="IS">IS</SelectItem>
               </SelectContent>
             </Select>
+            {isGradBatch && (
+            <>
             <Select value={trophyFilter} onValueChange={setTrophyFilter}>
               <SelectTrigger className="w-full sm:w-28 bg-white border-gray-200 text-gray-700">
                 <SelectValue placeholder="الدرع" />
@@ -1189,6 +1284,8 @@ const Dashboard = () => {
                 <SelectItem value="standard">المقاس العادي</SelectItem>
               </SelectContent>
             </Select>
+            </>
+            )}
 
             <Select value={dateFilter} onValueChange={setDateFilter}>
               <SelectTrigger className="w-full sm:w-40 bg-white border-gray-200 text-gray-700">
@@ -1250,7 +1347,7 @@ const Dashboard = () => {
                           {getStatusBadge(booking.status)}
                           <span className="font-mono text-[10px] text-gray-500">{booking.order_number}</span>
                           <span className="px-1.5 py-0.5 rounded text-[10px] bg-purple-100 text-purple-700 font-medium">
-                            تخرج
+                            {booking.selected_package === EVENT.selectedPackage ? "LFD" : "تخرج"}
                           </span>
                         </div>
                         <div className="font-semibold text-gray-900">{booking.customer_name}</div>
@@ -1310,8 +1407,24 @@ const Dashboard = () => {
                               const trophyName = details.find((d: any) => d.type === 'trophy_name')?.value;
                               const extraCompanions = details.find((d: any) => d.type === 'extra_companions_count')?.value;
                               const driveLink = details.find((d: any) => d.type === 'drive_link')?.value;
+                              const studentPhoto = details.find((d: any) => d.type === 'student_photo')?.value;
                               return (
                                 <>
+                                  {studentPhoto && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setSelectedImage(studentPhoto)}
+                                      className="block mb-1"
+                                      title="عرض صورة الطالب"
+                                    >
+                                      <img
+                                        src={studentPhoto}
+                                        alt={booking.customer_name}
+                                        loading="lazy"
+                                        className="w-12 h-12 rounded-lg object-cover border border-gray-200 hover:ring-2 hover:ring-purple-300"
+                                      />
+                                    </button>
+                                  )}
                                   {department && <div><strong>القسم:</strong> {department}</div>}
                                   {sashColor && <div><strong>الوشاح:</strong> {sashColor} {sashSize ? `(${sashSize})` : ''}</div>}
                                   {sashName && <div className="text-purple-600 font-semibold"><strong>اسم الوشاح:</strong> {sashName}</div>}
@@ -1410,6 +1523,7 @@ const Dashboard = () => {
                               </SelectContent>
                             </Select>
                           )}
+                          {isGradBatch && (
                           <Button
                             variant="outline"
                             size="icon"
@@ -1419,6 +1533,7 @@ const Dashboard = () => {
                           >
                             <Pencil className="w-4 h-4" />
                           </Button>
+                          )}
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button
@@ -1475,7 +1590,7 @@ const Dashboard = () => {
             </Button>
             <img 
               src={selectedImage} 
-              alt="إيصال الدفع" 
+              alt="معاينة الصورة" 
               className="max-w-full max-h-[80vh] rounded-lg object-contain"
               onClick={(e) => e.stopPropagation()}
             />

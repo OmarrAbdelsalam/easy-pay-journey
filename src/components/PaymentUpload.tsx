@@ -15,7 +15,7 @@ export interface PaymentDetails {
 }
 
 interface PaymentUploadProps {
-  selectedPackage: PackageType;
+  selectedPackage?: PackageType;
   companions: Companion[];
   selectedMethod: PaymentMethod;
   onMethodSelect: (method: PaymentMethod) => void;
